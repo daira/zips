@@ -352,7 +352,7 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
   \newcommand{\setnuzero}{\color{\nuzerocolor}}
   \newcommand{\nuzero}[1]{\texorpdfstring{{\setnuzero{#1}}}{#1}}
   \newcommand{\optSprout}[1]{{#1}^\mathsf{Sprout}}
-  \pagecolor{yellow!3}
+  %\pagecolor{yellow!3}
 } {
   \newcommand{\sprout}[1]{#1}
   \newcommand{\notsprout}[1]{}
@@ -532,7 +532,7 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\JubjubCurve}{\mathsf{Jubjub}}
 \newcommand{\jubjubCurve}{\term{Jubjub curve}}
 \newcommand{\Jubjub}{\titleterm{Jubjub}}
-\newcommand{\commonRandomString}{\term{Common Random String}}
+\newcommand{\uniformRandomString}{\term{Uniform Random String}}
 \newcommand{\BNRepresentedPairing}{\titleterm{BN-254}}
 \newcommand{\BLSRepresentedPairing}{\titleterm{BLS12-381}}
 \newcommand{\ppzkSNARK}{\term{preprocessing zk-SNARK}}
@@ -1084,7 +1084,6 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\KASaplingPublic}{\KASapling\mathsf{.Public}}
 \newcommand{\KASaplingPrivate}{\KASapling\mathsf{.Private}}
 \newcommand{\KASaplingSharedSecret}{\KASapling\mathsf{.SharedSecret}}
-\newcommand{\KASaplingFormatPrivate}{\KASapling\mathsf{.FormatPrivate}}
 \newcommand{\KASaplingDerivePublic}{\KASapling\mathsf{.DerivePublic}}
 \newcommand{\KASaplingAgree}{\KASapling\mathsf{.Agree}}
 
@@ -1357,6 +1356,8 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\compactSize}{\type{compactSize uint}}
 
 
+\newcommand{\SighashTxHashing}{\titleterm{SIGHASH Transaction Hashing}}
+\newcommand{\sighash}{\term{SIGHASH}}
 \newcommand{\sighashTxHash}{\term{SIGHASH transaction hash}}
 \newcommand{\sighashTxHashes}{\term{SIGHASH transaction hashes}}
 \newcommand{\sighashType}{\term{SIGHASH type}}
@@ -1547,8 +1548,8 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\xP}{{x_{\hspace{-0.12em}P}}}
 \newcommand{\yP}{{y_{\hspace{-0.03em}P}}}
 
-\newcommand{\CRS}{\mathsf{CRS}}
-\newcommand{\CRSType}{\mathsf{CRSType}}
+\newcommand{\URS}{\mathsf{URS}}
+\newcommand{\URSType}{\mathsf{URSType}}
 
 % Conversions
 
@@ -2671,7 +2672,7 @@ in the \spendStatement to confirm use of the correct $\NoteAddressRand$ value as
 input to \nullifier derivation. It is instantiated in \crossref{concretemixinghash}.
 
 $\DiversifyHash \typecolon \DiversifierType \rightarrow \SubgroupJ$ is a \hashFunction
-satisfying the Discrete Logarithm Independence property (which implies \collisionResistance\!\!)
+satisfying the Unlinkability property (which implies \collisionResistance\!)
 described in \crossref{abstractgrouphash}.
 It is used to derive a \diversifiedBase from a \diversifier in \crossref{saplingkeycomponents}.
 It is instantiated in \crossref{concretediversifyhash}.
@@ -3289,32 +3290,33 @@ efficiently computable left inverse.
 \subsubsection{\GroupHash} \label{abstractgrouphash}
 
 Given a represented group $\GroupG{}$ with prime-order subgroup $\SubgroupG$,
-and a type $\CRSType$, we define a \term{family of group hashes into\, $\SubgroupG$}
+and a type $\URSType$, we define a \term{family of group hashes into\, $\SubgroupG$}
 as a function
 
 \begin{formulae}
-  \item $\GroupGHash{} \typecolon \CRSType \times (\byteseq{8} \times \byteseqs) \rightarrow \SubgroupG$
+  \item $\GroupGHash{} \typecolon \URSType \times (\byteseq{8} \times \byteseqs) \rightarrow \SubgroupG$
 \end{formulae}
 
 \vspace{-2ex}
 \securityrequirement{\textbf{Discrete Logarithm Independence}
 
-For a randomly selected member $\GroupGHash{\CRS}$ of the family, it is infeasible to find
+For a randomly selected member $\GroupGHash{\URS}$ of the family, it is infeasible to find
 a sequence of \emph{distinct} inputs $m_{\alln} \typecolon \typeexp{(\byteseq{8} \times \byteseqs)}{n}$
 and a sequence of nonzero $x_{\alln} \typecolon \typeexp{\GFstar{\ParamG{r}}}{n}$
-such that $\ssum{i = 1}{n}\!\left(\scalarmult{x_i}{\GroupGHash{\CRS}(m_i)}\right) = \ZeroG{}$.
+such that $\ssum{i = 1}{n}\!\left(\scalarmult{x_i}{\GroupGHash{\URS}(m_i)}\right) = \ZeroG{}$.
 }
 
 \begin{nnotes}
-  \item This property implies (and is stronger than) collision-resistance,
-        since a collision $(m_1, m_2)$ for $\GroupGHash{\CRS}$ trivially gives a
-        discrete logarithm relation with $x_1 = 1$ and $x_2 = -1$.
-  \item An alternative approach is to model $\GroupGHash{\CRS}$ as a random
+  \item Discrete Logarithm Independence implies \collisionResistance\!,
+        since a collision $(m_1, m_2)$ for $\GroupGHash{\URS}$ trivially gives a
+        discrete logarithm relation with $x_1 = 1$ and $x_2 = -1$. It is in fact
+        stronger than \collisionResistance\!.
+  \item An alternative approach is to model $\GroupGHash{\URS}$ as a random
         oracle, and assume that the Discrete Logarithm Problem is hard in
         the group. We prefer to avoid the Random Oracle Model and instead make
         a more specific standard-model assumption, which is effectively no
         stronger than the assumptions made in the random oracle approach.
-  \item $\CRS$ is a \commonRandomString; we choose it verifiably at random
+  \item $\URS$ is a \uniformRandomString; we choose it verifiably at random
         (see \crossref{beacon}), \emph{after} fixing the concrete
         group hash algorithm to be used.
         This mitigates the possibility that the group hash algorithm could have
@@ -3322,6 +3324,7 @@ such that $\ssum{i = 1}{n}\!\left(\scalarmult{x_i}{\GroupGHash{\CRS}(m_i)}\right
   \item The input element with type $\byteseq{8}$ is intended to act as a
         ``personalization'' parameter to distinguish uses of the \groupHash for
         different purposes.
+        Discrete Logarithm Independence is required to hold across choices of this parameter.
 \end{nnotes}
 } %sapling
 
@@ -3426,9 +3429,11 @@ Note that Knowledge Soundness implies Soundness --- i.e.\ the property that it i
 infeasible to find a new proof $\Proof{}$ where $\ZKVerify{\vk}(x, \Proof{}) = 1$ without
 \emph{there existing} an \auxiliaryInput $w$ such that $(x, w) \in \ZKSatisfying$.
 
-It is possible to replay proofs, but informally, a proof for a given $(x, w)$ gives
-no information that helps to find a proof for other $(x, w)$. \todo{Clarify this and/or
-switch to a proving system that provides Simulation Extractability.}
+\vspace{-1ex}
+\nnote{The above properties do not include nonmalleability \cite{DSDCOPS2001}, and the
+design of the protocol using the \zeroKnowledgeProvingSystem must take this
+into account.}
+\vspace{2ex}
 
 \sprout{
 The \provingSystem is instantiated in \crossref{phgr}.
@@ -3445,26 +3450,30 @@ taking them to be the particular \provingKey and \verifyingKey defined by the
   \item $\PHGR$ (\crossref{phgr}) is used with the
         $\BNCurve$ pairing (\crossref{bnpairing}),
         to prove and verify the \Sprout \joinSplitStatement
-        (\crossref{joinsplitstatement}).
+        (\crossref{joinsplitstatement}) before \Sapling activation.
   \item $\Groth$ (\crossref{groth}) is used with the
         $\BLSCurve$ pairing (\crossref{blspairing}),
         to prove and verify the \Sapling \spendStatement
         (\crossref{spendstatement}) and \outputStatement
-        (\crossref{outputstatement}).
+        (\crossref{outputstatement}). It is also used to prove
+        and verify the \joinSplitStatement after \Sapling activation.
 \end{itemize}
 
-These specializations are referred to as
-$\JoinSplit$ for the \Sprout \joinSplitStatement,
-$\Spend$ for the \Sapling \spendStatement, and
-$\Output$ for the \Sapling \outputStatement.
+These specializations are referred to as $\JoinSplit$ for the \Sprout
+\joinSplitStatement (with either $\PHGR$ and $\BNCurve$, or $\Groth$ and
+$\BLSCurve$); $\Spend$ for the \Sapling \spendStatement; and $\Output$
+for the \Sapling \outputStatement.
 
 We omit the key subscripts on $\JoinSplitProve$ and
-$\JoinSplitVerify$, taking them to be the $\PHGR$ \provingKey
-and \verifyingKey defined in \crossref{sproutparameters}.
+$\JoinSplitVerify$, taking them to be either the $\PHGR$ \provingKey
+and \verifyingKey defined in \crossref{sproutparameters}, or the
+\texttt{sprout-groth16.params} $\Groth$ \provingKey and \verifyingKey
+defined in \crossref{saplingparameters}, according to whether the proof
+appears in a \block before or after \Sapling activation.
 
-Similarly, we omit the key subscripts on $\SpendProve$,
+Similarly, we omit key subscripts on $\SpendProve$,
 $\SpendVerify$, $\OutputProve$, and $\OutputVerify$, taking
-them to be the $\Groth$ \provingKeys and
+them to be the relevant $\Groth$ \provingKeys and
 \verifyingKeys defined in \crossref{saplingparameters}.
 } %sapling
 
@@ -3575,8 +3584,8 @@ The resulting \diversifiedPaymentAddress is $(\Diversifier, \DiversifiedTransmit
 For each \spendingKey, there is also a \defaultDiversifiedPaymentAddress
 with a ``random-looking'' \diversifier. This allows an implementation that does not expose
 diversified addresses as a user-visible feature, to use a default address that
-cannot be distinguished (just from the address) from one with a random \diversifier
-as above.
+cannot be distinguished (without knowledge of the \spendingKey) from one with a random
+\diversifier as above.
 
 \introlist
 Let $\first \typecolon (\byte \rightarrow \maybe{T}) \rightarrow \maybe{T}$
@@ -3609,8 +3618,8 @@ if this happens, discard the key and repeat with a different $\SpendingKey$.
   \item Similarly, address generators \MAY encode information in the \diversifier
         that can be recovered by the recipient of a payment to determine which
         \diversifiedPaymentAddress was used. It is \RECOMMENDED that such \diversifiers
-        be randomly chosen unique byte sequences used to index into a database, rather
-        than directly encoding the needed data.
+        be randomly chosen unique values used to index into a database, rather than
+        directly encoding the needed data.
 \end{pnotes}
 
 \vspace{-3ex}
@@ -3691,7 +3700,9 @@ where
   \item $\ProofJoinSplit \typecolon \JoinSplitProof$ is a \zkProof with
         \primaryInput $(\rt, \nfOld{\allOld}, \cmNew{\allNew},\changed{ \vpubOld,}
         \vpubNew, \hSig, \h{\allOld})$ for the
-        \joinSplitStatement defined in \crossref{joinsplitstatement};
+        \joinSplitStatement defined in \crossref{joinsplitstatement}\sapling{ (this is
+        a $\PHGR$ proof before \Sapling activation, and a $\Groth$ proof after \Sapling
+        activation)};
   \item $\TransmitCiphertext{\allNew} \typecolon \typeexp{\Ciphertext}{\NNew}$ is
         a sequence of ciphertext components for the encrypted output \notes.
 \end{itemize}
@@ -3759,11 +3770,12 @@ where
   \item $\AuthSignRandomizedPublic$ \MUSTNOT be of small order, i.e.\ $\scalarmult{\ParamJ{h}}{\AuthSignRandomizedPublic}$
         \MUSTNOT be $\ZeroJ$.
   \item The proof $\Proof{\Spend}$ \MUST be valid given a \primaryInput formed
-        from the other fields except $\spendAuthSig$.
-        I.e.\ it must be the case that $\SpendVerify{}((\cv, \rt, \nf, \AuthSignRandomizedPublic), \Proof{\Spend}) = 1$.
+        from the other fields except $\spendAuthSig$ ---
+        i.e.\ $\SpendVerify{}((\cv, \rt, \nf, \AuthSignRandomizedPublic), \Proof{\Spend}) = 1$.
   \item The \spendAuthSignature{} \MUST be a valid $\SpendAuthSig$ signature over $\SigHash$
-        using $\AuthSignRandomizedPublic$ as the public key.
-        I.e.\ it must be the case that $\SpendAuthSigVerify{\AuthSignRandomizedPublic}(\SigHash, \spendAuthSig) = 1$.
+        using $\AuthSignRandomizedPublic$ as the public key, where $\SigHash$ is the \sighashTxHash
+        of this \transaction using $\SIGHASHALL$ as defined in \crossref{sighash} ---
+        i.e.\ $\SpendAuthSigVerify{\AuthSignRandomizedPublic}(\SigHash, \spendAuthSig) = 1$.
 \end{consensusrules}
 } %sapling
 
@@ -4077,19 +4089,66 @@ where
 Given such a \merklePath, it is possible to verify that \merkleLeafNode
 $\MerkleNode{\MerkleDepth}{i}$ is in a tree with a given \merkleRoot $\rt = \MerkleNode{0}{0}$.
 
+
+\subsection{\SighashTxHashing} \label{sighash}
+
+\Bitcoin and \Zcash use signatures and/or non-interactive proofs associated
+with \transaction inputs to authorize spending. Because these signatures or proofs
+could otherwise be replayed in a different \transaction, it is necessary to ``bind''
+them to the \transaction for which they are intended. This is done by hashing information
+about the \transaction and (where applicable) the specific input, to give a
+\sighashTxHash which is then used for the spend authorization. The means of
+authorization differs between
+\sprout{\transparentInputs and inputs to \Sprout \joinSplitTransfers,}
+\notsprout{\transparentInputs, inputs to \Sprout \joinSplitTransfers,\sapling{ and \Sapling \spendTransfers,}}
+but the same \sighashTxHash algorithm is used.
+
+In the case of \Zcash, the
+\sprout{$\PHGR$ proving system used is}%
+\notsprout{$\PHGR$\sapling{ and $\Groth$} proving systems used are}%
+\emph{malleable}, meaning that there is the potential for an adversary who does
+not know all of the \auxiliaryInputs to a proof, to malleate it in order to create a new proof
+involving related \auxiliaryInputs \cite{DSDCOPS2001}. This can be understood as similar
+to a malleability attack on an encryption scheme, in which an adversary can malleate a
+ciphertext in order to create an encryption of a related plaintext, without knowing the
+original plaintext. \Zcash has been designed to mitigate malleability attacks, as described
+in \crossref{sproutnonmalleability}\sapling{, \crossref{bindingsig}, and \crossref{spendauthsig}}.
+
+To provide additional flexibility when combining spend authorizations from different
+sources, \Bitcoin defines several \sighashTypes that cover various parts of a transaction:
+\todo{explain these types}. One of these types is $\SIGHASHALL$\changed{, which is used for
+\Zcash-specific signatures, i.e.\ \joinSplitSignatures\sapling{, \spendAuthSignatures,
+and \bindingSignatures}}. \changed{In \sprout{this case}\notsprout{these cases} the
+\sighashTxHash is not associated with a \transparentInput, and so the input
+to hashing excludes \emph{all} of the $\scriptSig$ fields in the non-\Zcash-specific parts
+of the \transaction.}
+
+\changed{In \Zcash, all \sighashTypes are extended to cover the \Zcash-specific
+fields $\nJoinSplit$, $\vJoinSplit$, and if present $\joinSplitPubKey$. These fields
+are described in \crossref{txnencoding}. The hash \emph{does not} cover the field $\joinSplitSig$.}
+\nuzero{
+After \NUZero\sapling{ and \Sapling} activation, all \sighashTypes are also extended to cover
+\transaction fields introduced in those upgrades.
+
+The original \sighash algorithm defined by \Bitcoin suffered from some deficiencies as
+described in \cite{ZIP-143}; in \Zcash these are to be addressed by changing this algorithm
+as part of the \NUZero upgrade.
+} %nuzero
+
+\prenuzero{\todo{Describe the \sighash algorithm used prior to \NUZero activation,
+i.e.\ for version 1 and 2 \transactions.}}
+
+\nuzeroonly{The \sighash algorithm used after \NUZero activation and before \Sapling
+activation, i.e.\ for version 3 \transactions, is defined in \cite{ZIP-143}.}
+
+\saplingonward{The \sighash algorithm used after \Sapling activation, i.e.\ for
+version 4 \transactions, is defined in \cite{ZIP-243}.}
+
+
 \subsection{Non-malleability\pSproutOrNothing} \label{sproutnonmalleability}
 
-\Bitcoin defines several \sighashTypes that cover various parts of a transaction.
-\changed{In \Zcash, all of these \sighashTypes are extended to cover the \Zcash-specific
-fields $\nJoinSplit$, $\vJoinSplit$, and (if present) $\joinSplitPubKey$, described in
-\crossref{txnencoding}. They \emph{do not} cover the field $\joinSplitSig$.
-
-}
-
-\vspace{3ex}
 Let $\dataToBeSigned$ be the hash of the \transaction{} \changed{using the $\SIGHASHALL$
-\sighashType}. \changed{This \emph{excludes} all of the $\scriptSig$ fields in
-the non-\Zcash-specific parts of the \transaction.}
+\sighashType}.
 
 In order to ensure that a \joinSplitDescription is cryptographically bound to the
 \transparent inputs and outputs corresponding to $\vpubNew$ and $\vpubOld$, and
@@ -4300,9 +4359,13 @@ $\vSum = 0$, we also need to demonstrate that it does not overflow $\ValueCommit
 
 The $\spendStatements$ prove that all of $\vOld{\alln}$ are in $\ValueType$.
 Similarly the $\outputStatements$ prove that all of $\vNew{\allm}$ are in $\ValueType$.
-Also, $n \mult (2^{\ValueLength}-1)$ and $(m+1) \mult (2^{\ValueLength}-1)$ do not exceed $\SignedScalarLimitJ$.
-This is sufficient to conclude that $\ssum{i=1}{n} \vOld{i} - \ssum{j=1}{m} \vNew{j} - \vBalance$
-does not overflow $\ValueCommitType$.
+$\vBalance$ is encoded in the \transaction as a signed two's complement $64$-bit integer
+in the range $\range{-2^{63}}{2^{63}-1}$. $\ValueLength$ is defined as 64, so $\vSum$
+is in the range $\range{-m \mult (2^{64}-1) - 2^{63} + 1}{n \mult (2^{64}-1) + 2^{63}}$.
+The maximum \transaction size of $2$ MB limits $n$ to at most $\floor{\frac{2000000}{384}} = 5208$
+and $m$ to at most $\floor{\frac{2000000}{948}} = 2109$, ensuring
+$\vSum \in \range{-38913406623490299131842}{96079866507916199586728}$
+which is a subrange of $\ValueCommitType$.
 
 Thus checking the \bindingSignature ensures that the \transaction balances, without
 the individual values of the \spendDescriptions and \outputDescriptions being revealed.
@@ -4369,9 +4432,10 @@ The $\spendAuthSig$ and $\ProofSpend$ are included in the \spendDescription.
 \pnote{
 If the spender is computationally or memory-limited, step 4 \MAY be delegated to a different
 party that is capable of performing the \zkProof. In this case privacy will be lost to that
-party since it needs the \authProvingKey; this allows deriving the $\AuthSignPublic$
-and $\AuthProvePublic$ components of the \fullViewingKey, which are sufficient to recognize
-spent \notes and to recognize and decrypt incoming \notes. However, it will not obtain spending
+party since it needs $\AuthSignPublic$ and the \authProvingKey $\AuthProvePrivate$; this allows
+also deriving the $\AuthProvePublic$ component of the \fullViewingKey. Together
+$\AuthSignPublic$ and $\AuthProvePublic$ are sufficient to recognize spent \notes and to
+recognize and decrypt incoming \notes. However, the other party will not obtain spending
 authority for other \transactions, since it is not able to create a \spendAuthSignature by itself.
 } %pnote
 } %sapling
@@ -5467,9 +5531,23 @@ Define
 
 \vspace{-2ex}
 \securityrequirement{
-$\DiversifyHash$ must satisfy the Discrete Logarithm Independence property
-described in \crossref{abstractgrouphash}.
-}
+$\DiversifyHash$ must be ``unlinkable'': given two randomly selected
+\paymentAddresses from different spend authorities, and a third \paymentAddress
+which could be derived from either of those authorities, it is not possible to
+tell which authority the third address was derived from.}
+
+\begin{nnotes}
+  \item Suppose that $\GroupJHash{}$ acts as a random function from \diversifiers
+        to points of order $\ParamJ{r}$ on the \jubjubCurve. Then unlinkability of
+        $\DiversifyHash$ holds under the Decisional Diffie-Hellman assumption on the
+        \jubjubCurve.
+  \item Informally, the random self-reducibility property of DDH implies that an
+        adversary would gain no advantage from being able to query an oracle for
+        additional $(\DiversifiedTransmitBase, \DiversifiedTransmitPublic)$ pairs
+        with the same spend authority as an existing \paymentAddress, since they
+        could also create such pairs on their own. This justifies only considering
+        two \paymentAddresses in the security definition.
+\end{nnotes}
 } %sapling
 
 
@@ -5556,6 +5634,11 @@ of these functions.
 $\PedersenHash$ and $\PedersenHashToPoint$ are required to be \collisionResistant
 between inputs of fixed length, for a given personalization input $D$.
 No other security properties commonly associated with \hashFunctions are needed.
+}
+
+\vspace{-2ex}
+\nnote{
+These \hashFunctions are \emph{not} \collisionResistant for variable-length inputs.
 }
 
 \vspace{2ex}
@@ -5982,8 +6065,6 @@ Define $\KASaplingPublic := \GroupJ$.
 Define $\KASaplingSharedSecret := \SubgroupJ$.
 
 Define $\KASaplingPrivate := \GF{\ParamJ{r}}$.
-
-Define $\KASaplingFormatPrivate(x) := x$.
 
 Define $\KASaplingDerivePublic(\sk, B) := \scalarmult{\sk}{B}$.
 
@@ -6678,7 +6759,9 @@ curve.
 \sapling{
 \subsubsubsection{\Jubjub} \label{jubjub}
 
-The \representedGroup $\JubjubCurve$ is defined in this section.
+\Sapling uses an elliptic curve designed to be efficiently implementable in
+\zkSNARKCircuits, called ``Jubjub'' \cite{Carroll1876}.
+The \representedGroup $\JubjubCurve$ of points on this curve is defined in this section.
 
 Let $\ParamJ{q} := \ParamS{r}$, as defined in \crossref{blspairing}.
 
@@ -6788,7 +6871,7 @@ is injective on points in $\SubgroupJ$.
 \introsection
 \subsubsubsection{\GroupHash{} into \Jubjub} \label{concretegrouphashjubjub}
 
-Let $\CRS$ be the MPC randomness beacon defined in \crossref{beacon}.
+Let $\URS$ be the MPC randomness beacon defined in \crossref{beacon}.
 
 Let $\BlakeTwos{256}$ be as defined in \crossref{concreteblake2}.
 
@@ -6801,10 +6884,10 @@ let $M \typecolon \byteseqs$ be the hash input.
 
 \vspace{2ex}
 \introlist
-The hash $\GroupJHash{\CRS}(D, M) \typecolon \PrimeOrderJ$ is calculated as follows:
+The hash $\GroupJHash{\URS}(D, M) \typecolon \PrimeOrderJ$ is calculated as follows:
 
 \begin{formulae}
-  \item $P := \abstJOf{\LEOStoBSPOf{256}{\BlakeTwosOf{256}{D,\, \CRS \bconcat\, M}}}$
+  \item $P := \abstJOf{\LEOStoBSPOf{256}{\BlakeTwosOf{256}{D,\, \URS \bconcat\, M}}}$
   \item If $P = \bot$ then return $\bot$.
   \item $Q := \scalarmult{\ParamJ{h}}{P}$
   \item If $Q = \ZeroJ$ then return $\bot$, else return $Q$.
@@ -6815,10 +6898,10 @@ so that $\first(f) = f(i)$ where $i$ is the least integer in $\byte$
 such that $f(i) \neq \bot$, or $\bot$ if no such $i$ exists.
 
 Define $\FindGroupJHashOf{D, M} :=
-\first(\fun{i \typecolon \byte}{\GroupJHash{\CRS}(D, M \bconcat\, [i]) \typecolon \maybe{(\PrimeOrderJ)}})$.
+\first(\fun{i \typecolon \byte}{\GroupJHash{\URS}(D, M \bconcat\, [i]) \typecolon \maybe{(\PrimeOrderJ)}})$.
 
 \begin{pnotes}
-  \item The $\BlakeTwos{256}$ chaining variable after processing $\CRS$ may be precomputed.
+  \item The $\BlakeTwos{256}$ chaining variable after processing $\URS$ may be precomputed.
   \item For random input, $\FindGroupJHash$ returns $\bot$ with probability approximately $2^{-256}$.
         In the \Zcash protocol, most uses of $\FindGroupJHash$ are for constants and do not
         return $\bot$; the only use that could potentially return $\bot$ is in the
@@ -7464,7 +7547,7 @@ These parameters were obtained by a multi-party computation described in \todo{}
 \introsection
 \subsection{Randomness Beacon} \label{beacon}
 
-Let $\CRS := \ascii{096b36a5804bfacef1691e173c366a47ff5ba84a44f26ddd7e8d9f79d5b42df0}$.
+Let $\URS := \ascii{096b36a5804bfacef1691e173c366a47ff5ba84a44f26ddd7e8d9f79d5b42df0}$.
 
 This value is used in the definition of $\GroupJHash{}$ in \crossref{concretegrouphashjubjub},
 and in the multi-party computation to obtain the \Sapling parameters given in
@@ -7480,7 +7563,7 @@ It is derived as described in \cite{Bowe2018}:
 \end{itemize}
 
 \vspace{-4ex}
-\pnote{$\CRS$ is a $64$-byte US-ASCII string, i.e.\ the first byte is \hexint{30}, not \hexint{09}.}
+\pnote{$\URS$ is a $64$-byte US-ASCII string, i.e.\ the first byte is \hexint{30}, not \hexint{09}.}
 } %sapling
 
 
@@ -9016,16 +9099,20 @@ distinct openings of the \noteCommitment when Condition I or II is violated.
 
 The inventors of \Zerocash are Eli Ben-Sasson, Alessandro Chiesa,
 Christina Garman, Matthew Green, Ian Miers, Eran Tromer, and Madars
-Virza.
+Virza. The designers of the \Zcash protocol are the \Zerocash inventors
+and also Daira Hopwood, Sean Bowe, Jack Grigg, Simon Liu, Taylor Hornby,
+Nathan Wilcox, Zooko Wilcox, Jay Graber, Ariel Gabizon, and George Tankersley.
+The Equihash proof-of-work algorithm was designed by Alex Biryukov and
+Dmitry Khovratovich.
 
-The authors would like to thank everyone with whom they have discussed
-the \Zerocash protocol design; in addition to the inventors, this includes
-Mike Perry, Isis Lovecruft, Leif Ryge, Andrew Miller, Zooko Wilcox,
-Samantha Hulsey, Jack Grigg, Simon Liu, Ariel Gabizon, jl777, Ben Blaxill,
-Alex Balducci, Jake Tarren, Solar Designer, Ling Ren, Alison Stevenson,
-John Tromp, Paige Peterson, Maureen Walsh, Jay Graber, Jack Gavigan,
-Filippo Valsorda, Zaki Manian, George Tankersley, Tracy Hu, Brian Warner,
-Mary Maller, Michael Dixon, Andrew Poelstra, and no doubt others.
+The authors would like to thank everyone with whom they have discussed the
+\Zerocash and \Zcash protocol designs; in addition to the preceding, this
+includes Mike Perry, Isis Lovecruft, Leif Ryge, Andrew Miller, Samantha Hulsey,
+jl777, Ben Blaxill, Alex Balducci, Jake Tarren, Solar Designer, Ling Ren,
+Alison Stevenson, John Tromp, Paige Peterson, Maureen Walsh, Jack Gavigan,
+Filippo Valsorda, Zaki Manian, Tracy Hu, Brian Warner, Mary Maller,
+Michael Dixon, Andrew Poelstra, and no doubt others. We would also like to
+thank the designers and developers of \Bitcoin.
 
 \Zcash has benefited from security audits performed by NCC Group, Coinspect,
 and Least Authority.
@@ -9055,12 +9142,23 @@ found by Brian Warner.
     \item Remove the consensus rule
           ``If $\nJoinSplit > 0$, the \transaction{} \MUSTNOT use \sighashTypes other than $\SIGHASHALL$.'',
           which was never implemented.
+    \item Add section on signature hashing.
+    \item Clarify attribution of the \Zcash protocol design.
+    \item Acknowledge Alex Biryukov and Dmitry Khovratovich as the designers of Equihash.
 \sapling{
     \item Use the more precise subgroup types $\SubgroupG$ and $\SubgroupJ$ in preference to
           $\GroupG{}$ and $\GroupJ$ where applicable.
+    \item Correct the argument that $\vSum$ is in range in \crossref{saplingbalance}.
     \item Correct or improve the types of $\GroupJHash{}$, $\FindGroupJHash$, $\ExtractJ$, $\PRFexpand{}$, and $\CRHivk$.
     \item Ensure that \Sprout functions and values are given \Sprout-specific types where appropriate.
     \item Improve cross-referencing.
+    \item Clarify the use of $\PHGR$ vs $\Groth$ proofs.
+    \item Model the group hash, and the use of $\BlakeTwosGeneric$ to construct the group hash, as random oracles.
+          This appears to be unavoidable in order to allow proving unlinkability of $\DiversifyHash$.
+    \item Rename $\mathsf{CRS}$ (Common Random String) to $\URS$ (\uniformRandomString), to
+          match the terminology adopted at the first zkproof workshop held in Boston, Massachusetts
+          on May~10--11, 2018.
+    \item Add reference to \cite{Carroll1876}.
 } %sapling
 \end{itemize}
 

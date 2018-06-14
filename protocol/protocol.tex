@@ -222,6 +222,7 @@
 \newcommand*{\bigboxminus}[1]{\mathop{\mathpalette\big@boxminus{#1}\relax}\slimits@}
 \newcommand*{\bigdiamondplus}[1]{\mathop{\mathpalette\big@diamondplus{#1}\relax}\slimits@}
 \newcommand*{\bigdiamondminus}[1]{\mathop{\mathpalette\big@diamondminus{#1}\relax}\slimits@}
+\newcommand*{\bigvartimes}[1]{\mathop{\mathpalette\big@vartimes{#1}\relax}\slimits@}
 
 \newcommand{\big@boxplus}[2]{%
   \vcenter{\m@th\bigbox@thickness{#1}\hbox{%
@@ -257,6 +258,14 @@
     \polyline(0,0.5)(1,0.5)
     \end{picture}}}}
 
+\newcommand{\big@vartimes}[2]{%
+  \vcenter{\m@th\bigbox@thickness{#1}\hbox{%
+    \setlength{\unitlength}{#2}%
+    \begin{picture}(1,1)
+    \polyline(0.2,0.08)(0.8,1)
+    \polyline(0.2,1)(0.8,0.08)
+    \end{picture}}}}
+
 \newcommand{\bigbox@thickness}[1]{%
   \ifx#1\displaystyle
     \linethickness{0.2ex}%
@@ -274,7 +283,7 @@
 }
 \makeatother
 
-% We just want one ampersand symbol from boisik.
+% We just want one ampersand symbol from boisik
 \DeclareSymbolFont{bskadd}{U}{bskma}{m}{n}
 \DeclareFontFamily{U}{bskma}{\skewchar\font130 }
 \DeclareFontShape{U}{bskma}{m}{n}{<->bskma10}{}
@@ -517,7 +526,6 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\HashExtractor}{\titleterm{Hash Extractor}}
 \newcommand{\groupHash}{\term{group hash}}
 \newcommand{\groupHashes}{\term{group hashes}}
-\newcommand{\GroupHash}{\titleterm{Group Hash}}
 \newcommand{\representedPairing}{\term{represented pairing}}
 \newcommand{\RepresentedPairing}{\titleterm{Represented Pairing}}
 \newcommand{\RepresentedGroupsAndPairings}{\titleterm{Represented Groups and Pairings}}
@@ -533,6 +541,7 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\jubjubCurve}{\term{Jubjub curve}}
 \newcommand{\Jubjub}{\titleterm{Jubjub}}
 \newcommand{\uniformRandomString}{\term{Uniform Random String}}
+\newcommand{\uniformRandomStrings}{\term{Uniform Random Strings}}
 \newcommand{\BNRepresentedPairing}{\titleterm{BN-254}}
 \newcommand{\BLSRepresentedPairing}{\titleterm{BLS12-381}}
 \newcommand{\ppzkSNARK}{\term{preprocessing zk-SNARK}}
@@ -669,8 +678,11 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\notePlaintexts}{\term{note plaintexts}}
 \newcommand{\NotePlaintexts}{\titleterm{Note Plaintexts}}
 \newcommand{\noteCiphertext}{\term{transmitted note ciphertext}}
+\newcommand{\noteCiphertexts}{\term{transmitted note ciphertexts}}
 \newcommand{\notesCiphertext}{\term{transmitted notes ciphertext}}
 \newcommand{\noteOrNotesCiphertext}{\term{transmitted note(s) ciphertext}}
+\newcommand{\outputCiphertext}{\term{output ciphertext}}
+\newcommand{\outputCiphertexts}{\term{output ciphertexts}}
 \newcommand{\incrementalMerkleTree}{\term{incremental Merkle tree}}
 \newcommand{\MerkleTree}{\titleterm{Merkle Tree}}
 \newcommand{\merkleRoot}{\term{root}}
@@ -683,7 +695,7 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\merkleInternalNode}{\term{internal node}}
 \newcommand{\merkleInternalNodes}{\term{internal nodes}}
 \newcommand{\MerkleInternalNodes}{\term{Internal nodes}}
-\newcommand{\merklePath}{\term{Merkle tree path}}
+\newcommand{\merklePath}{\term{Merkle path}}
 \newcommand{\merkleLayer}{\term{layer}}
 \newcommand{\merkleLayers}{\term{layers}}
 \newcommand{\merkleIndex}{\term{index}}
@@ -799,7 +811,7 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\ascii}[1]{\textbf{``\texttt{#1}''}}
 \newcommand{\Justthebox}[2][-1.8ex]{\raisebox{#1}{\;\usebox{#2}\;}}
 \newcommand{\setof}[1]{\{{#1}\}}
-\newcommand{\powerset}[1]{\raisebox{-0.28ex}{\scalebox{1.25}{$\mathscr{P}$}}\kern -0.35em\left(\strut{#1}\right)}
+\newcommand{\powerset}[1]{\raisebox{-0.28ex}{\scalebox{1.25}{$\mathscr{P}$}}\kern -0.2em\big(\strut{#1}\big)}
 \newcommand{\barerange}[2]{{{#1}\,..\,{#2}}}
 \newcommand{\range}[2]{\setof{\barerange{#1}{#2}}}
 \newcommand{\rangenozero}[2]{\range{#1}{#2} \difference \setof{0}}
@@ -840,6 +852,7 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\grpzero}{\Zero_{\subgrpplus}}
 \newcommand{\grpminus}{\bigboxminus{1.8ex}\,}
 \newcommand{\grpneg}{\bigboxminus{1.8ex}}
+\newcommand{\vartimes}{\bigvartimes{1.8ex}}
 \newcommand{\band}{\binampersand}
 \newcommand{\suband}{\raisebox{-0.6ex}{\kern-0.06em\scalebox{0.65}{$\binampersand$}}}
 \newcommand{\bchoose}{\;\scalebox{1.2}[1]{\textsf{?}}\;}
@@ -855,7 +868,8 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\suchthat}{\,\vert\;}
 \newcommand{\paramdot}{\bigcdot}
 \newcommand{\lincomb}[1]{\left(\strut\kern-.025em{#1}\kern-0.04em\right)}
-\newcommand{\constraint}[3]{\lincomb{#1}\hairspace \times\hairspace \lincomb{#2}\hairspace =\hairspace \lincomb{#3}}
+\newcommand{\constraint}[3]{\lincomb{#1}\hairspace \vartimes\hairspace \lincomb{#2}\hairspace =\hairspace \lincomb{#3}}
+\newcommand{\lconstraint}[1]{\lincomb{#1}\hairspace \vartimes\mhspace{0.25em}}
 \newcommand{\maybe}[1]{{#1} \union \setof{\bot}}
 
 
@@ -900,6 +914,7 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\PaymentAddressSecondByte}{\hexint{9A}}
 \newcommand{\InViewingKey}{\mathsf{ivk}}
 \newcommand{\InViewingKeyLength}{\ell_{\InViewingKey}}
+\newcommand{\InViewingKeyTypeSapling}{\binaryrange{\InViewingKeyLength}}
 \newcommand{\InViewingKeyLeadByte}{\hexint{A8}}
 \newcommand{\InViewingKeySecondByte}{\hexint{AB}}
 \newcommand{\InViewingKeyThirdByte}{\hexint{D3}}
@@ -968,7 +983,7 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\AuthProvePublicRepr}{\AuthProvePublic^{\Repr}}
 \newcommand{\OutViewingKey}{\mathsf{ovk}}
 \newcommand{\OutViewingKeyLength}{\mathsf{\ell_{\OutViewingKey}}}
-\newcommand{\OutViewingKeyType}{\bitseq{\OutViewingKeyLength}}
+\newcommand{\OutViewingKeyType}{\byteseq{\OutViewingKeyLength/8}}
 \newcommand{\OutCipherKey}{\mathsf{ock}}
 \newcommand{\NotePosition}{\mathsf{pos}}
 \newcommand{\NotePositionBase}{\mathcal{J}}
@@ -1059,6 +1074,7 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 
 \newcommand{\KA}{\mathsf{KA}}
 \newcommand{\KAPublic}{\KA\mathsf{.Public}}
+\newcommand{\KAPublicPrimeOrder}{\KA\mathsf{.PublicPrimeOrder}}
 \newcommand{\KAPrivate}{\KA\mathsf{.Private}}
 \newcommand{\KASharedSecret}{\KA\mathsf{.SharedSecret}}
 \newcommand{\KAFormatPrivate}{\KA\mathsf{.FormatPrivate}}
@@ -1082,6 +1098,7 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 
 \newcommand{\KASapling}{\mathsf{KA^{Sapling}}}
 \newcommand{\KASaplingPublic}{\KASapling\mathsf{.Public}}
+\newcommand{\KASaplingPublicPrimeOrder}{\KASapling\mathsf{.PublicPrimeOrder}}
 \newcommand{\KASaplingPrivate}{\KASapling\mathsf{.Private}}
 \newcommand{\KASaplingSharedSecret}{\KASapling\mathsf{.SharedSecret}}
 \newcommand{\KASaplingDerivePublic}{\KASapling\mathsf{.DerivePublic}}
@@ -1285,6 +1302,7 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\sk}{\mathsf{sk}}
 \newcommand{\hSigInput}{\mathsf{hSigInput}}
 \newcommand{\crhInput}{\mathsf{crhInput}}
+\newcommand{\ockInput}{\mathsf{ockInput}}
 \newcommand{\dataToBeSigned}{\mathsf{dataToBeSigned}}
 \newcommand{\vBalance}{\mathsf{v^{balance}}}
 \newcommand{\vBad}{\mathsf{v^{bad}}}
@@ -1341,7 +1359,7 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\nullifiersField}{\mathtt{nullifiers}}
 \newcommand{\rkField}{\mathtt{rk}}
 \newcommand{\cvField}{\mathtt{cv}}
-\newcommand{\cmField}{\mathtt{cm}}
+\newcommand{\cmField}{\mathtt{cmu}}
 \newcommand{\commitment}{\mathtt{commitment}}
 \newcommand{\commitments}{\mathtt{commitments}}
 \newcommand{\ephemeralKey}{\mathtt{ephemeralKey}}
@@ -1464,6 +1482,9 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\Selectv}{\scalebox{1.53}{$\varv$}}
 \newcommand{\SelectvOf}[1]{\Selectv\!\left({#1}\right)\!}
 \newcommand{\subgroupr}{(\kern-0.075emr\kern-0.075em)}
+\newcommand{\Extract}{\mathsf{Extract}}
+\newcommand{\GroupHash}{\mathsf{GroupHash}}
+\newcommand{\FindGroupHash}{\mathsf{FindGroupHash}}
 
 \newcommand{\ParamP}[1]{{{#1}_\mathbb{P}}}
 \newcommand{\ParamPexp}[2]{{{#1}_\mathbb{P}\!}^{#2}}
@@ -1483,7 +1504,6 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\GroupGstar}[1]{\mathbb{G}^\ast_{#1}}
 \newcommand{\SubgroupG}{\mathbb{G}_{\subgroupr}}
 \newcommand{\SubgroupReprG}{\SubgroupG^{\ReprNoKern}}
-\newcommand{\GroupGHash}[1]{\mathsf{GroupHash}^{\SubgroupG}_{#1}}
 \newcommand{\CurveG}[1]{\Curve_{\GroupG{#1}}}
 \newcommand{\ZeroG}[1]{\Zero_{\GroupG{#1}}}
 \newcommand{\GenG}[1]{\Generator_{\GroupG{#1}}}
@@ -1494,7 +1514,12 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\abstG}[1]{\abst_{\GroupG{#1}}}
 \newcommand{\abstGOf}[2]{\abstG{#1}\!\left({#2}\right)\!}
 \newcommand{\PairingG}{\ParamG{\hat{e}}}
-\newcommand{\ExtractG}{\mathsf{Extract}_{\SubgroupG}}
+
+\newcommand{\ExtractG}{\Extract_{\SubgroupG}}
+\newcommand{\GroupGHash}[1]{\GroupHash^{\SubgroupG}_{#1}}
+\newcommand{\GroupGHashURSType}{\GroupHash\mathsf{.URSType}}
+\newcommand{\GroupGHashInput}{\GroupHash\mathsf{.Input}}
+\newcommand{\URS}{\mathsf{URS}}
 
 \newcommand{\ParamS}[1]{{{#1}_\mathbb{\hskip 0.03em S}}}
 \newcommand{\ParamSexp}[2]{{{#1}_\mathbb{\hskip 0.03em S}\!}^{#2}}
@@ -1516,20 +1541,24 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\SubgroupJ}{\mathbb{J}_{\subgroupr}}
 \newcommand{\SubgroupReprJ}{\SubgroupJ^{\ReprNoKern}}
 \newcommand{\PrimeOrderJ}{\SubgroupJ \difference \ZeroJ}
-\newcommand{\GroupJHash}[1]{\mathsf{GroupHash}^{\SubgroupJ}_{#1}}
 \newcommand{\CurveJ}{\Curve_{\GroupJ}}
 \newcommand{\ZeroJ}{\Zero_{\GroupJ}}
 \newcommand{\GenJ}{\Generator_{\GroupJ}}
 \newcommand{\ellJ}{\ell_{\GroupJ}}
 \newcommand{\ReprJ}{\bitseq{\ellJ}}
+\newcommand{\ReprJBytes}{\byteseq{\ellJ/8}}
 \newcommand{\reprJ}{\repr_{\GroupJ}}
 \newcommand{\reprJOf}[1]{\reprJ\!\left({#1}\right)\!}
 \newcommand{\abstJ}{\abst_{\GroupJ}}
 \newcommand{\abstJOf}[1]{\abstJ\!\left({#1}\right)\!}
-\newcommand{\ExtractJ}{\mathsf{Extract}_{\SubgroupJ}}
-\newcommand{\FindGroupJHash}{\mathsf{FindGroupHash}^{\SubgroupJ}}
-\newcommand{\FindGroupJHashOf}[1]{\FindGroupJHash\!\left({#1}\right)\!}
 \newcommand{\SignedScalarLimitJ}{\frac{\ParamJ{r}-1}{2}}
+
+\newcommand{\ExtractJ}{\Extract_{\SubgroupJ}}
+\newcommand{\GroupJHash}[1]{\GroupHash^{\SubgroupJ}_{#1}}
+\newcommand{\GroupJHashURSType}{\GroupJHash{}\mathsf{.URSType}}
+\newcommand{\GroupJHashInput}{\GroupJHash{}\mathsf{.Input}}
+\newcommand{\FindGroupJHash}{\FindGroupHash^{\SubgroupJ}}
+\newcommand{\FindGroupJHashOf}[1]{\FindGroupJHash\!\left({#1}\right)\!}
 
 \newcommand{\ParamM}[1]{{{#1}_\mathbb{\hskip 0.03em M}}}
 \newcommand{\ParamMexp}[2]{{{#1}_\mathbb{\hskip 0.03em M}\!}^{#2}}
@@ -1547,9 +1576,6 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\abst}{\mathsf{abst}}
 \newcommand{\xP}{{x_{\hspace{-0.12em}P}}}
 \newcommand{\yP}{{y_{\hspace{-0.03em}P}}}
-
-\newcommand{\URS}{\mathsf{URS}}
-\newcommand{\URSType}{\mathsf{URSType}}
 
 % Conversions
 
@@ -1716,8 +1742,7 @@ This specification is structured as follows:
   \item Concrete Protocol — how the functions and encodings of the abstract
         protocol are instantiated;
 \notsprout{
-  \item Network Upgrades — the strategy for upgrading from \Sprout to \NUZero
-and then \Sapling;
+  \item Network Upgrades — the strategy for upgrading to \NUZero and then \Sapling;
 }
   \item Consensus Changes from \Bitcoin — how \Zcash differs from \Bitcoin at
         the consensus layer, including the Proof of Work;
@@ -1883,7 +1908,7 @@ only for \emph{fully shielded} \transactions. It does not exclude the possibilit
 that an adversary may use metadata-based heuristics such as timing or the number of
 inputs and outputs to make probabilistic inferences about \transaction linkage.
 For consequences of this in the case of partially shielded \transactions,
-see \cite{Peterson2017} and \cite{Quesnelle2017}.} This contrasts with
+see \cite{Peterson2017}, \cite{Quesnelle2017}, and \cite{KYMM2018}.} This contrasts with
 other proposals for private payment systems, such as CoinJoin \cite{Bitcoin-CoinJoin}
 or \CryptoNote \cite{vanSaberh2014}, that are based on mixing of a limited number of
 transactions and that therefore have smaller \noteTraceabilitySets.
@@ -1945,18 +1970,19 @@ $\truncate{k}(S)$ means the sequence formed from the first $k$ elements of $S$.
 $T \subseteq U$ indicates that $T$ is an inclusive subset or subtype of $U$.
 
 \notsprout{
-$\setof{x \typecolon T \suchthat p(x)}$ means the subset of $x$ from $T$
-for which $p(x)$ holds.
+$\setof{x \typecolon T \suchthat p_x}$ means the subset of $x$ from $T$
+for which $p_x$ (a boolean expression depending on $x$) holds.
 }
 
 $S \union T$ means the set union of $S$ and $T$, or the type corresponding
 to it.
 
-$S \intersection T$ means the set intersection of $S$ and $T$.
+$S \intersection T$ means the set intersection of $S$ and $T$,
+i.e.\ $\setof{x \typecolon S \suchthat x \in T}$.
 
 \notsprout{
 $S \difference T$ means the set difference obtained by removing elements
-in $T$ from $S$, i.e. $\setof{x \typecolon S \suchthat x \neq T}$.
+in $T$ from $S$, i.e. $\setof{x \typecolon S \suchthat x \notin T}$.
 }
 
 $\hexint{}$ followed by a string of $\mathtt{monospace}$ hexadecimal
@@ -2244,7 +2270,7 @@ A \Sapling \note is a tuple $(\Diversifier, \DiversifiedTransmitPublic,
 \begin{itemize}
   \item $\Diversifier \typecolon \DiversifierType$
         is the \diversifier of the recipient's \paymentAddress;
-  \item $\DiversifiedTransmitPublic \typecolon \KASaplingPublic$
+  \item $\DiversifiedTransmitPublic \typecolon \KASaplingPublicPrimeOrder$
         is the \diversifiedTransmissionKey of the recipient's \paymentAddress;
   \item $\Value \typecolon \range{0}{\MAXMONEY}$ is an integer
         representing the value of the \note in \zatoshi;
@@ -2255,7 +2281,7 @@ A \Sapling \note is a tuple $(\Diversifier, \DiversifiedTransmitPublic,
 \introlist
 Let $\NoteTypeSapling$ be the type of a \Sapling \note, i.e.
 \begin{formulae}
-  \item $\NoteTypeSapling := \DiversifierType \times \KASaplingPublic \times \range{0}{\MAXMONEY}
+  \item $\NoteTypeSapling := \DiversifierType \times \KASaplingPublicPrimeOrder \times \range{0}{\MAXMONEY}
            \times \NoteCommitSaplingTrapdoor$.
 \end{formulae}
 } %sapling
@@ -2364,7 +2390,7 @@ in the tree refers to its parent via the $\hashPrevBlock$ \blockHeader field
 (see \crossref{blockheader}).
 
 A path from the root toward the leaves of the tree consisting of a sequence
-of one or valid \blocks consistent with consensus rules, is called a
+of one or more valid \blocks consistent with consensus rules, is called a
 \validBlockchain.
 
 Each \block in a \blockchain has a \blockHeight. The \blockHeight of the
@@ -2373,7 +2399,7 @@ Each \block in a \blockchain has a \blockHeight. The \blockHeight of the
 
 In order to choose the \bestValidBlockchain in its view of the
 overall \block tree, a node sums the work, as defined in \crossref{workdef}, of
-all \blocks in each chain, and considers the \validBlockchain with greatest
+all \blocks in each \validBlockchain, and considers the \validBlockchain with greatest
 total work to be best. To break ties between leaf \blocks, a node will prefer the
 \block that it received first.
 
@@ -2386,9 +2412,9 @@ up to that height.
 
 Each \block contains one or more \transactions.
 
-\xTransparentInputs to a \transaction insert value into a \transparentValuePool,
-and \transparentOutputs remove value from this pool. As in \Bitcoin, the remaining
-value in the pool is available to miners as a fee.
+\xTransparentInputs to a \transaction insert value into a \transparentValuePool
+associated with the \transaction, and \transparentOutputs remove value from this pool.
+As in \Bitcoin, the remaining value in the pool is available to miners as a fee.
 
 \vspace{-3ex}
 \consensusrule{
@@ -2432,8 +2458,8 @@ In a given \blockchain, \sapling{for each of \Sprout and \Sapling,}
         \transaction.
 \end{itemize}
 
-\joinSplitDescriptions also have interstitial input and output
-\treestates\notsprout{ for \Sprout}, explained in the following section.
+\changed{\joinSplitDescriptions also have interstitial input and output
+\treestates\notsprout{ for \Sprout}, explained in the following section.}
 \sapling{There is no equivalent of interstitial \treestates for \Sapling.}
 
 
@@ -2467,7 +2493,9 @@ For each \joinSplitDescription in a \transaction, an interstitial output \treest
 constructed which adds the \noteCommitments and \nullifiers specified in that
 \joinSplitDescription to the input \treestate referred to by its \anchor.
 This interstitial output \treestate is available for use as the \anchor of subsequent
-\joinSplitDescriptions in the same \transaction.
+\joinSplitDescriptions in the same \transaction. In general, therefore, the set
+of interstitial \treestates associated with a \transaction forms a tree in which
+the parent of each node is determined by its \anchor.
 
 Interstitial \treestates are necessary because when a \transaction is constructed,
 it is not known where it will eventually appear in a mined \block. Therefore the
@@ -2607,9 +2635,9 @@ These calculations are described in \crossref{subsidies}.
 
 \subsection{\CoinbaseTransactions}
 
-The first \transaction in a block must be a \coinbaseTransaction, which should
-collect and spend any \minerSubsidy and \transactionFees paid by \transactions
-included in this \block. The \coinbaseTransaction must also pay the \foundersReward
+The first (and only the first) \transaction in a block is a \coinbaseTransaction,
+which collects and spends any \minerSubsidy and \transactionFees paid by \transactions
+included in this \block. The \coinbaseTransaction{} \MUST also pay the \foundersReward
 as described in \crossref{foundersreward}.
 
 
@@ -2622,7 +2650,7 @@ as described in \crossref{foundersreward}.
 
 Let $\MerkleDepthSprout$, $\MerkleHashLengthSprout$,
 \sapling{$\MerkleDepthSapling$, $\MerkleHashLengthSapling$, $\InViewingKeyLength$, $\DiversifierLength$,}
-$\RandomSeedLength$, $\hSigLength$, and $\NOld$ be as defined in \crossref{constants}.
+$\RandomSeedLength$, $\PRFOutputLengthSprout$, $\hSigLength$, and $\NOld$ be as defined in \crossref{constants}.
 
 \sapling{
 Let $\GroupJ$, $\SubgroupJ$, $\ParamJ{r}$, and $\ellJ$ be as defined in \crossref{jubjub}.
@@ -2659,11 +2687,11 @@ It is instantiated in \crossref{equihashgen}.
 }
 
 \sapling{
-$\CRHivk \typecolon \ReprJ \times \ReprJ \rightarrow \binaryrange{\InViewingKeyLength}$
+$\CRHivk \typecolon \ReprJ \times \ReprJ \rightarrow \InViewingKeyTypeSapling$
 is a \collisionResistant \hashFunction used in \crossref{saplingkeycomponents}
 to derive an \incomingViewingKey for a \Sapling \paymentAddress. It is also used
 in the \spendStatement (\crossref{spendstatement}) to confirm use of the correct
-key for the \note being spent. It is instantiated in \crossref{concretecrhivk}.
+keys for the \note being spent. It is instantiated in \crossref{concretecrhivk}.
 
 $\MixingPedersenHash \typecolon \GroupJ \times \range{0}{\ParamJ{r}-1}
 \rightarrow \GroupJ$ is a \hashFunction used in \crossref{commitmentsandnullifiers}
@@ -2671,9 +2699,8 @@ to derive the unique $\NoteAddressRand$ value for a \Sapling \note. It is also u
 in the \spendStatement to confirm use of the correct $\NoteAddressRand$ value as an
 input to \nullifier derivation. It is instantiated in \crossref{concretemixinghash}.
 
-$\DiversifyHash \typecolon \DiversifierType \rightarrow \SubgroupJ$ is a \hashFunction
-satisfying the Unlinkability property (which implies \collisionResistance\!)
-described in \crossref{abstractgrouphash}.
+$\DiversifyHash \typecolon \DiversifierType \rightarrow \PrimeOrderJ$ is a \hashFunction
+satisfying the Unlinkability security property described in \crossref{abstractgrouphash}.
 It is used to derive a \diversifiedBase from a \diversifier in \crossref{saplingkeycomponents}.
 It is instantiated in \crossref{concretediversifyhash}.
 } %sapling
@@ -2700,7 +2727,7 @@ Let $\Sym$ be as defined in \crossref{concretesym}.
 
 \notsprout{For \Sprout, \changed{four} \emph{independent} $\PRF{x}{}$ are needed:}
 
-\begin{tabular}{@{\hskip 2em}l@{\notsprout{\hskip 1.88em}}l@{\;}l@{\;}l@{\;}l}
+\begin{tabular}{@{\hskip 2em}l@{\notsprout{\hskip 1.88em}}l@{\;}l@{\;}l@{\,\notsprout{\hskip 3.78em}}l}
 $\PRFaddr{}      $&$\typecolon\; \bitseq{\AuthPrivateLength} $&$\times\; \byte $& &$\rightarrow \PRFOutputSprout $\\
 $\PRFnf{}        $&$\typecolon\; \bitseq{\AuthPrivateLength} $&$\times\; \PRFOutputSprout $& &$\rightarrow \PRFOutputSprout $\\
 $\PRFpk{}        $&$\typecolon\; \bitseq{\AuthPrivateLength} $&$\times\; \setofOld $&$\times\; \hSigType $&$\rightarrow \PRFOutputSprout $\\
@@ -2713,9 +2740,9 @@ derive a \paymentAddress from a \spendingKey in \crossref{sproutkeycomponents}.
 \sapling{
 For \Sapling, three additional $\PRF{x}{}$ are needed:
 
-\begin{tabular}{@{\hskip 2em}l@{\;}l@{\;}l@{\;}l@{\hskip 0.25em}l}
+\begin{tabular}{@{\hskip 2em}l@{\;}l@{\;}l@{\;}l@{\,}l}
 $\PRFexpand{}    $&$\typecolon\; \SpendingKeyType   $&$\times\; \PRFInputExpand $& &$\rightarrow \PRFOutputExpand $\\
-$\PRFock{}       $&$\typecolon\; \OutViewingKeyType $&$\times\; \ReprJ \times \ReprJ \times \ReprJ $& &$\rightarrow \Keyspace$\\
+$\PRFock{}       $&$\typecolon\; \OutViewingKeyType $&$\times\; \ReprJBytes \times \ReprJBytes \times \ReprJBytes $& &$\rightarrow \Keyspace$\\
 $\PRFnfSapling{} $&$\typecolon\; \SubgroupReprJ     $&$\times\; \ReprJ $& &$\rightarrow \PRFOutputNfSapling $
 \end{tabular}
 
@@ -2757,12 +2784,23 @@ for any $\Key \in \Keyspace$ and $\Ptext \in \Plaintext$,
 $\SymDecrypt{\Key}(\SymEncrypt{\Key}(\Ptext)) = \Ptext$.
 $\bot$ is used to represent the decryption of an invalid ciphertext.
 
+\sprout{
 \vspace{-3ex}
 \securityrequirement{
 $\Sym$ must be one-time (INT-CTXT $\wedge$ IND-CPA)-secure \cite{BN2007}.
 \quotedterm{One-time} here means that an honest protocol participant will almost
 surely encrypt only one message with a given key; however, the adversary may make
 many adaptive chosen ciphertext queries for a given key.
+}}
+\notsprout{
+\vspace{-2ex}
+\begin{securityrequirements}
+  \item $\Sym$ must be one-time (INT-CTXT $\wedge$ IND-CPA)-secure \cite{BN2007}.
+        \quotedterm{One-time} here means that an honest protocol participant will almost
+        surely encrypt only one message with a given key; however, the adversary may make
+        many adaptive chosen ciphertext queries for a given key.
+  \saplingonwarditem{...}
+\end{securityrequirements}
 }
 
 \subsubsection{\KeyAgreement} \label{abstractkeyagreement}
@@ -2772,6 +2810,7 @@ a shared secret, each using their private key and the other party's public key.
 
 A \keyAgreementScheme $\KA$ defines a type of public keys $\KAPublic$, a type
 of private keys $\KAPrivate$, and a type of shared secrets $\KASharedSecret$.
+\sapling{Optionally, it also defines a type $\KAPublicPrimeOrder \subseteq \KAPublic$.}
 
 \sapling{Optional:} Let $\KAFormatPrivate \typecolon \PRFOutputSprout \rightarrow \KAPrivate$
 be a function to convert a bit string of length $\PRFOutputLengthSprout$ to a $\KA$ private key.
@@ -2785,7 +2824,7 @@ be the agreement function.
 
 \sapling{Optional:} Let $\KABase \typecolon \KAPublic$ be a public base point.
 
-\vspace{-2ex}
+\vspace{-2.5ex}
 \pnote{The range of $\KADerivePublic$ may be a strict subset of $\KAPublic$.}
 
 \vspace{-2ex}
@@ -3094,6 +3133,7 @@ $\SigDerivePublic(\sk_1 \grpplus \sk_2) = \SigDerivePublic(\sk_1)\, \combplus \S
 In other words, $\SigDerivePublic$ is an injective homomorphism from the private key group to the public key group.
 
 \vspace{1ex}
+\introlist
 For $\rmN \typecolon \PosInt$,
 \begin{itemize}
   \item $\sgrpsum{i=1}{\rmN} \sk_i$ means $\sk_1 \grpplus \sk_2 \grpplus \cdots\, \grpplus \sk_{\rmN}$;
@@ -3287,44 +3327,56 @@ efficiently computable left inverse.
 
 \sapling{
 \introlist
-\subsubsection{\GroupHash} \label{abstractgrouphash}
+\subsubsection{Group Hash} \label{abstractgrouphash}
 
 Given a represented group $\GroupG{}$ with prime-order subgroup $\SubgroupG$,
-and a type $\URSType$, we define a \term{family of group hashes into\, $\SubgroupG$}
-as a function
+a \term{family of group hashes into\, $\SubgroupG$}, $\GroupGHash{}$, consists of:
 
-\begin{formulae}
-  \item $\GroupGHash{} \typecolon \URSType \times (\byteseq{8} \times \byteseqs) \rightarrow \SubgroupG$
-\end{formulae}
+\begin{itemize}
+  \item a type $\GroupGHashURSType$ of \uniformRandomStrings;
+  \item a type $\GroupGHashInput$ of inputs;
+  \item a function $\GroupGHash{} \typecolon \GroupGHashURSType \times \GroupGHashInput \rightarrow \SubgroupG$.
+\end{itemize}
+
+In \crossref{concretegrouphashjubjub}, we instantiate a family of group hashes into
+the \jubjubCurve defined by \crossref{jubjub}.
 
 \vspace{-2ex}
-\securityrequirement{\textbf{Discrete Logarithm Independence}
-
-For a randomly selected member $\GroupGHash{\URS}$ of the family, it is infeasible to find
-a sequence of \emph{distinct} inputs $m_{\alln} \typecolon \typeexp{(\byteseq{8} \times \byteseqs)}{n}$
-and a sequence of nonzero $x_{\alln} \typecolon \typeexp{\GFstar{\ParamG{r}}}{n}$
-such that $\ssum{i = 1}{n}\!\left(\scalarmult{x_i}{\GroupGHash{\URS}(m_i)}\right) = \ZeroG{}$.
-}
+\securityrequirement{
+For a randomly selected $\URS \typecolon \GroupGHashURSType$,
+it must be reasonble to model $\GroupGHash{\URS}$ as a random oracle.
+} %securityrequirement
 
 \begin{nnotes}
+  \item $\GroupJHash{}$ is used to obtain generators of the \jubjubCurve for various purposes:
+        the bases $\AuthSignBase$ and $\AuthProveBase$ used in \Sapling key generation,
+        the \xPedersenHash defined in \crossref{concretepedersenhash}, and
+        the commitment schemes defined in \crossref{concretewindowedcommit} and
+        in \crossref{concretehomomorphiccommit}.
+
+        The security property needed for these uses can alternatively be defined in the
+        standard model as follows:
+
+        \textbf{Discrete Logarithm Independence}:
+        For a randomly selected member $\GroupGHash{\URS}$ of the family, it is infeasible to find
+        a sequence of \emph{distinct} inputs $m_{\alln} \typecolon \typeexp{\GroupGHashInput}{n}$
+        and a sequence of nonzero $x_{\alln} \typecolon \typeexp{\GFstar{\ParamG{r}}}{n}$
+        such that $\ssum{i = 1}{n}\!\left(\scalarmult{x_i}{\GroupGHash{\URS}(m_i)}\right) = \ZeroG{}$.
+  \item Under the Discrete Logarithm assumption on $\GroupG{}$, a random oracle almost surely satisfies
+        Discrete Logarithm Independence.
   \item Discrete Logarithm Independence implies \collisionResistance\!,
         since a collision $(m_1, m_2)$ for $\GroupGHash{\URS}$ trivially gives a
         discrete logarithm relation with $x_1 = 1$ and $x_2 = -1$. It is in fact
         stronger than \collisionResistance\!.
-  \item An alternative approach is to model $\GroupGHash{\URS}$ as a random
-        oracle, and assume that the Discrete Logarithm Problem is hard in
-        the group. We prefer to avoid the Random Oracle Model and instead make
-        a more specific standard-model assumption, which is effectively no
-        stronger than the assumptions made in the random oracle approach.
+  \item $\GroupJHash{}$ is also used to instantiate $\DiversifyHash$ in \crossref{concretediversifyhash}.
+        We do not know how to prove the Unlinkability property defined in that section
+        in the standard model, but in a model where $\GroupJHash{}$ is taken as a random oracle,
+        it is implied by the Decisional Diffie-Hellman assumption on $\SubgroupJ$.
   \item $\URS$ is a \uniformRandomString; we choose it verifiably at random
         (see \crossref{beacon}), \emph{after} fixing the concrete
         group hash algorithm to be used.
         This mitigates the possibility that the group hash algorithm could have
         been backdoored.
-  \item The input element with type $\byteseq{8}$ is intended to act as a
-        ``personalization'' parameter to distinguish uses of the \groupHash for
-        different purposes.
-        Discrete Logarithm Independence is required to hold across choices of this parameter.
 \end{nnotes}
 } %sapling
 
@@ -3534,12 +3586,12 @@ Define $\AuthProveBase := \FindGroupJHashOf{\ascii{Zcash\_H\_}, \ascii{}}$.
 
 Define $\ToScalar(x \typecolon \PRFOutputExpand) := \LEOStoIPOf{\PRFOutputLengthExpand}{x} \pmod{\ParamJ{r}}$.
 
+\introlist
 A new \Sapling \spendingKey $\SpendingKey$ is generated by choosing a bit sequence
 uniformly at random from $\SpendingKeyType$.
 
-\introlist
-From this \spendingKey, the \authSigningKey $\AuthSignPrivate$ and \authProvingKey $\AuthProvePrivate$
-are derived as follows:
+From this \spendingKey, the \authSigningKey $\AuthSignPrivate \typecolon \GFstar{\ParamJ{r}}$ and
+\authProvingKey $\AuthProvePrivate \typecolon \GF{\ParamJ{r}}$ are derived as follows:
 
 \vspace{-0.5ex}
 \begin{tabular}{@{\hskip 1.7em}r@{\;}l}
@@ -3548,8 +3600,11 @@ are derived as follows:
   $\OutViewingKey$ &$:= \truncate{(\OutViewingKeyLength/8)}(\PRFexpand{\SpendingKey}([2]))$
 \end{tabular}
 
+If $\AuthSignPrivate = 0$, discard this key and repeat with a new $\SpendingKey$.
+
 \vspace{1ex}
-$\AuthSignPublic$, $\AuthProvePublic$, and $\InViewingKey$ are then derived as:
+$\AuthSignPublic \typecolon \PrimeOrderJ$, $\AuthProvePublic \typecolon \SubgroupJ$, and
+$\InViewingKey \typecolon \InViewingKeyTypeSapling$ are then derived as:
 
 \vspace{-0.5ex}
 \begin{tabular}{@{\hskip 1.7em}r@{\;}l}
@@ -3578,7 +3633,8 @@ Then calculate:
 \end{formulae}
 
 \vspace{-1ex}
-The resulting \diversifiedPaymentAddress is $(\Diversifier, \DiversifiedTransmitPublic)$.
+The resulting \diversifiedPaymentAddress is
+$(\Diversifier \typecolon \DiversifierType, \DiversifiedTransmitPublic \typecolon \KASaplingPublicPrimeOrder)$.
 
 \vspace{1ex}
 For each \spendingKey, there is also a \defaultDiversifiedPaymentAddress
@@ -3600,7 +3656,7 @@ Define:
         \end{cases}$
   \item $\DefaultDiversifier(\sk \typecolon \SpendingKeyType) :=
           \first\big(\fun{i \typecolon \byte}{\CheckDiversifier(\truncate{(\DiversifierLength/8)}(\PRFexpand{\sk}([3, i])))
-                                              \typecolon \maybe{\SubgroupJ}}\big)$.
+                                              \typecolon \maybe{(\PrimeOrderJ)}}\big)$.
 \end{formulae}
 
 For a random \spendingKey, $\DefaultDiversifier$ returns $\bot$ with probability approximately $2^{-256}$;
@@ -3898,9 +3954,9 @@ the following steps:
 
 \vspace{0.5ex}
 \begin{itemize}
-  \item Check that $\DiversifiedTransmitPublic \typecolon \KASaplingPublic$ is a
-        valid Edwards point on the \jubjubCurve and that this point is not of
-        small order (i.e.\ $\scalarmult{\ParamJ{h}}{\DiversifiedTransmitPublic} \neq \ZeroJ$).
+  \item Check that $\DiversifiedTransmitPublic$ is of type $\KASaplingPublicPrimeOrder$, i.e.\ it
+        is a valid Edwards point on the \jubjubCurve not equal to $\ZeroJ$, and
+        $\scalarmult{\ParamJ{r}}{\DiversifiedTransmitPublic} = \ZeroJ$.
 
   \item Calculate $\DiversifiedTransmitBase = \DiversifyHash(\Diversifier)$
         and check that $\DiversifiedTransmitBase \neq \bot$.
@@ -3963,6 +4019,7 @@ Let $\NoteCommitSproutTrapdoor$ be as defined in \crossref{abstractcommit}.
 A \dummy{} \SproutOrNothing input \note, with index $i$ in the \joinSplitDescription,
 is constructed as follows:
 
+\vspace{-1ex}
 \begin{itemize}
   \item Generate a new uniformly random \spendingKey $\AuthPrivateOld{i} \leftarrowR \bitseq{\AuthPrivateLength}$
         and derive its \payingKey $\AuthPublicOld{i}$.
@@ -3970,12 +4027,13 @@ is constructed as follows:
   \item Choose uniformly random $\NoteAddressRandOld{i} \leftarrowR \PRFOutputSprout$
         and $\NoteCommitRandOld{i} \leftarrowR \NoteCommitSproutTrapdoor$.
   \item Compute $\nfOld{i} = \PRFnf{\AuthPrivateOld{i}}(\NoteAddressRandOld{i})$.
-  \item Construct a \dummy \merklePath $\TreePath{i}$ for use in the
+  \item Let $\TreePath{i}$ be a \dummy \merklePath for the
         \auxiliaryInput to the \joinSplitStatement (this will not be checked).
   \item When generating the \joinSplitProof\!\!, set $\EnforceMerklePath{i}$ to $0$.
 \end{itemize}
 }
 
+\vspace{-1ex}
 A \dummy{} \SproutOrNothing output \note is constructed as normal but with
 zero value, and sent to a random \paymentAddress.
 
@@ -4002,6 +4060,7 @@ Let $\NoteCommitSaplingTrapdoor$ be as defined in \crossref{abstractcommit}.
 \introlist
 A \dummy{} \Sapling input \note is constructed as follows:
 
+\vspace{-1ex}
 \begin{itemize}
   \item Choose uniformly random $\SpendingKey \leftarrowR \SpendingKeyType$.
   \item Generate a new \diversifiedPaymentAddress $(\Diversifier, \DiversifiedTransmitPublic)$
@@ -4020,6 +4079,7 @@ A \dummy{} \Sapling input \note is constructed as follows:
         \auxiliaryInput to the \spendStatement (this will not be checked, because $\vOld{} = 0$).
 \end{itemize}
 
+\vspace{-1ex}
 As in \Sprout, a \dummy{} \Sapling output \note is constructed as normal but with
 zero value, and sent to a random \paymentAddress.
 } %sapling
@@ -4114,9 +4174,10 @@ ciphertext in order to create an encryption of a related plaintext, without know
 original plaintext. \Zcash has been designed to mitigate malleability attacks, as described
 in \crossref{sproutnonmalleability}\sapling{, \crossref{bindingsig}, and \crossref{spendauthsig}}.
 
+\introlist
 To provide additional flexibility when combining spend authorizations from different
-sources, \Bitcoin defines several \sighashTypes that cover various parts of a transaction:
-\todo{explain these types}. One of these types is $\SIGHASHALL$\changed{, which is used for
+sources, \Bitcoin defines several \sighashTypes that cover various parts of a transaction
+\cite{Bitcoin-SigHash}. One of these types is $\SIGHASHALL$\changed{, which is used for
 \Zcash-specific signatures, i.e.\ \joinSplitSignatures\sapling{, \spendAuthSignatures,
 and \bindingSignatures}}. \changed{In \sprout{this case}\notsprout{these cases} the
 \sighashTxHash is not associated with a \transparentInput, and so the input
@@ -4135,8 +4196,8 @@ described in \cite{ZIP-143}; in \Zcash these are to be addressed by changing thi
 as part of the \NUZero upgrade.
 } %nuzero
 
-\prenuzero{\todo{Describe the \sighash algorithm used prior to \NUZero activation,
-i.e.\ for version 1 and 2 \transactions.}}
+\prenuzero{The \sighash algorithm used prior to \NUZero activation, i.e.\ for
+version 1 and 2 \transactions, will be defined in \cite{ZIP-76} (to be written).}
 
 \nuzeroonly{The \sighash algorithm used after \NUZero activation and before \Sapling
 activation, i.e.\ for version 3 \transactions, is defined in \cite{ZIP-143}.}
@@ -4147,8 +4208,8 @@ version 4 \transactions, is defined in \cite{ZIP-243}.}
 
 \subsection{Non-malleability\pSproutOrNothing} \label{sproutnonmalleability}
 
-Let $\dataToBeSigned$ be the hash of the \transaction{} \changed{using the $\SIGHASHALL$
-\sighashType}.
+Let $\dataToBeSigned$ be the hash of the \transaction{}, not associated with an input,
+\changed{using the $\SIGHASHALL$ \sighashType}.
 
 In order to ensure that a \joinSplitDescription is cryptographically bound to the
 \transparent inputs and outputs corresponding to $\vpubNew$ and $\vpubOld$, and
@@ -4260,8 +4321,8 @@ Let $\ValueCommit{}$, $\ValueCommitValueBase$, and $\ValueCommitRandBase$
 be as defined in \crossref{concretevaluecommit}:
 \begin{formulae}
   \item $\ValueCommit{} \typecolon \ValueCommitTrapdoor \times \ValueCommitType \rightarrow \ValueCommitOutput$;
-  \item $\ValueCommitValueBase \typecolon \SubgroupJ$ is the value base in $\ValueCommit{}$;
-  \item $\ValueCommitRandBase \typecolon \SubgroupJ$ is the randomness base in $\ValueCommit{}$.
+  \item $\ValueCommitValueBase \typecolon \PrimeOrderJ$ is the value base in $\ValueCommit{}$;
+  \item $\ValueCommitRandBase \typecolon \PrimeOrderJ$ is the randomness base in $\ValueCommit{}$.
 \end{formulae}
 
 $\BindingSig$, $\combplus$, and $\grpplus$ are instantiated in \crossref{concretebindingsig}.
@@ -4309,7 +4370,8 @@ In order to check for implementation faults, the signer \SHOULD also check that
 \end{formulae}
 
 \vspace{1ex}
-Let $\SigHash$ be the \sighashTxHash as defined in \cite{ZIP-243}, using $\SIGHASHALL$.
+Let $\SigHash$ be the \sighashTxHash as defined in \cite{ZIP-243}, not associated with an input,
+using the \sighashType $\SIGHASHALL$.
 
 A validator checks balance by verifying that $\BindingSigVerify{\BindingPublic}(\SigHash, \bindingSig) = 1$.
 
@@ -4380,6 +4442,7 @@ other parties that are cooperating to create the \transaction. If all of the
 \outputDescriptions of the \transaction.
 } %pnote
 
+\vspace{-1ex}
 \nnote{
 The technique of checking signatures using a public key derived from a sum of
 \xPedersenCommitments is also used in the \Mimblewimble protocol \cite{Jedusor2016}.
@@ -4396,10 +4459,11 @@ spending of an input \note. It is instantiated in \crossref{concretespendauthsig
 Knowledge of the \spendingKey could have been proven directly in the \spendStatement,
 similar to the check in \crossref{sproutspendauthority} that is part of the \joinSplitStatement.
 The motivation for a separate signature is to allow devices that are limited in memory
-and computational capacity, such as hardware wallets, to authorize a shielded spend.
-Typically such devices cannot create, and may not be able to verify, \zkSNARKProofs.
+and computational capacity, such as hardware wallets, to authorize a \Sapling shielded spend.
+Typically such devices cannot create, and may not be able to verify, \zkSNARKProofs for
+a statement of the size needed using the $\PHGR$ or $\Groth$ proving systems.
 
-\vspace{2ex}
+\vspace{1ex}
 The verifying key of the signature must be revealed in the \spendDescription so that
 the signature can be checked by validators. To ensure that the verifying key cannot
 be linked to the \paymentAddress or \spendingKey from which the \note was spent, we
@@ -4409,13 +4473,16 @@ known to the signer. The \spendAuthSignature is over the \sighashTxHash, so that
 replayed in other \transactions.
 
 \vspace{2ex}
-Let $\SigHash$ be the \sighashTxHash as defined in \cite{ZIP-243}, using $\SIGHASHALL$.
+Let $\SigHash$ be the \sighashTxHash as defined in \cite{ZIP-243}, not associated with an input,
+using the \sighashType $\SIGHASHALL$.
 
 Let $\AuthSignPrivate$ be the \spendAuthPrivateKey as defined in \crossref{saplingkeycomponents}.
 
 \vspace{2ex}
-\introlist
+\intropart
 For each \spendDescription, the signer uses a fresh \spendAuthRandomizer $\AuthSignRandomizer$:
+
+\vspace{-1ex}
 \begin{enumerate}
   \item Choose $\AuthSignRandomizer \leftarrowR \SpendAuthSigGenRandom()$.
   \item Let $\AuthSignRandomizedPrivate = \SpendAuthSigRandomizePrivate(\AuthSignRandomizer, \AuthSignPrivate)$.
@@ -4427,8 +4494,9 @@ For each \spendDescription, the signer uses a fresh \spendAuthRandomizer $\AuthS
 \end{enumerate}
 
 \introlist
-The $\spendAuthSig$ and $\ProofSpend$ are included in the \spendDescription.
+The resulting $\spendAuthSig$ and $\ProofSpend$ are included in the \spendDescription.
 
+\vspace{-1ex}
 \pnote{
 If the spender is computationally or memory-limited, step 4 \MAY be delegated to a different
 party that is capable of performing the \zkProof. In this case privacy will be lost to that
@@ -4441,6 +4509,7 @@ authority for other \transactions, since it is not able to create a \spendAuthSi
 } %sapling
 
 
+\intropart
 \subsection{\NoteCommitments{} and \Nullifiers} \label{commitmentsandnullifiers}
 
 A \transaction that contains one or more
@@ -4478,6 +4547,7 @@ Let $\PRFnf{}{}$\sapling{ and $\PRFnfSapling{}{}$} be as instantiated in \crossr
 is derived as $\PRFnf{\AuthPrivate}(\NoteAddressRand)$, where $\AuthPrivate$ is the
 \spendingKey associated with the \note.
 
+\vspace{2ex}
 \sapling{
 For a \Sapling{} \note, the \nullifier is derived as
 $\PRFnfSapling{\AuthProvePublicRepr}(\NoteAddressRandRepr)$, where $\AuthProvePublicRepr$
@@ -4485,14 +4555,26 @@ is a representation of the \nullifierKey associated with the \note and $\NoteAdd
 } %sapling
 
 
-\intropart
+\notsprout{\pagebreak}\sprout{\intropart}
 \subsection{\ZkSNARKStatements} \label{snarkstatements}
 
+\vspace{-1ex}
 \subsubsection{\JoinSplitStatement\pSproutOrNothing} \label{joinsplitstatement}
+
+\vspace{-2ex}
+Let $\MerkleHashLengthSprout$, $\PRFOutputLengthSprout$, $\MerkleDepthSprout$, $\ValueLength$,
+$\AuthPrivateLength$, $\NoteAddressPreRandLength$, $\hSigLength$, $\NOld$, $\NNew$ be as defined in \crossref{constants}.
+
+\vspace{-1ex}
+Let $\PRFaddr{}$, $\PRFnf{}$, $\PRFpk{}$, and $\PRFrho{}$ be as defined in \crossref{abstractprfs}.
+
+\vspace{-1ex}
+Let $\NoteCommitSprout{}$ be as defined in \crossref{abstractcommit}, and
+let $\NoteTypeSprout$ and $\NoteCommitmentSprout$ be as defined in \crossref{notes}.
 
 A valid instance of $\ProofJoinSplit$ assures that given a \primaryInput:
 
-\vspace{-1ex}
+\vspace{-2ex}
 \begin{formulae}
   \item $\oparen\rt \typecolon \MerkleHashSprout,\\
          \hparen\nfOld{\allOld} \typecolon \typeexp{\PRFOutputSprout}{\NOld},\\
@@ -4502,10 +4584,9 @@ A valid instance of $\ProofJoinSplit$ assures that given a \primaryInput:
          \hparen\hSig \typecolon \hSigType,\\
          \hparen\h{\allOld} \typecolon \smash{\typeexp{\PRFOutputSprout}{\NOld}\cparen}$,
 \end{formulae}
-\vspace{-1ex}
-\introlist
+\vspace{-2ex}
 the prover knows an \auxiliaryInput:
-\vspace{-0.5ex}
+\vspace{-1ex}
 \begin{formulae}
   \item $\oparen\TreePath{\allOld} \typecolon \typeexp{\typeexp{\MerkleHashSprout}{\MerkleDepthSprout}}{\NOld},\\
          \hparen\NotePosition_{\allOld} \typecolon \typeexp{\NotePositionTypeSprout}{\NOld},\\
@@ -4515,15 +4596,16 @@ the prover knows an \auxiliaryInput:
          \hparen\changed{\NoteAddressPreRand \typecolon \bitseq{\NoteAddressPreRandLength},}\\
          \hparen\changed{\EnforceMerklePath{\allOld} \typecolon \bitseq{\NOld}}\cparen$,
 \end{formulae}
-\vspace{-2ex}
-\introlist
+\vspace{-2.5ex}
 where:
+\vspace{-1ex}
 \begin{formulae}
   \item for each $i \in \setofOld$: $\nOld{i} = (\AuthPublicOld{i},
 \vOld{i}, \NoteAddressRandOld{i}, \NoteCommitRandOld{i})$;
   \item for each $i \in \setofNew$: $\nNew{i} = (\AuthPublicNew{i},
 \vNew{i}, \NoteAddressRandNew{i}, \NoteCommitRandNew{i})$
 \end{formulae}
+\vspace{-1.5ex}
 such that the following conditions hold:
 
 \snarkcondition{Merkle path validity} \label{sproutmerklepathvalidity}
@@ -4532,55 +4614,56 @@ for each $i \in \setofOld$ \changed{$\mid$ $\EnforceMerklePath{i} = 1$}:
 $(\TreePath{i}, \NotePosition_i)$ is a valid \merklePath (see \crossref{merklepath}) of depth
 $\MerkleDepthSprout$ from $\NoteCommitmentSprout(\nOld{i})$ to the \anchor $\rt$.
 
+\vspace{-1ex}
 \textbf{Note:} Merkle path validity covers conditions 1.\,(a) and 1.\,(d) of the NP statement
 in \cite[section 4.2]{BCGGMTV2014}.
-\vspace{1ex}
 
 \changed{\snarkcondition{Merkle path enforcement} \label{sproutmerklepathenforcement}
 
 for each $i \in \setofOld$, if $\vOld{i} \neq 0$ then $\EnforceMerklePath{i} = 1$.}
 
-\vspace{-1ex}
+\vspace{-2ex}
 \snarkcondition{Balance} \label{sproutbalance}
 
 $\changed{\vpubOld\; +} \ssum{i=1}{\NOld} \vOld{i} = \vpubNew + \ssum{i=1}{\NNew} \vNew{i} \in \ValueType$.
 
+\vspace{-1ex}
 \snarkcondition{\Nullifier{} integrity} \label{sproutnullifierintegrity}
 
 for each $i \in \setofOld$:
 $\nfOld{i} = \PRFnf{\AuthPrivateOld{i}}(\NoteAddressRandOld{i})$.
 
-\vspace{-0.5ex}
+\vspace{-1ex}
 \snarkcondition{Spend authority} \label{sproutspendauthority}
 
 for each $i \in \setofOld$:
 $\AuthPublicOld{i} = \changed{\PRFaddr{\AuthPrivateOld{i}}(0)}$.
 
-\vspace{-0.5ex}
+\vspace{-1ex}
 \snarkcondition{Non-malleability} \label{sproutnonmalleablejs}
 
 for each $i \in \setofOld$:
 $\h{i} = \PRFpk{\AuthPrivateOld{i}}(i, \hSig)$.
 
-\vspace{-0.5ex}
+\vspace{-1ex}
 \changed{\snarkcondition{Uniqueness of $\NoteAddressRandNew{i}$} \label{sproutuniquerho}
 
 for each $i \in \setofNew$:
 $\NoteAddressRandNew{i} = \PRFrho{\NoteAddressPreRand}(i, \hSig)$.}
 
-\vspace{-0.5ex}
+\vspace{-1ex}
 \snarkcondition{Note commitment integrity} \label{sproutcommitmentintegrity}
 
 for each $i \in \setofNew$: $\cmNew{i} = \NoteCommitmentSprout(\nNew{i})$.
 
-\vspace{2ex}
+\vspace{0.5ex}
 For details of the form and encoding of proofs, see \crossref{phgr}.
 
 
 \sapling{
-\introlist
 \subsubsection{\SpendStatement{} (\Sapling)} \label{spendstatement}
 
+\vspace{-1ex}
 Let $\MerkleHashLengthSapling$, $\PRFOutputLengthNfSapling$, and $\ScalarLength$ be
 as defined in \crossref{constants}.
 
@@ -4589,15 +4672,17 @@ Let $\ValueCommitAlg$ and $\NoteCommitSaplingAlg$ be as specified in \crossref{a
 
 Let $\SpendAuthSig$ be as defined in \crossref{concretespendauthsig}.
 
-Let $\GroupJ$, $\SubgroupJ$, $\ParamJ{q}$, $\ParamJ{r}$, and $\ParamJ{h}$ be as defined in \crossref{jubjub}.
+Let $\GroupJ$, $\SubgroupJ$, $\reprJ$, $\ParamJ{q}$, $\ParamJ{r}$, and $\ParamJ{h}$ be as defined in \crossref{jubjub}.
 
-Let $\ExtractJ \typecolon \SubgroupJ \rightarrow \GF{\ParamJ{q}}$ be as defined in \crossref{concreteextractorjubjub}.
+\vspace{-0.5ex}
+Let $\ExtractJ \typecolon \SubgroupJ \rightarrow \MerkleHashSapling$ be as defined in \crossref{concreteextractorjubjub}.
 
 Let $\AuthProveBase$ be as defined in \crossref{saplingkeycomponents}.
 
 \intropart
 A valid instance of $\ProofSpend$ assures that given a \primaryInput:
 
+\vspace{-2ex}
 \begin{formulae}
   \item $\oparen\rt \typecolon \MerkleHashSapling,\\
          \hparen\cvOld{} \typecolon \ValueCommitOutput,\\
@@ -4605,10 +4690,11 @@ A valid instance of $\ProofSpend$ assures that given a \primaryInput:
          \hparen\AuthSignRandomizedPublic \typecolon \SpendAuthSigPublic\cparen$,
 \end{formulae}
 
-\vspace{-1.5ex}
+\vspace{-2ex}
 \introlist
 the prover knows an \auxiliaryInput:
 
+\vspace{-1ex}
 \begin{formulae}
   \item $\oparen\TreePath{} \typecolon \typeexp{\MerkleHash}{\MerkleDepthSapling},\\
          \hparen\NotePosition \typecolon \NotePositionTypeSapling,\vspace{0.4ex}\\
@@ -4636,8 +4722,7 @@ $\cmOld{} = \NoteCommitSapling{\NoteCommitRandOld{}}(\reprJOf{\DiversifiedTransm
 \snarkcondition{Merkle path validity} \label{saplingmerklepathvalidity}
 
 Either $\vOld{} = 0$; or $(\TreePath{}, \NotePosition)$ is a valid \merklePath of depth $\MerkleDepthSapling$,
-as defined in \crossref{merklepath}, from $\cmU = \ItoLEBSP{\MerkleHashLengthSapling}\!\big(\ExtractJ(\cmOld{})\kern-0.1em\big)$
-to the \anchor $\rt$.
+as defined in \crossref{merklepath}, from $\cmU = \ExtractJ(\cmOld{})$ to the \anchor $\rt$.
 
 \snarkcondition{Value commitment integrity} \label{spendvaluecommitmentintegrity}
 
@@ -4705,7 +4790,7 @@ as defined in \crossref{constants}.
 
 Let $\ValueCommitAlg$ and $\NoteCommitSaplingAlg$ be as specified in \crossref{abstractcommit}.
 
-Let $\GroupJ$ and the cofactor $\ParamJ{h}$ be as defined in \crossref{jubjub}.
+Let $\GroupJ$, $\reprJ$, and $\ParamJ{h}$ be as defined in \crossref{jubjub}.
 
 A valid instance of $\ProofOutput$ assures that given a \primaryInput:
 
@@ -4788,13 +4873,14 @@ are combined to form a \notesCiphertext.
 For both encryption and decryption,
 
 \begin{itemize}
-  \item let $\Sym$ be the \encryptionScheme instantiated in \crossref{concretesym};
+  \item let $\Sym$ be the scheme instantiated in \crossref{concretesym};
   \item let $\KDFSprout$ be the \keyDerivationFunction instantiated in \crossref{concretesproutkdf};
   \item let $\KASprout$ be the \keyAgreementScheme instantiated in \crossref{concretesproutkeyagreement};
   \item let $\hSig$ be the value computed for this \joinSplitDescription in \crossref{joinsplitdesc}.
 \end{itemize}
 
 
+\vspace{-2ex}
 \subsubsection{Encryption\pSproutOrNothing} \label{sproutencrypt}
 
 Let $\KASprout$ be the \keyAgreementScheme instantiated in \crossref{concretesproutkeyagreement}.
@@ -4802,12 +4888,13 @@ Let $\KASprout$ be the \keyAgreementScheme instantiated in \crossref{concretespr
 Let $\TransmitPublicNew{\allNew}$ be the \transmissionKeys
 for the intended recipient addresses of each new \note.
 
-Let $\NotePlaintext{\allNew}$ be the \SproutOrNothing \notePlaintexts as
+Let $\NotePlaintext{\allNew}$ be \SproutOrNothing \notePlaintexts
 defined in \crossref{notept}.
 
 \introlist
 Then to encrypt:
 
+\vspace{-1ex}
 \begin{itemize}
 \changed{
   \item Generate a new $\KASprout$ (public, private) key pair
@@ -4825,9 +4912,11 @@ $(\EphemeralPublic, \EphemeralPrivate)$.
 }
 \end{itemize}
 
+\vspace{-2.5ex}
 The resulting \notesCiphertext is $\changed{(\EphemeralPublic,
 \TransmitCiphertext{\allNew})}$.
 
+\vspace{-3ex}
 \pnote{
 It is technically possible to replace $\TransmitCiphertext{i}$ for a given \note
 with a random (and undecryptable) dummy ciphertext, relying instead on out-of-band
@@ -4847,6 +4936,7 @@ $\TransmitPrivate$ as specified in \crossref{sproutkeycomponents}.
 Let $\cmNew{\allNew}$ be the \noteCommitments of each output coin.
 
 \introlist
+\vspace{0.5ex}
 Then for each $i \in \setofNew$, the recipient will attempt to decrypt that ciphertext
 component $(\EphemeralPublic, \TransmitCiphertext{i})$ as follows:
 
@@ -4879,6 +4969,7 @@ the \spendingKey $\AuthPrivate$; the coin is unspent if and only if
 $\nf = \PRFnf{\AuthPrivate}(\NoteAddressRand)$ is not in the \nullifierSet
 for that \blockchain.
 
+\vspace{-2ex}
 \begin{pnotes}
   \item The decryption algorithm corresponds to step 3 (b) i. and ii.
         (first bullet point) of the $\Receive$ algorithm shown in \cite[Figure 2]{BCGGMTV2014}.
@@ -4914,7 +5005,9 @@ For both encryption and decryption,
 \begin{itemize}
   \item let $\Sym$ be the \encryptionScheme instantiated in \crossref{concretesym};
   \item let $\KDFSapling$ be the \keyDerivationFunction instantiated in \crossref{concretesaplingkdf};
-  \item let $\KASapling$ be the \keyAgreementScheme instantiated in \crossref{concretesaplingkeyagreement}.
+  \item let $\KASapling$ be the \keyAgreementScheme instantiated in \crossref{concretesaplingkeyagreement};
+  \item let $\reprJ$ be as defined in \crossref{jubjub};
+  \item let $\ExtractJ$ be as defined in \crossref{concreteextractorjubjub}.
 \end{itemize}
 } %sapling
 
@@ -4922,38 +5015,44 @@ For both encryption and decryption,
 \sapling{
 \subsubsection{Encryption (\Sapling)} \label{saplingencrypt}
 
-Let $\DiversifiedTransmitPublicNew \typecolon \KASaplingPublic$ be the
+Let $\DiversifiedTransmitPublicNew \typecolon \KASaplingPublicPrimeOrder$ be the
 \diversifiedTransmissionKey for the intended recipient address of a new \Sapling{} \note,
-and let $\DiversifiedTransmitBaseNew \typecolon \KASaplingPublic$ be the corresponding
+and let $\DiversifiedTransmitBaseNew \typecolon \KASaplingPublicPrimeOrder$ be the corresponding
 \diversifiedBase computed as $\DiversifyHash(\Diversifier)$.
 
-(Since \note encryption is used in the context of sending a \note as
-described in \crossref{saplingsend}, we may assume that $\DiversifiedTransmitBaseNew$
-has already been calculated and is not $\bot$.)
+Since \Sapling \note encryption is used only in the context of \crossref{saplingsend}, we may assume that
+$\DiversifiedTransmitBaseNew$ has already been calculated and is not $\bot$.
 
+Let $\OutViewingKey \typecolon \OutViewingKeyType$ be the \outgoingViewingKey of the
+\paymentAddress from which the \note is being spent.
+
+\introsection
 Let $\NotePlaintext{} = (\Diversifier, \Value, \NoteCommitRand, \Memo)$ be the \Sapling{} \notePlaintext.
 
 $\NotePlaintext{}$ is encoded as defined in \crossref{notept}.
 
 Let $\cvNew{}$ be the \valueCommitment for the new \note, and let $\cmNew{}$ be the \noteCommitment.
 
-\introlist
 Then to encrypt:
 
 \begin{itemize}
-  \item Choose a uniformly random ephemeral private key $\EphemeralPrivate \leftarrowR \KASaplingPrivate$.
-  \item Calculate $\EphemeralPublic = \KASaplingDerivePublic(\EphemeralPrivate, \DiversifiedTransmitBaseNew)$.
-  \item Let $\TransmitPlaintext{}$ be the raw encoding of $\NotePlaintext{}$.
-  \item Let $\DHSecret{} = \KASaplingAgree(\EphemeralPrivate, \DiversifiedTransmitPublicNew)$.
-  \item Let $\TransmitKey{} = \KDFSapling(\DHSecret{}, \EphemeralPublic)$.
-  \item Let $\TransmitCiphertext{} = \SymEncrypt{\TransmitKey{}}(\TransmitPlaintext{})$.
-  \item Let $\OutCipherKey = \PRFock{\OutViewingKey}(\cvNew{}, \cmNew{}, \EphemeralPublic)$.
-  \item Let $\OutPlaintext = \LEBStoOSPOf{512}{\reprJOf{\DiversifiedTransmitPublicNew} \bconcat \ItoLEBSPOf{256}{\EphemeralPrivate}}$.
-  \item Let $\OutCiphertext = \SymEncrypt{\OutCipherKey}(\OutPlaintext)$.
+  \item choose a uniformly random ephemeral private key $\EphemeralPrivate \leftarrowR \KASaplingPrivate$
+  \item let $\EphemeralPublic = \KASaplingDerivePublic(\EphemeralPrivate, \DiversifiedTransmitBaseNew)$
+  \item let $\TransmitPlaintext{}$ be the raw encoding of $\NotePlaintext{}$
+  \item let $\DHSecret{} = \KASaplingAgree(\EphemeralPrivate, \DiversifiedTransmitPublicNew)$
+  \item let $\TransmitKey{} = \KDFSapling(\DHSecret{}, \EphemeralPublic)$
+  \item let $\TransmitCiphertext{} = \SymEncrypt{\TransmitKey{}}(\TransmitPlaintext{})$
+  \item let $\cvField = \LEBStoOSP{\ellJ}\big(\reprJ(\cvNew{})\kern-0.12em\big)$
+  \item let $\cmField = \LEBStoOSP{256}\big(\ExtractJ(\cmNew{})\kern-0.15em\big)$
+  \item let $\ephemeralKey = \LEBStoOSPOf{\ellJ}{\reprJOf{\EphemeralPublic}}$
+  \item let $\OutCipherKey = \PRFock{\OutViewingKey}(\cvField, \cmField, \ephemeralKey)$
+  \item let $\OutPlaintext = \LEBStoOSPOf{512}{\reprJ(\DiversifiedTransmitPublicNew) \,\bconcat\, \ItoLEBSPOf{256}{\EphemeralPrivate}\kern-0.12em}$
+  \item let $\OutCiphertext = \SymEncrypt{\OutCipherKey}(\OutPlaintext)$
 \end{itemize}
 
 The resulting \noteCiphertext is $(\EphemeralPublic, \TransmitCiphertext{}, \OutCiphertext)$.
 
+\vspace{-2ex}
 \pnote{
 It is technically possible to replace $\TransmitCiphertext{}$ for a given \note
 with a random (and undecryptable) dummy ciphertext, relying instead on out-of-band
@@ -4972,25 +5071,27 @@ received out-of-band, which are not addressed in this document.
 Let $\InViewingKey$ be the recipient's \incomingViewingKey, as specified in
 \crossref{saplingkeycomponents}.
 
-Let $(\EphemeralPublic, \TransmitCiphertext{})$ be the \noteCiphertext from the
-\outputDescription{}, and let $\cm$ be the \noteCommitment.
+Let $(\EphemeralPublic, \TransmitCiphertext{}, \OutCiphertext)$ be the \noteCiphertext from the
+\outputDescription{}. Let $\cmField$ be that field of the \outputDescription (encoding the
+$u$-coordinate of the \noteCommitment).
 
 \introlist
-The recipient will attempt to decrypt the \noteCiphertext as follows:
+The recipient will attempt to decrypt the $\EphemeralPublic$ and $\TransmitCiphertext{}$
+components of the \noteCiphertext as follows:
 
 \begin{formulae}
   \item let $\DHSecret{} = \KASaplingAgree(\InViewingKey, \EphemeralPublic)$
   \item let $\TransmitKey{} = \KDFSapling(\DHSecret{}, \EphemeralPublic)$
   \item let $\TransmitPlaintext{} = \SymDecrypt{\TransmitKey{}}(\TransmitCiphertext{})$
   \item if $\TransmitPlaintext{} = \bot$, return $\bot$
-  \item extract $\NotePlaintext = (\Diversifier, \Value, \NoteCommitRand, \Memo)$ from $\TransmitPlaintext{}$
+  \item extract $\NotePlaintext{} = (\Diversifier, \Value, \NoteCommitRand, \Memo)$ from $\TransmitPlaintext{}$
   \item let $\DiversifiedTransmitBase = \DiversifyHash(\Diversifier)$
   \item if $\DiversifiedTransmitBase = \bot$, return $\bot$
   \item let $\DiversifiedTransmitPublic = \KASaplingDerivePublic(\InViewingKey, \DiversifiedTransmitBase)$
-  \item if $\NoteCommitSapling{\NoteCommitRand}(\reprJOf{\DiversifiedTransmitBase},
-                                                \reprJOf{\DiversifiedTransmitPublic},
-                                                \Value) \neq \cm$,
-        return $\bot$, else return $\NotePlaintext{}$.
+  \item let $\cmU' = \ExtractJ\big(\NoteCommitSapling{\NoteCommitRandNew{}}(\reprJOf{\DiversifiedTransmitBase},
+                                                                            \reprJOf{\DiversifiedTransmitPublic},
+                                                                            \Value)\kern-0.12em\big)$.
+  \item if $\LEBStoOSPOf{256}{\cmU'} \neq \cmField$, return $\bot$, else return $\NotePlaintext{}$.
 \end{formulae}
 
 A received \Sapling{} \note is necessarily a \positionedNote, and so its
@@ -4999,7 +5100,7 @@ $\NoteAddressRand$ value can immediately be calculated as described in
 
 To test whether a \Sapling{} \note is unspent in a particular \blockchain also requires
 the \nullifierKey $\AuthProvePublicRepr$; the coin is unspent if and only if
-$\nf = \PRFnfSapling{\AuthProvePublicRepr}(\reprJ(\NoteAddressRand))$ is not in the
+$\nf = \PRFnfSapling{\AuthProvePublicRepr}\big(\reprJ(\NoteAddressRand)\kern-0.15em\big)$ is not in the
 \nullifierSet for that \blockchain.
 
 \pnote{
@@ -5017,20 +5118,28 @@ contain the \transaction in which a \note was output.
 Let $\OutViewingKey$ be the recipient's \outgoingViewingKey, as specified in
 \crossref{saplingkeycomponents}.
 
-Let $(\EphemeralPublic, \TransmitCiphertext{})$ be the \noteCiphertext from the
-\outputDescription{}, and let $\cmNew{}$ be the \noteCommitment.
+Let $(\EphemeralPublic, \TransmitCiphertext{}, \OutCiphertext)$ be the \noteCiphertext
+from the \outputDescription{}.
 
+Let $\cvField$, $\cmField$, and $\ephemeralKey$ be those
+fields of the \outputDescription (encoding the \valueCommitment, the $u$-coordinate
+of the \noteCommitment, and $\EphemeralPublic$ respectively).
+
+\vspace{-2ex}
+\pnote{For a valid \transaction it must be the case that
+$\ephemeralKey = \LEBStoOSP{\ellJ}\big(\reprJOf{\EphemeralPublic}\kern-0.15em\big)$.}
+
+\vspace{2ex}
+The \outgoingViewingKey holder will attempt to decrypt the \noteCiphertext as follows:
 
 \introlist
-Once detected, the \outgoingViewingKey holder will attempt to decrypt the \noteCiphertext as follows:
-
 \begin{formulae}
-  \item let $\OutCipherKey = \PRFock{\OutViewingKey}(\cvNew{}, \cmNew{}, \EphemeralPublic)$
+  \item let $\OutCipherKey = \PRFock{\OutViewingKey}(\cvField, \cmField, \ephemeralKey)$
   \item let $\OutPlaintext = \SymDecrypt{\OutCipherKey}(\OutCiphertext)$
   \item if $\OutPlaintext = \bot$, return $\bot$
   \item extract $(\DiversifiedTransmitPublicRepr, \EphemeralPrivate)$ from $\OutPlaintext$
   \item let $\DiversifiedTransmitPublic = \abstJOf{\DiversifiedTransmitPublicRepr}$
-  \item if $\DiversifiedTransmitPublic = \bot$, return $\bot$
+  \item if $\DiversifiedTransmitPublic \notin \KASaplingPublicPrimeOrder$, return $\bot$
   \item let $\DHSecret{} = \KASaplingAgree(\EphemeralPrivate, \DiversifiedTransmitPublic)$
   \item let $\TransmitKey{} = \KDFSapling(\DHSecret{}, \EphemeralPublic)$
   \item let $\TransmitPlaintext{} = \SymDecrypt{\TransmitKey{}}(\TransmitCiphertext{})$
@@ -5040,15 +5149,15 @@ Once detected, the \outgoingViewingKey holder will attempt to decrypt the \noteC
   \item if $\DiversifiedTransmitBase = \bot$, return $\bot$
   \item if $\KASaplingDerivePublic(\EphemeralPrivate, \DiversifiedTransmitBase) \neq \EphemeralPublic$,
         return $\bot$
-  \item if $\NoteCommitSapling{\NoteCommitRandNew{}}(\reprJOf{\DiversifiedTransmitBase},
-                                                     \reprJOf{\DiversifiedTransmitPublic},
-                                                     \Value) \neq \cmNew{}$,
-        return $\bot$, else return $\NotePlaintext{}$.
+  \item let $\cmU' = \ExtractJ\big(\NoteCommitSapling{\NoteCommitRandNew{}}(\reprJOf{\DiversifiedTransmitBase},
+                                                                            \reprJOf{\DiversifiedTransmitPublic},
+                                                                            \Value)\kern-0.12em\big)$.
+  \item if $\LEBStoOSPOf{256}{\cmU'} \neq \cmField$, return $\bot$, else return $\NotePlaintext{}$.
 \end{formulae}
-
 } %sapling
 
 
+\intropart
 \subsection{\Blockchain{} Scanning\pSproutOrNothing} \label{sproutscan}
 
 The following algorithm can be used, given the \blockchain and a
@@ -5056,23 +5165,32 @@ The following algorithm can be used, given the \blockchain and a
 to the corresponding \paymentAddress, its \memo field, and its final status
 (spent or unspent).
 
+\vspace{1ex}
+Let $\PRFOutputLengthSprout$ be as defined in \crossref{constants}.
+
+Let $\NoteTypeSprout$ be as defined in \crossref{notes}.
+
+\vspace{1ex}
 Let $\InViewingKey = (\AuthPublic, \TransmitPrivate)$ be the \incomingViewingKey
 corresponding to $\AuthPrivate$, and let $\TransmitPublic$ be the associated
 \transmissionKey, as specified in \crossref{sproutkeycomponents}.
 
+\introsection
+\vspace{2ex}
 \begin{formulae}
   \item Initialize $\ReceivedSet \typecolon \powerset{\NoteTypeSprout \times \Memo} = \setof{}$.
   \item Initialize $\SpentSet \typecolon \powerset{\NoteTypeSprout} = \setof{}$.
   \item Initialize $\NullifierMap \typecolon \PRFOutputSprout \rightarrow \NoteTypeSprout$ to the empty mapping.
+        \vspace{1ex}
   \item For each \transaction $\tx$,
   \item \tab For each \joinSplitDescription in $\tx$,
   \item \tab \tab Let $(\EphemeralPublic, \TransmitCiphertext{\allNew})$ be the \notesCiphertext
                   of the \joinSplitDescription.
   \item \tab \tab For $i$ in $\allNew$,
   \item \tab \tab \tab Attempt to decrypt the \noteCiphertext component
-                       $(\EphemeralPublic, \TransmitCiphertext{i})$
-                       using the algorithm in
-  \item \tab \tab \tab \crossref{sproutdecrypt}. If this succeeds giving $\NotePlaintext{}$:
+                       $(\EphemeralPublic, \TransmitCiphertext{i})$ using $\InViewingKey$ with the
+                       \vspace{-1.2ex}
+  \item \tab \tab \tab algorithm in \crossref{sproutdecrypt}. If this succeeds giving $\NotePlaintext{}$:
   \item \tab \tab \tab \tab Extract $\NoteTuple{}$ and $\Memo$ from $\NotePlaintext{}$ (taking the
                             $\AuthPublic$ field of the \note to be $\AuthPublic$ from
                             $\InViewingKey$).
@@ -5080,12 +5198,12 @@ corresponding to $\AuthPrivate$, and let $\TransmitPublic$ be the associated
   \item \tab \tab \tab \tab Calculate the nullifier $\nf$ of $\NoteTuple{}$ using $\AuthPrivate$
                             as described in \crossref{notes}.
   \item \tab \tab \tab \tab Add the mapping $\nf \rightarrow \NoteTuple{}$ to $\NullifierMap$.
-  \item
+  \item \vspace{-2ex}
   \item \tab \tab Let $\nf_{\allOld}$ be the \nullifiers of the \joinSplitDescription.
   \item \tab \tab For $i$ in $\allOld$,
   \item \tab \tab \tab If $\nf_i$ is present in $\NullifierMap$, add $\NullifierMap(\nf_i)$
                        to $\SpentSet$.
-  \item
+  \item \vspace{-2ex}
   \item Return $(\ReceivedSet, \SpentSet)$.
 \end{formulae}
 
@@ -5093,47 +5211,59 @@ corresponding to $\AuthPrivate$, and let $\TransmitPublic$ be the associated
 \sapling{
 \subsection{\Blockchain{} Scanning (\Sapling)} \label{saplingscan}
 
-Unlike \Sprout, \blockchain scanning in \Sapling requires only a \fullViewingKey,
-not a \spendingKey.
+In \Sapling, \blockchain scanning requires only the $\AuthProvePublic$ and $\InViewingKey$
+key components, rather than a \spendingKey as in \Sprout.
 
-The following algorithm can be used, given the \blockchain and a
-\Sapling \fullViewingKey $(\AuthSignPublic, \AuthProvePublic)$, to obtain each \note sent
-to the corresponding \paymentAddress, its \memo field, and its final status
-(spent or unspent).
+Typically, these components are derived from a \fullViewingKey as described in
+\crossref{saplingkeycomponents}.
 
-Let $\InViewingKey$ be the \incomingViewingKey
-corresponding to $(\AuthSignPublic, \AuthProvePublic)$,
-as specified in \crossref{sproutkeycomponents}.
+The following algorithm can be used, given the \blockchain and
+$(\AuthProvePublic, \InViewingKey)$, to obtain each \note sent to the corresponding
+\paymentAddress, its \memo field, and its final status (spent or unspent).
 
+\vspace{1ex}
+Let $\PRFOutputLengthNfSapling$ be as defined in \crossref{constants}.
+
+Let $\NoteTypeSapling$ be as defined in \crossref{notes}.
+
+\introsection
 \begin{formulae}
   \item Initialize $\ReceivedSet \typecolon \powerset{\NoteTypeSapling \times \Memo} = \setof{}$.
   \item Initialize $\SpentSet \typecolon \powerset{\NoteTypeSapling} = \setof{}$.
   \item Initialize $\NullifierMap \typecolon \PRFOutputNfSapling \rightarrow \NoteTypeSapling$ to the empty mapping.
+        \vspace{1ex}
   \item For each \transaction $\tx$,
   \item \tab For each \outputDescription in $\tx$ with \notePosition $\NotePosition$,
-  \item \tab \tab Attempt to decrypt the \noteCiphertext component
-                  $(\EphemeralPublic, \TransmitCiphertext{})$ using the algorithm in
-  \item \tab \tab \crossref{saplingdecryptivk}. If this succeeds giving $\NotePlaintext{}$:
+  \item \tab \tab Attempt to decrypt the \noteCiphertext components
+                  $\EphemeralPublic$ and $\TransmitCiphertext{}$ using $\InViewingKey$ with the algorithm\vspace{-1.2ex}%
+  \item \tab \tab in \crossref{saplingdecryptivk}. If this succeeds giving $\NotePlaintext{}$:
   \item \tab \tab \tab Extract $\NoteTuple{}$ and $\Memo$ from $\NotePlaintext{}$.
   \item \tab \tab \tab Add $(\NoteTuple{}, \Memo)$ to $\ReceivedSet$.
   \item \tab \tab \tab Calculate the nullifier $\nf$ of $\NoteTuple{}$ using $\AuthProvePublic$
                        and $\NotePosition$ as described in \crossref{notes}.
   \item \tab \tab \tab Add the mapping $\nf \rightarrow \NoteTuple{}$ to $\NullifierMap$.
-  \item
+  \item \vspace{-2ex}
   \item \tab For each \spendDescription in $\tx$,
   \item \tab \tab Let $\nf$ be the \nullifier of the \spendDescription.
   \item \tab \tab If $\nf$ is present in $\NullifierMap$, add $\NullifierMap(\nf)$ to $\SpentSet$.
-  \item
+  \item \vspace{-2ex}
   \item Return $(\ReceivedSet, \SpentSet)$.
 \end{formulae}
 
-
-%\pnote{This algorithm \emph{does not} guarantee to detect all \notes
-%The detection and attempted-decryption algorithms are independent. It is incorrect
-%to attempt to detect outgoing \notes by attempting decryption. This differs from the
-%case of receiving a \note using an \incomingViewingKey (\crossref{decryptsaplingivk}).
-%The ... is that it is possible .., and so ... would potentially miss ..}
-
+\vspace{-2ex}
+\begin{nnotes}
+  \item The above algorithm does not use the $\OutViewingKey$ key component, or the $\OutCiphertext$
+        \noteCiphertext component. When scanning the whole \blockchain, these are indeed not necessary.
+        The advantage of supporting decryption using $\OutViewingKey$ as described in \crossref{saplingdecryptovk},
+        is that it allows recovering information about the \notePlaintexts sent in a \transaction from that
+        \transaction alone.
+  \item When scanning only part of a \blockchain, it may be useful to augment the above algorithm with
+        decryption of $\OutCiphertext$ components for each \transaction, in order to obtain information
+        about \notes that were spent in the scanned period but received outside it.
+  \item The above algorithm does not detect \notes that were sent ``out-of-band'' or with incorrect
+        \noteCiphertexts. It is possible to detect whether such \notes were spent only if their \nullifiers
+        are known.
+\end{nnotes}
 } %sapling
 
 
@@ -5299,6 +5429,7 @@ consistent with \cite[section 3.1]{NIST2015}, i.e.\ big-endian.
 
 \subsubsubsection{\BlakeTwo{} \HashFunction} \label{concreteblake2}
 
+\vspace{-2ex}
 BLAKE2 is defined by \cite{ANWW2013}.
 \sprout{\Zcash uses only the $\BlakeTwobGeneric$ variant.}
 \sapling{\Zcash uses both the $\BlakeTwobGeneric$ and $\BlakeTwosGeneric$
@@ -5317,11 +5448,12 @@ as specified in \cite{ZIP-143}.}
 and in the $\RedJubjub$ \signatureScheme which instantiates $\SpendAuthSig$
 and $\BindingSig$.}
 
+\vspace{-1ex}
 \begin{formulae}
   \item $\BlakeTwob{\ell} \typecolon \byteseq{16} \times \byteseqs \rightarrow \byteseq{\ell/8}$
 \end{formulae}
 
-\vspace{-3ex}
+\vspace{-5ex}
 \pnote{
 $\BlakeTwob{\ell}$ is not the same as $\BlakeTwob{512}$ truncated to
 $\ell$ bits, because the digest length is encoded in the parameter
@@ -5329,7 +5461,7 @@ block.
 }
 
 \sapling{
-\vspace{3ex}
+\vspace{1ex}
 $\BlakeTwosOf{\ell}{p, x}$ refers to unkeyed $\BlakeTwos{\ell}$
 in sequential mode, with an output digest length of $\ell/8$ bytes,
 $8$-byte personalization string $p$, and input $x$.
@@ -5337,6 +5469,7 @@ $8$-byte personalization string $p$, and input $x$.
 $\BlakeTwosGeneric$ is used to instantiate $\PRFexpand{}$, $\PRFnfSapling{}$,
 $\CRHivk$, and $\GroupJHash{}$.
 
+\vspace{-1ex}
 \begin{formulae}
   \item $\BlakeTwos{\ell} \typecolon \byteseq{8} \times \byteseqs \rightarrow \byteseq{\ell/8}$
 \end{formulae}
@@ -5344,6 +5477,7 @@ $\CRHivk$, and $\GroupJHash{}$.
 
 
 \introsection
+\vspace{-1ex}
 \subsubsubsection{\MerkleTree{} \HashFunction} \label{merklecrh}
 
 \newsavebox{\merklebox}
@@ -5362,47 +5496,57 @@ Let $\SHACompress$ be as specified in \crossref{concretesha256}.
 $\MerkleCRHSprout \typecolon \MerkleHashSprout \times \MerkleHashSprout \rightarrow \MerkleHashSprout$
 is defined as follows:
 
+\vspace{-1ex}
 \begin{formulae}
   \item $\MerkleCRHSprout(\mathsf{left}, \mathsf{right}) := \SHACompressBox{\merklebox}$.
 \end{formulae}
 
+\vspace{-2ex}
 \pnote{
 $\SHACompress$ is not the same as the $\SHAFull$ function, which hashes arbitrary-length
 byte sequences.
 }
 }
 \notsprout{
+\vspace{-2ex}
 $\MerkleCRHSprout$ and $\MerkleCRHSapling$ are used to hash
 \incrementalMerkleTree \merkleHashes for \Sprout and \Sapling respectively.
 
+\vspace{-2ex}
 \subsubsubsubsection{$\MerkleCRHSprout$ \HashFunction} \label{sproutmerklecrh}
 
+\vspace{-3ex}
 Let $\SHACompress$ be as specified in \crossref{concretesha256}.
 
 $\MerkleCRHSprout \typecolon \MerkleLayerSprout \times \MerkleHashSprout \times \MerkleHashSprout
 \rightarrow \MerkleHashSprout$ is defined as follows:
 
+\vspace{-1ex}
 \begin{formulae}
   \item $\MerkleCRHSprout(\mathsf{layer}, \mathsf{left}, \mathsf{right}) := \SHACompressBox{\merklebox}$.
 \end{formulae}
 
 \vspace{-4ex}
-\begin{pnotes}
-  \item The $\mathsf{layer}$ argument does not affect the output.
-  \item $\SHACompress$ is not the same as the $\SHAFull$ function, which hashes arbitrary-length
-        byte sequences.
-\end{pnotes}
-}
-
-\vspace{-2ex}
 \securityrequirement{
 $\SHACompress$ must be \collisionResistant, and it must be infeasible to find a preimage $x$
 such that $\SHACompress(x) = \zeros{256}$.
 }
 
+\vspace{-3ex}
+\begin{pnotes}
+\vspace{-2ex}
+  \item The $\mathsf{layer}$ argument does not affect the output.
+        \vspace{-1ex}
+  \item $\SHACompress$ is not the same as the $\SHAFull$ function, which hashes arbitrary-length
+        byte sequences.
+\end{pnotes}
+}
+
 \sapling{
+\vspace{-3ex}
 \subsubsubsubsection{$\MerkleCRHSapling$ \HashFunction} \label{saplingmerklecrh}
 
+\vspace{-3ex}
 Let $\PedersenHash$ be as specified in \crossref{concretepedersenhash}.
 
 $\MerkleCRHSapling \typecolon \MerkleLayerSapling \times \MerkleHashSapling \times \MerkleHashSapling
@@ -5411,23 +5555,22 @@ $\MerkleCRHSapling \typecolon \MerkleLayerSapling \times \MerkleHashSapling \tim
 \begin{formulae}
   \item $\MerkleCRHSapling(\mathsf{layer}, \mathsf{left}, \mathsf{right}) := \PedersenHash(\ascii{Zcash\_PH},
            l \bconcat \mathsf{left} \bconcat \mathsf{right})$
-  \item \tab where $l = \ItoLEBSPOf{6}{\MerkleDepthSapling - 1 - \mathsf{layer}}$.
+        \vspace{-1ex}
+  \item where $l = \ItoLEBSP{6}\big(\MerkleDepthSapling - 1 - \mathsf{layer}\big)$.
 \end{formulae}
 
-\vspace{-2ex}
+\vspace{-5ex}
 \securityrequirement{
 $\PedersenHash$ must be \collisionResistant\!.
 }
 
-\pnote{
-The prefix $l$ provides domain separation between inputs at different layers of the
-\noteCommitmentTree. It is distinct from the prefix used in $\NoteCommitSaplingAlg$
-as noted in \crossref{concretewindowedcommit}.
-}
+\vspace{-3ex}
+\pnote{The prefix $l$ provides domain separation between inputs at different layers of the
+\noteCommitmentTree. It is distinct from the $\NoteCommitSaplingAlg$ prefix
+as noted in \crossref{concretewindowedcommit}.}
 } %sapling
 
 
-\introsection
 \subsubsubsection{\hSigText{} \HashFunction} \label{hsigcrh}
 
 \newsavebox{\hsigbox}
@@ -5441,6 +5584,7 @@ as noted in \crossref{concretewindowedcommit}.
 \end{bytefield}
 \end{lrbox}
 
+\vspace{-2ex}
 $\hSigCRH$ is used to compute the value $\hSig$ in \crossref{joinsplitdesc}.
 
 \changed{
@@ -5448,6 +5592,7 @@ $\hSigCRH$ is used to compute the value $\hSig$ in \crossref{joinsplitdesc}.
   \item $\hSigCRH(\RandomSeed, \nfOld{\allOld}, \joinSplitPubKey) := \BlakeTwobOf{256}{\ascii{ZcashComputehSig},\; \hSigInput}$
 \end{formulae}
 
+\vspace{-2ex}
 where
 \begin{formulae}
   \item $\hSigInput := \Justthebox{\hsigbox}$.
@@ -5456,6 +5601,7 @@ where
 
 $\BlakeTwobOf{256}{p, x}$ is defined in \crossref{concreteblake2}.
 
+\vspace{-2ex}
 \securityrequirement{
 $\BlakeTwobOf{256}{\ascii{ZcashComputehSig}, x}$ must be \collisionResistant on $x$.
 }
@@ -5474,6 +5620,7 @@ $\BlakeTwobOf{256}{\ascii{ZcashComputehSig}, x}$ must be \collisionResistant on 
 \introlist
 \subsubsubsection{\CRHivkText{} \HashFunction} \label{concretecrhivk}
 
+\vspace{-2ex}
 $\CRHivk$ is used to derive the \incomingViewingKey $\InViewingKey$
 for a \Sapling \paymentAddress.
 For its use when generating an address see \crossref{saplingkeycomponents},
@@ -5487,6 +5634,7 @@ It is defined as follows:
            \LEOStoIPOf{256}{\BlakeTwosOf{256}{\ascii{Zcashivk},\; \crhInput}} \bmod 2^{\InViewingKeyLength}$
 \end{formulae}
 
+\vspace{-2ex}
 where
 \begin{formulae}
   \item $\crhInput := \Justthebox{\crhivkbox}$
@@ -5495,6 +5643,7 @@ where
 \vspace{2ex}
 $\BlakeTwobOf{256}{p, x}$ is defined in \crossref{concreteblake2}.
 
+\vspace{-1ex}
 \securityrequirement{
 $\LEOStoIPOf{256}{\BlakeTwosOf{256}{\ascii{Zcashivk}, x}} \bmod 2^{\InViewingKeyLength}$
 must be \collisionResistant on a $64$-byte input $x$. Note that this
@@ -5504,6 +5653,7 @@ rather than a $256$-bit hash), but it is a reasonable assumption
 given the design, structure, and cryptanalysis to date of $\BlakeTwosGeneric$.
 }
 
+\vspace{-1ex}
 \nnote{
 $\BlakeTwosGeneric$ has a variable output digest length feature, but it
 does not support arbitrary bit lengths, otherwise it would have been
@@ -5525,21 +5675,22 @@ Let $\GroupJHash{}$ and $U$ be as defined in \crossref{concretegrouphashjubjub}.
 
 Define
 
+\vspace{-1ex}
 \begin{formulae}
   \item $\DiversifyHash(\Diversifier) := \GroupJHash{\NotUpMySleeve}(\ascii{Zcash\_gd}, \LEBStoOSPOf{\DiversifierLength}{\Diversifier})$
 \end{formulae}
 
-\vspace{-2ex}
+\vspace{-3ex}
 \securityrequirement{
-$\DiversifyHash$ must be ``unlinkable'': given two randomly selected
+\textbf{Unlinkability:} Given two randomly selected
 \paymentAddresses from different spend authorities, and a third \paymentAddress
 which could be derived from either of those authorities, it is not possible to
 tell which authority the third address was derived from.}
 
 \begin{nnotes}
-  \item Suppose that $\GroupJHash{}$ acts as a random function from \diversifiers
-        to points of order $\ParamJ{r}$ on the \jubjubCurve. Then unlinkability of
-        $\DiversifyHash$ holds under the Decisional Diffie-Hellman assumption on the
+  \item Suppose that $\GroupJHash{}$ is modelled as a random oracle from \diversifiers
+        to points of order $\ParamJ{r}$ on the \jubjubCurve. In this model, Unlinkability
+        of $\DiversifyHash$ holds under the Decisional Diffie-Hellman assumption on the
         \jubjubCurve.
   \item Informally, the random self-reducibility property of DDH implies that an
         adversary would gain no advantage from being able to query an oracle for
@@ -5571,7 +5722,7 @@ $\PedersenHash$ is used in the \incrementalMerkleTree over \noteCommitments
 
 Let $\GroupJ$, $\SubgroupJ$, $\ZeroJ$, $\ParamJ{q}$, $\ParamJ{r}$, $\ParamJ{a}$, and $\ParamJ{d}$ be as defined in \crossref{jubjub}.
 
-Let $\ExtractJ \typecolon \SubgroupJ \rightarrow \GF{\ParamJ{q}}$ be as defined in \crossref{concreteextractorjubjub}.
+Let $\ExtractJ \typecolon \SubgroupJ \rightarrow \MerkleHashSapling$ be as defined in \crossref{concreteextractorjubjub}.
 
 Let $\FindGroupJHash$ be as defined in \crossref{concretegrouphashjubjub}.
 
@@ -5624,7 +5775,7 @@ $\PedersenEncode{\paramdot} \typecolon \bitseq{3 \mult \range{1}{c}} \rightarrow
 Finally, define $\PedersenHash \typecolon \byteseq{8} \times \bitseq{\PosInt} \rightarrow \MerkleHashSapling$ by:
 
 \begin{formulae}
-  \item $\PedersenHash(D, M) := \ItoLEBSPOf{\MerkleHashLengthSapling}{\ExtractJ(\PedersenHashToPoint(D, M))}$.
+  \item $\PedersenHash(D, M) := \ExtractJ(\PedersenHashToPoint(D, M))$.
 \end{formulae}
 
 See \crossref{cctpedersenhash} for rationale and efficient circuit implementation
@@ -5684,8 +5835,8 @@ Since the security proof from \cite[Appendix A]{BGG1995}
 depends only on the encoding being injective and its range not including
 zero, the proof can be adapted straightforwardly to show that $\PedersenHashToPoint$
 is \collisionResistant under the same assumptions and security bounds.
-Because $\ItoLEBSP{\MerkleHashLengthSapling}$ and $\ExtractJ$ are injective,
-it follows that $\PedersenHash$ is equally \collisionResistant\!.
+Because $\ExtractJ$ is injective, it follows that $\PedersenHash$ is equally
+\collisionResistant\!.
 
 \vspace{2ex}
 \begin{theorem} \label{thmnohashtouncommittedsapling}
@@ -5693,9 +5844,10 @@ $\UncommittedSapling = \ItoLEBSPOf{\MerkleHashLengthSapling}{1}$ is not in the r
 \end{theorem}
 
 \begin{proof}
-By the definition of $\PedersenHash$, $\ItoLEBSPOf{\smash{\MerkleHashLengthSapling}}{1}$
-can be in the range of $\PedersenHash$ only if there exist $D \typecolon \byteseq{8}$ and
-$M \typecolon \bitseq{\PosInt}$ such that $\ExtractJ(\PedersenHashToPoint(D, M)) = 1$.
+By injectivity of $\ItoLEBSP{\MerkleHashLengthSapling}$ and the definitions of
+$\PedersenHash$ and $\ExtractJ$, $\ItoLEBSPOf{\smash{\MerkleHashLengthSapling}}{1}$
+can be in the range of $\PedersenHash$ only if there exist
+$(D \typecolon \byteseq{8}$, $M \typecolon \bitseq{\PosInt})$ such that $\SelectuOf{\PedersenHashToPoint(D, M)} = 1$.
 The latter can only be the affine-Edwards $u$-coordinate of a point in $\strut\GroupJ$.
 We show that there are no points in $\GroupJ$ with affine-Edwards $u$-coordinate $1$.
 Suppose for a contradiction that $(u, \varv) \in \GroupJ$ for $u = 1$ and some
@@ -5893,10 +6045,21 @@ be necessary.})
 }
 
 
+\newsavebox{\ockbox}
+\begin{lrbox}{\ockbox}
+\setsapling
+\begin{bytefield}[bitwidth=0.039em]{512}
+    \sbitbox{256}{$\LEBStoOSPOf{256}{\OutViewingKey}$} &
+    \sbitbox{256}{$32$-byte $\cvField$}
+    \sbitbox{256}{$32$-byte $\cmField$} &
+    \sbitbox{256}{$32$-byte $\ephemeralKey$}
+\end{bytefield}
+\end{lrbox}
+
 \newsavebox{\nfsaplingbox}
 \begin{lrbox}{\nfsaplingbox}
 \setsapling
-\begin{bytefield}[bitwidth=0.046em]{512}
+\begin{bytefield}[bitwidth=0.039em]{512}
     \sbitbox{256}{$\LEBStoOSPOf{256}{\AuthProvePublicRepr}$} &
     \sbitbox{256}{$\LEBStoOSPOf{256}{\NoteAddressRandRepr}$}
 \end{bytefield}
@@ -5922,6 +6085,26 @@ $\PRFOutputExpand$ when keyed by the bits corresponding to $\SpendingKey$, with 
 corresponding to $t$.
 } %securityrequirement
 
+
+\introlist
+\vspace{2ex}
+$\PRFock{}$ is used in \crossref{} to derive the
+\authSigningKey $\OutCipherKey$ used to encrypt an \outputCiphertext.
+
+It is instantiated using the $\BlakeTwobGeneric$ \hashFunction defined in
+\crossref{concreteblake2}:
+
+\begin{formulae}
+  \item $\PRFock{\OutViewingKey}(\cvField, \cmField, \ephemeralKey) := \BlakeTwobOf{256}{\ascii{Zcash\_Derive\_ock}, \ockInput}$
+  \item where $\ockInput = \Justthebox{\ockbox}$.
+\end{formulae}
+
+\vspace{-4.5ex}
+\securityrequirement{
+$\BlakeTwobOf{512}{\ascii{Zcash\_Derive\_ock}, \ockInput}$ must be a
+PRF for output range $\Keyspace$ (defined in \crossref{concretesym}) when keyed by the bits corresponding
+to $\OutViewingKey$, with input in the bits corresponding to $\cvField$, $\cmField$, and $\ephemeralKey$.
+} %securityrequirement
 
 \vspace{2ex}
 \introlist
@@ -6062,6 +6245,8 @@ Let $\GroupJ$, $\SubgroupJ$, and the cofactor $\ParamJ{h}$ be as defined in \cro
 
 Define $\KASaplingPublic := \GroupJ$.
 
+Define $\KASaplingPublicPrimeOrder := \PrimeOrderJ$.
+
 Define $\KASaplingSharedSecret := \SubgroupJ$.
 
 Define $\KASaplingPrivate := \GF{\ParamJ{r}}$.
@@ -6201,7 +6386,7 @@ Its associated types are defined as follows:
 \introlist
 Define $\RedDSAHashToScalar \typecolon \byteseqs \rightarrow \GF{\ParamG{r}}$ by:
 \begin{formulae}
-  \item $\RedDSAHashToScalar(B) = \LEOStoIPOf{\RedDSAHashLength}{\RedDSAHash(B)} \!\pmod{\ParamG{r}}$
+  \item $\RedDSAHashToScalar(B) = \LEOStoIP{\RedDSAHashLength}\big(\RedDSAHash(B)\kern-0.16em\big) \!\pmod{\ParamG{r}}$
 \end{formulae}
 
 \introlist
@@ -6244,10 +6429,10 @@ Define $\RedDSASign{} \typecolon (\sk \typecolon \RedDSAPrivate) \times (M \type
   \item Choose a byte sequence $T$ uniformly at random on $\byteseq{(\RedDSAHashLength+128)/8}$.
   \item Let $r = \RedDSAHashToScalar(T \bconcat M)$.
   \item Let $\RedDSASigR = \scalarmult{r}{\GenG{}}$.
-  \item Let $\RedDSAReprR = \LEBStoOSPOf{\ellG{}}{\reprGOf{}{\RedDSASigR}\hairspace}$.
-  \item Let $\vkBytes = \LEBStoOSPOf{\ellG{}}{\reprGOf{}{\RedDSADerivePublic(\sk)}}$.
+  \item Let $\RedDSAReprR = \LEBStoOSPOf{\ellG{}}{\reprGOf{}{\RedDSASigR}}$.
+  \item Let $\vkBytes = \LEBStoOSPOf{\ellG{}}{\reprGOf{}{\RedDSADerivePublic(\sk)}\kern 0.05em}$.
   \item Let $\RedDSASigS = (r + \RedDSAHashToScalar(\RedDSAReprR \bconcat \vkBytes \bconcat M) \mult \sk) \bmod \ParamG{r}$.
-  \item Let $\RedDSAReprS = \LEBStoOSPOf{\bitlength(\ParamG{r})}{\ItoLEBSPOf{\bitlength(\ParamG{r})}{\RedDSASigS}}$.
+  \item Let $\RedDSAReprS = \LEBStoOSPOf{\bitlength(\ParamG{r})}{\ItoLEBSPOf{\bitlength(\ParamG{r})}{\RedDSASigS}\kern-0.16em}$.
   \item Return $\RedDSAReprR \bconcat \RedDSAReprS$.
 \end{formulae}
 
@@ -6257,9 +6442,9 @@ Define $\RedDSAVerify{} \typecolon (\vk \typecolon \RedDSAPublic) \times (M \typ
 \begin{formulae}
   \item Let $\RedDSAReprR$ be the first $\ceiling{\ellG{}/8}$ bytes of $\sigma$, and
         let $\RedDSAReprS$ be the remaining $\ceiling{\bitlength(\ParamG{r})/8}$ bytes.
-  \item Let $\RedDSASigR = \abstG{}\big(\LEOStoBSPOf{\ellG{}}{\RedDSAReprR}\!\big)$, and
-        let $\RedDSASigS = \LEOStoIPOf{\bitlength(\ParamG{r})}{\RedDSAReprS}$.
-  \item Let $\vkBytes = \LEBStoOSPOf{\ellG{}}{\reprGOf{}{\RedDSADerivePublic(\sk)}}$.
+  \item Let $\RedDSASigR = \abstG{}\big(\LEOStoBSP{\ellG{}}(\RedDSAReprR)\kern-0.1em\big)$, and
+        let $\RedDSASigS = \LEOStoIP{\bitlength(\ParamG{r})}(\RedDSAReprS)$.
+  \item Let $\vkBytes = \LEBStoOSPOf{\ellG{}}{\reprGOf{}{\RedDSADerivePublic(\sk)}\kern 0.05em}$.
   \item Let $\RedDSASigc = \RedDSAHashToScalar(\RedDSAReprR \bconcat \vkBytes \bconcat M)$.
   \item Return $1$ if $\RedDSASigR \neq \bot$ and $\RedDSASigS < \ParamG{r}$ and
         $\scalarmult{\RedDSASigS}{\GenG{}} = \RedDSASigR + \scalarmult{\RedDSASigc}{\vk}$, otherwise $0$.
@@ -6795,6 +6980,7 @@ be the left inverse of $\reprJ$ such that if $S$ is not in the range of
 $\reprJ$, then $\abstJOf{S} = \bot$.
 
 Define $\SubgroupJ$ as the order-$\ParamJ{r}$ subgroup of $\GroupJ$. Note that this includes $\ZeroJ$.
+For the set of prime-order points we write $\PrimeOrderJ$.
 
 Define $\SubgroupReprJ := \setof{\reprJ(P) \typecolon \ReprJ \suchthat P \in \SubgroupJ}$.
 
@@ -6823,13 +7009,18 @@ other conditions on points, for example that they have order at least $\ParamJ{r
 
 Let $\SelectuOf{(u, \varv)} = u$ and let $\SelectvOf{(u, \varv)} = \varv$.
 
-Let $\ExtractJ \typecolon \SubgroupJ \rightarrow \GF{\ParamJ{q}}$ be $\Selectu$.
+Define $\ExtractJ \typecolon \SubgroupJ \rightarrow \MerkleHashSapling$ by
+\begin{formulae}
+  \item $\ExtractJ(P) := \ItoLEBSPOf{\MerkleHashLengthSapling}{\SelectuOf{P}}$.
+\end{formulae}
 
+\vspace{-2ex}
 \facts{The point $(0, 1) = \ZeroJ$, and the point $(0, -1)$ has order $2$ in $\GroupJ$.
 $\SubgroupJ$ is of odd-prime order.}
 
 % <https://github.com/zcash/zcash/issues/2234#issuecomment-333360977>
 \vspace{2ex}
+\introlist
 \begin{lemma*}
 Let $P = (u, \varv) \in \SubgroupJ$. Then $(u, -\varv) \notin \SubgroupJ$.
 \end{lemma*}
@@ -6850,6 +7041,7 @@ since $\SubgroupJ$ is of odd order \cite{KvE2013}).
 \end{proof}
 
 \vspace{0.5ex}
+\introlist
 \begin{theorem} \label{thmselectuinjective}
 $\Selectu$ is injective on $\SubgroupJ$.
 \end{theorem}
@@ -6861,15 +7053,25 @@ potentially exceptional case $1 - d \smult u^2 = 0$ does not occur for a
 complete twisted Edwards curve, we see that for a given $u$ there can be at
 most two possible solutions for $\varv$, and that if there are two solutions
 they can be written as $\varv$ and $-\varv$. In that case by the Lemma, at
-most one of $(u, \varv)$ and $(u, -\varv)$ is in $\SubgroupJ$. Therefore, $\Selectu$
-is injective on points in $\SubgroupJ$.
+most one of $(u, \varv)$ and $(u, -\varv)$ is in $\SubgroupJ$. Therefore,
+$\Selectu$ is injective on points in $\SubgroupJ$.
 \end{proof}
+
+It follows that $\ExtractJ$ is injective on $\SubgroupJ$.
 }
 
 
 \sapling{
 \introsection
-\subsubsubsection{\GroupHash{} into \Jubjub} \label{concretegrouphashjubjub}
+\subsubsubsection{Group Hash into \Jubjub} \label{concretegrouphashjubjub}
+
+Let $\GroupGHashInput := \byteseq{8} \times \byteseqs$.
+
+(The input element with type $\byteseq{8}$ is intended to act as a
+``personalization'' parameter to distinguish uses of the \groupHash for
+different purposes.)
+
+Let $\GroupGHashURSType := \byteseq{64}$.
 
 Let $\URS$ be the MPC randomness beacon defined in \crossref{beacon}.
 
@@ -6879,10 +7081,10 @@ Let $\LEOStoIP{}$ be as defined in \crossref{endian}.
 
 Let $\abstJ$ be as defined in \crossref{jubjub}.
 
+\vspace{2ex}
 Let $D \typecolon \byteseq{8}$ be an $8$-byte domain separator, and
 let $M \typecolon \byteseqs$ be the hash input.
 
-\vspace{2ex}
 \introlist
 The hash $\GroupJHash{\URS}(D, M) \typecolon \PrimeOrderJ$ is calculated as follows:
 
@@ -7095,10 +7297,10 @@ or greater, are reserved for use in future \Zcash protocol extensions.
 
 Other fields are as defined in \crossref{notes}.
 
-\vspace{2ex}
+\vspace{1ex}
 \introlist
 The encoding of a \SproutOrNothing \notePlaintext consists of:
-\vspace{2ex}
+\vspace{1ex}
 \begin{equation*}
 \begin{bytefield}[bitwidth=0.029em]{1672}
 \changed{
@@ -7127,7 +7329,7 @@ The encoding of a \SproutOrNothing \notePlaintext consists of:
 \sapling{
 \introlist
 The encoding of a \Sapling \notePlaintext consists of:
-\vspace{2ex}
+\vspace{1ex}
 \begin{equation*}
 \begin{bytefield}[bitwidth=0.029em]{1672}
     \sbitbox{180}{$8$-bit $\NotePlaintextLeadByteSapling$}
@@ -7161,7 +7363,10 @@ addresses \cite{Bitcoin-Base58}.
 
 \sapling{
 For \Sapling-specific key and address formats, Bech32 \cite{BIP-173} is used
-instead of Base58Check.
+instead of Base58Check. All conformance requirements of BIP 173 apply except for
+the limit of 90 characters on an encoded Bech32 string (which does not hold for
+\Sapling viewing keys, for example), and requirements specific to Bitcoin's
+Segwit addresses.
 }
 
 $\shaCompress$ outputs are always represented as sequences of $32$ bytes.
@@ -7177,7 +7382,7 @@ or P2PKH (Pay to Public Key Hash) addresses \cite{Bitcoin-P2PKH}.
 
 \introlist
 The raw encoding of a P2SH address consists of:
-\vspace{2ex}
+\vspace{1ex}
 \begin{equation*}
 \begin{bytefield}[bitwidth=0.1em]{176}
     \sbitbox{80}{$8$-bit $\PtoSHAddressLeadByte$}
@@ -7197,7 +7402,7 @@ The raw encoding of a P2SH address consists of:
 
 \introlist
 The raw encoding of a P2PKH address consists of:
-\vspace{2ex}
+\vspace{1ex}
 \begin{equation*}
 \begin{bytefield}[bitwidth=0.1em]{176}
     \sbitbox{80}{$8$-bit $\PtoPKHAddressLeadByte$}
@@ -7248,7 +7453,7 @@ components are derived from a \spendingKey as described in \crossref{sproutkeyco
 
 \introlist
 The raw encoding of a \SproutOrNothing \paymentAddress consists of:
-\vspace{2ex}
+\vspace{1ex}
 \begin{equation*}
 \begin{bytefield}[bitwidth=0.07em]{520}
 \changed{
@@ -7284,17 +7489,17 @@ cause the first two characters of the Base58Check encoding to be fixed as
 \subsubsection{\Sapling \PaymentAddresses} \label{saplingpaymentaddrencoding}
 
 A \Sapling \paymentAddress consists of $\Diversifier \typecolon \DiversifierType$
-and $\DiversifiedTransmitPublic \typecolon \KASaplingPublic$.
+and $\DiversifiedTransmitPublic \typecolon \KASaplingPublicPrimeOrder$.
 
-$\Diversifier$ is a sequence of 11 bytes.
-$\DiversifiedTransmitPublic$ is an encoding of a $\KASaplingPublic$ key
-(see \crossref{concretesaplingkeyagreement}),
+$\DiversifiedTransmitPublic$ is an encoding of a $\KASapling$ public key of type
+$\KASaplingPublicPrimeOrder$ (see \crossref{concretesaplingkeyagreement}),
 for use with the encryption scheme defined in \crossref{saplinginband}.
+$\Diversifier$~is a sequence of $11$ bytes.
 These components are derived as described in \crossref{saplingkeycomponents}.
 
 \introlist
 The raw encoding of a \Sapling \paymentAddress consists of:
-\vspace{2ex}
+\vspace{1ex}
 \begin{equation*}
 \begin{bytefield}[bitwidth=0.07em]{344}
     \sbitbox{120}{$\LEBStoOSPOf{88}{\Diversifier}$}
@@ -7309,7 +7514,8 @@ The raw encoding of a \Sapling \paymentAddress consists of:
 \end{itemize}
 
 When decoding the representation of $\DiversifiedTransmitPublic$, the address is
-not valid if $\abstJ$ returns $\bot$.
+not valid if $\abstJ$ returns $\bot$ or if the resulting $\DiversifiedTransmitPublic$
+is not of prime order.
 
 For addresses on the production network, the \humanReadablePart is \ascii{zs}.
 For addresses on the test network, the \humanReadablePart is \ascii{ztestsapling}.
@@ -7330,7 +7536,7 @@ components are derived from a \spendingKey as described in \crossref{sproutkeyco
 \introlist
 The raw encoding of an \incomingViewingKey consists of, in order:
 }
-\vspace{2ex}
+\vspace{1ex}
 \begin{equation*}
 \begin{bytefield}[bitwidth=0.062em]{536}
 \changed{
@@ -7361,6 +7567,7 @@ considered invalid if $\TransmitPrivate \neq \KASproutFormatPrivate(\TransmitPri
 
 $\KASproutFormatPrivate$ is defined in \crossref{concretesproutkeyagreement}.
 
+\vspace{-2ex}
 \pnote{
 For addresses on the production network, the lead bytes and encoded length
 cause the first four characters of the Base58Check encoding to be fixed as
@@ -7373,15 +7580,17 @@ cause the first four characters of the Base58Check encoding to be fixed as
 \sapling{
 \subsubsection{\Sapling \IncomingViewingKeys} \label{saplinginviewingkeyencoding}
 
-A \Sapling \incomingViewingKey consists of $\InViewingKey \typecolon \KASaplingPrivate$
-(see \crossref{concretesaplingkeyagreement}).
+Let $\InViewingKeyLength$ be as defined in \crossref{constants}.
 
-$\InViewingKey$ is a $\KASaplingPrivate$ key, derived as described in \crossref{saplingkeycomponents}.
+A \Sapling \incomingViewingKey consists of $\InViewingKey \typecolon \InViewingKeyTypeSapling$.
+
+$\InViewingKey$ is a $\KASaplingPrivate$ key (restricted to $\InViewingKeyLength$ bits),
+derived as described in \crossref{saplingkeycomponents}.
 It is used with the encryption scheme defined in \crossref{saplinginband}.
 
 \introlist
 The raw encoding of an \incomingViewingKey consists of:
-\vspace{2ex}
+\vspace{1ex}
 \begin{equation*}
 \begin{bytefield}[bitwidth=0.07em]{256}
     \sbitbox{256}{$256$-bit $\InViewingKey$}
@@ -7389,10 +7598,11 @@ The raw encoding of an \incomingViewingKey consists of:
 \end{equation*}
 
 \begin{itemize}
-  \item $32$ bytes (little-endian) specifying $\InViewingKey$.
+  \item $32$ bytes (little-endian) specifying $\InViewingKey$, padded with zeros in the most
+        significant bits.
 \end{itemize}
 
-$\InViewingKey$ \MUST be in the range $\binaryrange{\InViewingKeyLength}$ as specified
+$\InViewingKey$ \MUST be in the range $\InViewingKeyTypeSapling$ as specified
 in \crossref{saplingkeycomponents}. That is, a decoded \incomingViewingKey{} \MUST be
 considered invalid if $\InViewingKey$ is not in this range.
 
@@ -7404,19 +7614,20 @@ For \incomingViewingKeys on the test network, the \humanReadablePart is \ascii{z
 \sapling{
 \subsubsection{\Sapling \FullViewingKeys} \label{saplingfullviewingkeyencoding}
 
-A \Sapling \fullViewingKey consists of $\AuthSignPublic \typecolon \GroupJ$
-and $\AuthProvePublic \typecolon \GroupJ$.
+A \Sapling \fullViewingKey consists of $\AuthSignPublic \typecolon \PrimeOrderJ$,
+$\AuthProvePublic \typecolon \SubgroupJ$, and $\OutViewingKey \typecolon \byteseq{\OutViewingKeyLength/8}$.
 
 $\AuthSignPublic$ and $\AuthProvePublic$ are points on the \jubjubCurve
 (see \crossref{jubjub}). They are derived as described in \crossref{saplingkeycomponents}.
 
 \introlist
 The raw encoding of a \fullViewingKey consists of:
-\vspace{2ex}
+\vspace{1ex}
 \begin{equation*}
-\begin{bytefield}[bitwidth=0.07em]{512}
+\begin{bytefield}[bitwidth=0.05em]{512}
     \sbitbox{256}{$\LEBStoOSPOf{256}{\reprJOf{\AuthSignPublic}\kern 0.05em}$}
     \sbitbox{256}{$\LEBStoOSPOf{256}{\reprJOf{\AuthProvePublic}\kern 0.05em}$}
+    \sbitbox{256}{$32$-byte $\OutViewingKey$}
 \end{bytefield}
 \end{equation*}
 
@@ -7424,10 +7635,12 @@ The raw encoding of a \fullViewingKey consists of:
   \item $32$ bytes specifying the compressed Edwards encoding of $\AuthSignPublic$
         (see \crossref{jubjub}).
   \item $32$ bytes specifying the compressed Edwards encoding of $\AuthProvePublic$.
+  \item $32$ bytes specifying the \outgoingViewingKey $\OutViewingKey$.
 \end{itemize}
 
 When decoding this representation, the key is not valid if $\abstJ$ returns $\bot$
-for either point.
+for either $\AuthSignPublic$ or $\AuthProvePublic$, or if $\AuthSignPublic \notin \PrimeOrderJ$,
+or if $\AuthProvePublic \notin \SubgroupJ$.
 
 For \incomingViewingKeys on the production network, the \humanReadablePart is \ascii{zviews}.
 For \incomingViewingKeys on the test network, the \humanReadablePart is \ascii{zviewtestsapling}.
@@ -7442,7 +7655,7 @@ A \SproutOrNothing \spendingKey consists of $\AuthPrivate$, which is a sequence 
 
 \introlist
 The raw encoding of a \SproutOrNothing \spendingKey consists of:
-\vspace{2ex}
+\vspace{1ex}
 \begin{equation*}
 \begin{bytefield}[bitwidth=0.07em]{264}
 \changed{
@@ -7491,7 +7704,7 @@ A \Sapling \spendingKey consists of $\SpendingKey \typecolon \SpendingKeyType$
 
 \introlist
 The raw encoding of a \Sapling \spendingKey consists of:
-\vspace{2ex}
+\vspace{1ex}
 \begin{equation*}
 \begin{bytefield}[bitwidth=0.07em]{256}
     \sbitbox{256}{$\LEBStoOSPOf{256}{\SpendingKey}$}
@@ -7720,7 +7933,7 @@ $\versionField \geq 4$ and $\nShieldedSpend + \nShieldedOutput > 0$.
 
 \begin{consensusrules}
   \item The \transactionVersionNumber{} \MUST be greater than or equal to $1$.
-  \presaplingitem{The \fOverwintered{} flag \MUSTNOT be set\sprout{ in the protocol version described by this document}.}
+  \prenuzeroitem{The \fOverwintered{} flag \MUSTNOT be set\sprout{ in the protocol version described by this document}.}
   \nuzeroonwarditem{The \fOverwintered{} flag \MUST be set.}
   \nuzeroonwarditem{The \versionGroupID{} \MUST be recognized.}
   \nuzeroonlyitem{The \transactionVersionNumber{} \MUST be $3$ and the \versionGroupID{} \MUST
@@ -7894,6 +8107,8 @@ Consensus rules applying to a \joinSplitDescription are given in \crossref{joins
 
 Let $\LEBStoOSP{}{}$ be as defined in \crossref{endian}.
 
+Let $\reprJ$ be as defined in \crossref{jubjub}.
+
 An abstract \spendDescription, as described in \crossref{spendsandoutputs}, is encoded in
 a \transaction as an instance of a \type{SpendDescription} type as follows:
 
@@ -7932,6 +8147,10 @@ Consensus rules applying to a \spendDescription are given in \crossref{spenddesc
 
 Let $\LEBStoOSP{}{}$ be as defined in \crossref{endian}.
 
+Let $\reprJ$ be as defined in \crossref{jubjub}.
+
+Let $\ExtractJ$ be as defined in \crossref{concretegrouphashjubjub}.
+
 An abstract \outputDescription, described in \crossref{spendsandoutputs}, is encoded in
 a \transaction as an instance of an \type{OutputDescription} type as follows:
 
@@ -7943,13 +8162,13 @@ Bytes & \heading{Name} & \heading{Data Type} & \heading{Description} \\
 \hhline{|=|=|=|=|}
 
 $32$ & $\cvField$ & \type{char[32]} & A \valueCommitment to the value of the output \note,
-$\LEBStoOSPOf{256}{\cv}$. \\ \hline
+$\LEBStoOSPOf{256}{\reprJOf{\cv}\kern 0.05em}$. \\ \hline
 
-$32$ & $\cmField$ & \type{char[32]} & The \noteCommitment for the output \note,
-$\LEBStoOSPOf{256}{\cmU}$ where $\cmU = \ItoLEBSPOf{\MerkleHashLengthSapling}{\ExtractJ(\cm)}$. \\ \hline
+$32$ & $\cmField$ & \type{char[32]} & The $u$-coordinate of the \noteCommitment for the output \note,
+$\LEBStoOSPOf{256}{\cmU}$ where $\cmU = \ExtractJ(\cm)$. \\ \hline
 
-$32$ & $\ephemeralKey$ & \type{char[32]} & An encoding of a $\JubjubCurve$ public key $\EphemeralPublic$
-(see \crossref{concretesaplingkeyagreement}). \\ \hline
+$32$ & $\ephemeralKey$ & \type{char[32]} & An encoding of an ephemeral $\JubjubCurve$ public key,
+$\LEBStoOSPOf{256}{\reprJOf{\EphemeralPublic}}$. \\ \hline
 
 $580$ & $\encCiphertext$ & \type{char[580]} & A ciphertext component for the
 encrypted output \note, $\TransmitCiphertext{}$. \\ \hline
@@ -7963,8 +8182,8 @@ $\ProofOutput$ (see \crossref{groth}). \\ \hline
 \end{tabularx}
 \end{center}
 
-The $\ephemeralKey$ and $\encCiphertext$ fields together form the \noteCiphertext,
-which is computed as described in \crossref{saplinginband}.
+The $\ephemeralKey$, $\encCiphertext$, and $\outCiphertext$ fields together form the
+\noteCiphertext, which is computed as described in \crossref{saplinginband}.
 
 Consensus rules applying to an \outputDescription are given in \crossref{outputdesc}.
 }
@@ -8096,7 +8315,7 @@ The changes relative to \Bitcoin version $4$ blocks as described in \cite{Bitcoi
 \end{itemize}
 
 
-\introsection
+\intropart
 \subsection{Proof of Work}
 
 \Zcash uses Equihash \cite{BK2016} as its Proof of Work. Motivations for
@@ -8966,10 +9185,13 @@ The motivations for this change were as follows:
         properties of the scheme. (The Std 1363a-2004 version of ECIES \cite{IEEE2004}
         has a ``DHAES mode'' that allows this, but the representation of the key
         input is underspecified, leading to incompatible implementations.)
-        The scheme we use has both the ephemeral and recipient public key
-        encodings --which are unambiguous for $\KASproutCurve$-- and also $\hSig$ and
-        a nonce as described below, as input to the KDF. Note that being able to
-        break the Elliptic Curve Diffie-Hellman Problem on $\KASproutCurve$ (without breaking
+        The scheme we use\notsprout{ for \Sprout} has both the ephemeral and
+        recipient public key encodings --which are unambiguous for $\KASproutCurve$--
+        and also $\hSig$ and a nonce as described below, as input to the KDF.
+        \sapling{For \Sapling, it is only possible to include the ephemeral public
+        key encoding, but this is sufficient to retain the original security properties
+        of DHAES.} Note that being able to break the Elliptic Curve Diffie-Hellman Problem
+        on $\KASproutCurve$\sapling{ or $\JubjubCurve$} (without breaking
         $\SymSpecific$ as an authenticated encryption scheme or $\BlakeTwob{256}$ as
         a KDF) would not help to decrypt the \notesCiphertext unless
         $\TransmitPublic$ is known or guessed.
@@ -8985,7 +9207,8 @@ The motivations for this change were as follows:
         with knowledge of $\AuthPrivateOld{\allOld}$, so an adversary cannot
         modify it in a ciphertext from someone else's transaction for use in a
         chosen-ciphertext attack without detection.}
-        \sapling{In \Sapling, there is no equivalent to $\hSig$. \todo{Explain why this is ok.}}
+        \sapling{(In \Sapling, there is no equivalent to $\hSig$, but the \bindingSignature
+        and \spendAuthSignatures prevent such modifications.)}
   \item \sproutspecific{The scheme used by \SproutOrZcash includes an optimization that reuses
         the same ephemeral key (with different nonces) for the two ciphertexts
         encrypted in each \joinSplitDescription.}
@@ -9076,7 +9299,7 @@ distinct openings of the \noteCommitment when Condition I or II is violated.
           \Zcash \joinSplitStatement. $\cm$ can be computed from the other fields.
           \sapling{(The definition of \notes for \Sapling is different again.)}
     \item The length of proof encodings given in the paper is $288$
-          bytes.\sproutspecific{This differs from the $296$ bytes specified in \crossref{phgr},
+          bytes. \sproutspecific{This differs from the $296$ bytes specified in \crossref{phgr},
           because both the $x$-coordinate and compressed $y$-coordinate of each
           point need to be represented. Although it is possible to encode a proof
           in $288$ bytes by making use of the fact that elements of $\GF{q}$ can
@@ -9115,7 +9338,7 @@ Michael Dixon, Andrew Poelstra, and no doubt others. We would also like to
 thank the designers and developers of \Bitcoin.
 
 \Zcash has benefited from security audits performed by NCC Group, Coinspect,
-and Least Authority.
+Least Authority, and Mary Maller.
 
 The Faerie Gold attack was found by Zooko Wilcox; subsequent analysis
 of variations on the attack was performed by Daira Hopwood and Sean Bowe.
@@ -9129,8 +9352,20 @@ The errors in the proof of Ledger Indistinguishability mentioned in
 The design of \Sapling is primarily due to Matthew Green, Ian Miers,
 Daira Hopwood, Sean Bowe, and Jack Grigg. A potential attack linking
 \diversifiedPaymentAddresses, avoided in the adopted design, was
-found by Brian Warner.
-}
+found by Brian Warner.}
+
+Numerous people have contributed to the science of zero-knowledge proving
+systems, but we would particularly like to acknowledge the work of
+Shafi Goldwasser, Silvio Micali, Oded Goldreich, Rosario Gennaro,
+Bryan Parno, Jon Howell, Craig Gentry, Mariana Raykova, and Jens Groth.
+
+Many of the ideas used in \Zcash{} ---including the use of zero-knowledge proofs
+to resolve the tension between privacy and auditability, Merkle trees over
+note commitments\notsprout{ (using Pedersen hashes as in \Sapling)},
+and the use of ``serial numbers'' or \nullifiers to detect or prevent
+double-spends--- were first applied to privacy-preserving digital currencies
+by Tomas Sander and Amnon Ta–Shma. To a large extent \Zcash is a refinement
+of their ``Auditable, Anonymous Electronic Cash'' proposal in \cite{ST1999}.
 
 
 \intropart
@@ -9143,16 +9378,23 @@ found by Brian Warner.
           ``If $\nJoinSplit > 0$, the \transaction{} \MUSTNOT use \sighashTypes other than $\SIGHASHALL$.'',
           which was never implemented.
     \item Add section on signature hashing.
+    \item Correct the definition of set difference ($S \setminus T$).
+    \item Clarify that interstitial \treestates form a tree for each \transaction containing \joinSplitDescriptions.
     \item Clarify attribution of the \Zcash protocol design.
     \item Acknowledge Alex Biryukov and Dmitry Khovratovich as the designers of Equihash.
+    \item Acknowledge Shafi Goldwasser, Silvio Micali, Oded Goldreich, Rosario Gennaro, Bryan Parno, Jon Howell,
+          Craig Gentry, Mariana Raykova, and Jens Groth for their work on zero-knowledge proving systems.
+    \item Acknowledge Tomas Sander and Amnon Ta–Shma for \cite{ST1999}.
 \sapling{
     \item Use the more precise subgroup types $\SubgroupG$ and $\SubgroupJ$ in preference to
           $\GroupG{}$ and $\GroupJ$ where applicable.
     \item Correct the argument that $\vSum$ is in range in \crossref{saplingbalance}.
-    \item Correct or improve the types of $\GroupJHash{}$, $\FindGroupJHash$, $\ExtractJ$, $\PRFexpand{}$, and $\CRHivk$.
+    \item Correct or improve the types of $\GroupJHash{}$, $\FindGroupJHash$, $\ExtractJ$, $\PRFexpand{}$,
+          $\PRFock{}$, and $\CRHivk$.
+    \item Instantiate $\PRFock{}$ using $\BlakeTwob{256}$.
     \item Ensure that \Sprout functions and values are given \Sprout-specific types where appropriate.
     \item Improve cross-referencing.
-    \item Clarify the use of $\PHGR$ vs $\Groth$ proofs.
+    \item Clarify the use of $\PHGR$ vs $\Groth$ proofs in \joinSplitStatements.
     \item Model the group hash, and the use of $\BlakeTwosGeneric$ to construct the group hash, as random oracles.
           This appears to be unavoidable in order to allow proving unlinkability of $\DiversifyHash$.
     \item Rename $\mathsf{CRS}$ (Common Random String) to $\URS$ (\uniformRandomString), to
@@ -9258,7 +9500,7 @@ found by Brian Warner.
     \item Specify $\RedDSA$ and $\RedJubjub$.
     \item Specify \bindingSignatures and \spendAuthSignatures.
     \item Specify the randomness beacon.
-    \item Add output ciphertexts and $\OutCipherKey$.
+    \item Add \outputCiphertexts and $\OutCipherKey$.
     \item Define $\DefaultDiversifier$.
     \item Change the \spendCircuit and \outputCircuit specifications to remove unintended differences
           from sapling-crypto.
@@ -9869,9 +10111,11 @@ variables in $\GF{\ParamS{r}}$, each of the form:
 where $\lincomb{A}$, $\lincomb{B}$, and $\lincomb{C}$ are \linearCombinations
 of variables and constants in $\GF{\ParamS{r}}$.
 
-Here $\times$ and $\mult$ both represent multiplication in the field $\GF{\ParamS{r}}$,
-but we use $\times$ for multiplications corresponding to gates of the circuit,
+Here $\vartimes$ and $\mult$ both represent multiplication in the field $\GF{\ParamS{r}}$,
+but we use $\vartimes$ for multiplications corresponding to gates of the circuit,
 and $\mult$ for multiplications by constants in the terms of a \linearCombination.
+$\vartimes$ should not be confused with $\times$ which is defined as cartesian product
+in \crossref{notation}.
 
 \subsection{Elliptic curve background} \label{ecbackground}
 
@@ -9997,7 +10241,7 @@ The constraint ``either $a = 0$ or $b = c$'' can be implemented as:
 \introlist
 \subsubsubsection{Selection constraints} \label{cctselection}
 
-A selection constraint $b \bchoose x : y = z$, where $b \typecolon \bit$ has been
+A selection constraint $(b \bchoose x : y) = z$, where $b \typecolon \bit$ has been
 boolean-constrained, can be implemented as:
 
 \begin{formulae}
@@ -10453,19 +10697,19 @@ To look up a given window entry $w_{(B,\,i,\,s)} = (u_s, \varv_s)$, where
 $s = 4 \smult s_2 + 2 \smult s_1 + s_0$, we use:
 
 \begin{formulae}
-  \item $\lincomb{s_1} \times \lincomb{s_0} = \lincomb{s\suband}$
-  \item $\lincomb{s_2} \times \big(\!- u_0 \smult s\suband \plus u_0 \smult s_1 \plus u_0 \smult s_0 - u_0 \plus u_1 \smult s\suband
-                                     - u_1 \smult s_0 \plus u_2 \smult s\suband - u_2 \smult s_1 - u_3 \smult s\suband \\
-         \mhspace{3.28em}             \plus u_4 \smult s\suband - u_4 \smult s_1 - u_4 \smult s_0 \plus u_4 - u_5 \smult s\suband
-                                     \plus u_5 \smult s_0 - u_6 \smult s\suband \plus u_6 \smult s_1 \plus u_7 \smult s\suband\big) = \\
-         \mhspace{1.68em}     \lincomb{u_s - u_0 \smult s\suband \plus u_0 \smult s_1 \plus u_0 \smult s_0 - u_0 \plus u_1 \smult s\suband
-                                           - u_1 \smult s_0 \plus u_2 \smult s\suband - u_2 \smult s_1 - u_3 \smult s\suband}$
-  \item $\lincomb{s_2} \times \big(\!- \vv_0 \smult s\suband \plus \vv_0 \smult s_1 \plus \vv_0 \smult s_0 - \vv_0 \plus \vv_1 \smult s\suband
-                                     - \vv_1 \smult s_0 \plus \vv_2 \smult s\suband - \vv_2 \smult s_1 - \vv_3 \smult s\suband \\
-         \mhspace{3.27em}            \plus \vv_4 \smult s\suband - \vv_4 \smult s_1 - \vv_4 \smult s_0 \plus \vv_4 - \vv_5 \smult s\suband
-                                     \plus \vv_5 \smult s_0 - \vv_6 \smult s\suband \plus \vv_6 \smult s_1 \plus \vv_7 \smult s\suband\big) = \\
-         \mhspace{1.66em}     \lincomb{\vv_s - \vv_0 \smult s\suband \plus \vv_0 \smult s_1 \plus \vv_0 \smult s_0 - \vv_0 \plus \vv_1 \smult s\suband
-                                             - \vv_1 \smult s_0 \plus \vv_2 \smult s\suband - \vv_2 \smult s_1 - \vv_3 \smult s\suband}$
+  \item $\constraint{s_1}{s_0}{s\suband}$
+  \item $\lconstraint{s_2} \big(\!- u_0 \smult s\suband \plus u_0 \smult s_1 \plus u_0 \smult s_0 - u_0 \plus u_1 \smult s\suband
+                                  - u_1 \smult s_0 \plus u_2 \smult s\suband - u_2 \smult s_1 - u_3 \smult s\suband \\
+         \mhspace{3.52em}     \plus u_4 \smult s\suband - u_4 \smult s_1 - u_4 \smult s_0 \plus u_4 - u_5 \smult s\suband
+                              \plus u_5 \smult s_0 - u_6 \smult s\suband \plus u_6 \smult s_1 \plus u_7 \smult s\suband\big) = \\
+         \mhspace{1.92em}  \lincomb{u_s - u_0 \smult s\suband \plus u_0 \smult s_1 \plus u_0 \smult s_0 - u_0 \plus u_1 \smult s\suband
+                                  - u_1 \smult s_0 \plus u_2 \smult s\suband - u_2 \smult s_1 - u_3 \smult s\suband}$
+  \item $\lconstraint{s_2} \big(\!- \vv_0 \smult s\suband \plus \vv_0 \smult s_1 \plus \vv_0 \smult s_0 - \vv_0 \plus \vv_1 \smult s\suband
+                                  - \vv_1 \smult s_0 \plus \vv_2 \smult s\suband - \vv_2 \smult s_1 - \vv_3 \smult s\suband \\
+         \mhspace{3.51em}     \plus \vv_4 \smult s\suband - \vv_4 \smult s_1 - \vv_4 \smult s_0 \plus \vv_4 - \vv_5 \smult s\suband
+                              \plus \vv_5 \smult s_0 - \vv_6 \smult s\suband \plus \vv_6 \smult s_1 \plus \vv_7 \smult s\suband\big) = \\
+         \mhspace{1.90em}  \lincomb{\vv_s - \vv_0 \smult s\suband \plus \vv_0 \smult s_1 \plus \vv_0 \smult s_0 - \vv_0 \plus \vv_1 \smult s\suband
+                                  - \vv_1 \smult s_0 \plus \vv_2 \smult s\suband - \vv_2 \smult s_1 - \vv_3 \smult s\suband}$
 \end{formulae}
 
 This costs $3$ constraints for each of $84$ window lookups, plus $6$ constraints for
@@ -10531,7 +10775,7 @@ to allow several optimizations in the circuit implementation.
 
 \xPedersenHashes are the single most commonly used primitive in the
 \Sapling circuits. $\MerkleDepthSapling$ \xPedersenHash instances are used
-in the \spendCircuit to check a Merkle path to the \noteCommitment of the
+in the \spendCircuit to check a \merklePath to the \noteCommitment of the
 \note being spent. We also reuse the \xPedersenHash implementation to
 construct the \commitmentScheme $\NoteCommitSaplingAlg$.
 

@@ -120,6 +120,9 @@
 \newlist{formulae}{itemize}{3}
 \setlist[formulae]{itemsep=0.2ex,topsep=0ex,leftmargin=1.5em,label=,after=\vspace{1.5ex}}
 
+\newlist{algorithm}{itemize}{3}
+\setlist[algorithm]{itemsep=0ex,topsep=0ex,leftmargin=1.5em,label=,after=\vspace{1.5ex}}
+
 \newlist{lines}{itemize}{3}
 \setlist[lines]{itemsep=-0.5ex,topsep=0ex,before=\vspace{1ex},leftmargin=1.6em,label=,after=\vspace{1ex}}
 
@@ -1038,6 +1041,7 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\NoteCommitSaplingAlg}{\mathsf{NoteCommit}^{\mathsf{Sapling}}}
 \newcommand{\NoteCommitSapling}[1]{\NoteCommitSaplingAlg_{#1}}
 \newcommand{\NoteCommitSaplingTrapdoor}{\NoteCommitSaplingAlg\mathsf{.Trapdoor}}
+\newcommand{\NoteCommitSaplingTrapdoorBytes}{\byteseq{32}}
 \newcommand{\NoteCommitSaplingInput}{\NoteCommitSaplingAlg\mathsf{.Input}}
 \newcommand{\NoteCommitSaplingOutput}{\NoteCommitSaplingAlg\mathsf{.Output}}
 \newcommand{\ValueCommitAlg}{\mathsf{ValueCommit}}
@@ -1130,6 +1134,8 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\NotePlaintext}[1]{\mathbf{np}_{#1}}
 \newcommand{\OutPlaintext}{\mathbf{op}}
 \newcommand{\NoteCommitRand}{\mathsf{\sprout{r}\notsprout{rcm}}}
+\newcommand{\NoteCommitRandBytes}{\bytes{\NoteCommitRand}}
+\newcommand{\NoteCommitRandBytesType}{\byteseq{32}}
 \newcommand{\NoteCommitRandLength}{\mathsf{\ell_{\NoteCommitRand}}}
 \newcommand{\NoteCommitRandOld}[1]{\NoteCommitRand^\mathsf{old}_{#1}}
 \newcommand{\NoteCommitRandNew}[1]{\NoteCommitRand^\mathsf{new}_{#1}}
@@ -1151,6 +1157,8 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\nf}{\mathsf{nf}}
 \newcommand{\nfOld}[1]{\nf^\mathsf{old}_{#1}}
 \newcommand{\Memo}{\mathsf{memo}}
+\newcommand{\MemoByteLength}{512}
+\newcommand{\MemoType}{\byteseq{\MemoByteLength}}
 \newcommand{\DecryptNoteSprout}{\mathtt{DecryptNote\notsprout{Sprout}}}
 \newcommand{\DecryptNoteSapling}{\mathtt{DecryptNoteSapling}}
 \newcommand{\ReplacementCharacter}{\textsf{U+FFFD}}
@@ -2358,21 +2366,35 @@ knowledge of $\AuthSignPrivate$.}
 Transmitted \notes are stored on the \blockchain in encrypted form, together with
 a representation of the \noteCommitment $\cm$.
 
-The \notePlaintexts in a \joinSplitDescription are encrypted to the
+The \notePlaintexts in each \joinSplitDescription are encrypted to the
 respective \transmissionKeys $\TransmitPublicNew{\allNew}$.
+
+\introlist
 Each \SproutOrNothing{} \notePlaintext (denoted $\NotePlaintext{}$) consists of
-$(\Value, \NoteAddressRand, \NoteCommitRand\changed{, \Memo})$.
+
+\vspace{-1ex}
+\begin{formulae}
+  \item $(\Value \typecolon \ValueType, \NoteAddressRand \typecolon \PRFOutputSprout,
+          \NoteCommitRand \typecolon \NoteCommitSproutTrapdoor\changed{, \Memo \typecolon \MemoType})$.
+\end{formulae}
 
 \saplingonward{
 The \notePlaintext in each \outputDescription is encrypted to the
-\diversifiedTransmissionKey $\DiversifiedTransmitPublic$.
+\diversifiedPaymentAddress $(\Diversifier, \DiversifiedTransmitPublic)$.
+
+\introlist
 Each \Sapling{} \notePlaintext (denoted $\NotePlaintext{}$) consists of
-$(\Diversifier, \Value, \NoteCommitRand, \Memo)$.
+
+\vspace{-1ex}
+\begin{formulae}
+  \item $(\Diversifier \typecolon \DiversifierType, \Value \typecolon \ValueType,
+          \NoteCommitRandBytes \typecolon \NoteCommitSaplingTrapdoorBytes, \Memo \typecolon \MemoType)$.
+\end{formulae}
 } %saplingonward
 
 \changed{
-$\Memo$ represents a \memo associated with this \note. The usage of the
-\memo is by agreement between the sender and recipient of the \note.
+$\Memo$ represents a $\MemoByteLength$-byte \memo associated with this \note.
+The usage of the \memo is by agreement between the sender and recipient of the \note.
 }
 
 Other fields are as defined in \crossref{notes}.
@@ -2700,7 +2722,7 @@ in the \spendStatement to confirm use of the correct $\NoteAddressRand$ value as
 input to \nullifier derivation. It is instantiated in \crossref{concretemixinghash}.
 
 $\DiversifyHash \typecolon \DiversifierType \rightarrow \PrimeOrderJ$ is a \hashFunction
-satisfying the Unlinkability security property described in \crossref{abstractgrouphash}.
+satisfying the Unlinkability security property described in \crossref{concretediversifyhash}.
 It is used to derive a \diversifiedBase from a \diversifier in \crossref{saplingkeycomponents}.
 It is instantiated in \crossref{concretediversifyhash}.
 } %sapling
@@ -2784,23 +2806,12 @@ for any $\Key \in \Keyspace$ and $\Ptext \in \Plaintext$,
 $\SymDecrypt{\Key}(\SymEncrypt{\Key}(\Ptext)) = \Ptext$.
 $\bot$ is used to represent the decryption of an invalid ciphertext.
 
-\sprout{
 \vspace{-3ex}
 \securityrequirement{
 $\Sym$ must be one-time (INT-CTXT $\wedge$ IND-CPA)-secure \cite{BN2007}.
 \quotedterm{One-time} here means that an honest protocol participant will almost
 surely encrypt only one message with a given key; however, the adversary may make
 many adaptive chosen ciphertext queries for a given key.
-}}
-\notsprout{
-\vspace{-2ex}
-\begin{securityrequirements}
-  \item $\Sym$ must be one-time (INT-CTXT $\wedge$ IND-CPA)-secure \cite{BN2007}.
-        \quotedterm{One-time} here means that an honest protocol participant will almost
-        surely encrypt only one message with a given key; however, the adversary may make
-        many adaptive chosen ciphertext queries for a given key.
-  \saplingonwarditem{...}
-\end{securityrequirements}
 }
 
 \subsubsection{\KeyAgreement} \label{abstractkeyagreement}
@@ -3077,12 +3088,12 @@ $Q \typecolon \powerset{\SigMessage \times \SigSignature}$ initialized to $\seto
 that records queried messages and corresponding signatures.
 
 \vspace{1ex}
-\begin{formulae}
+\begin{algorithm}
   \item $\Oracle_{\sk} :=$ var $Q \leftarrow \setof{}$ in $\fun{(m \typecolon \SigMessage, \SigRandomizer \typecolon \SigRandom)}{}$
   \item \tab let $\sigma = \SigSign{\SigRandomizePrivate(\SigRandomizer, \sk)}(m)$
   \item \tab $Q \leftarrow Q \union \setof{(m, \sigma)}$
   \item \tab return $\sigma \typecolon \SigSignature$.
-\end{formulae}
+\end{algorithm}
 
 For random $\sk \leftarrowR \SigGenPrivate()$ and $\vk = \SigDerivePublic(\sk)$, it must be
 infeasible for an adversary given $\vk$ and a new instance of $\Oracle_{\sk}$ to find
@@ -3680,14 +3691,18 @@ if this happens, discard the key and repeat with a different $\SpendingKey$.
 
 \vspace{-3ex}
 \begin{nnotes}
-  \item Assume that $\PRFexpand{}$ is a PRF with output range $\PRFOutputExpand$, and define
-        $f \typecolon \SpendingKeyType \times \PRFInputExpand \rightarrow \GF{\ParamJ{r}}$ by
-        \begin{formulae}
-          \item $f_{\sk}(t) := \ToScalar(\PRFexpand{\SpendingKey}(t))$.
-        \end{formulae}
-        Then $f$ is also a PRF, since $\LEOStoIP{512} \typecolon \PRFOutputExpand \rightarrow \binaryrange{512}$
-        is injective and $2^{512}$ is large compared to $\ParamJ{r}$. It follows that the
-        distribution of $\AuthSignPrivate$,
+  \item Assume that $\PRFexpand{}$ is a PRF with output range $\PRFOutputExpand$, where
+        $2^{\PRFOutputLengthExpand}$ is large compared to $\ParamJ{r}$.
+
+        Define $f \typecolon \SpendingKeyType \times \PRFInputExpand \rightarrow \GF{\ParamJ{r}}$ by
+        $f_{\sk}(t) := \ToScalar(\PRFexpand{\SpendingKey}(t))$.
+
+        Then $f$ is also a PRF, since
+        $\LEOStoIP{\PRFOutputLengthExpand} \typecolon \PRFOutputExpand \rightarrow \binaryrange{\PRFOutputLengthExpand}$
+        is injective, and the bias introduced by the reduction modulo $\ParamJ{r}$ is small
+        because \crossref{constants} defines $\PRFOutputLengthExpand$ as $512$.
+
+        It follows that the distribution of $\AuthSignPrivate$,
         i.e.\ $\PRFexpand{\SpendingKey}([0]) : \SpendingKey \leftarrowR \SpendingKeyType$,
         is computationally indistinguishable from that of $\SpendAuthSigGenPrivate()$ (defined
         in \crossref{concretespendauthsig}).
@@ -3945,9 +3960,21 @@ containing one or more \outputDescriptions.
 Let $\ValueCommitAlg$ and $\NoteCommitSaplingAlg$ be as specified in \crossref{abstractcommit}.
 
 Let $\reprJ$ and $\ParamJ{h}$ be as defined in \crossref{jubjub}.
-\vspace{0.5ex}
+
+\vspace{2ex}
+Let $\OutViewingKey$ be the \outgoingViewingKey of the address from which the payment
+is being sent.
+
+\vspace{-4ex}
+\pnote{If a payment is sent from multiple addresses, the sender \MAY choose one
+of the addresses for this purpose. Alternatively, the sender \MAY use a separate
+\outgoingViewingKey for all payments associated with an \quotedterm{account}.
+The latter is intended to be defined in \cite{ZIP-32} which is currently in draft.
+If the sender prefers to obtain forward secrecy of the payment information with
+respect to compromise of its own secrets, it \MAY set $\OutViewingKey = \bot$.}
 
 \introlist
+\vspace{2ex}
 For each \outputDescription, the sender selects a value $\ValueNew{}$ and a destination
 \Sapling \paymentAddress $(\Diversifier, \DiversifiedTransmitPublic)$, and then performs
 the following steps:
@@ -3978,11 +4005,13 @@ the following steps:
                                                                    \ValueNew{})$
         \end{tabular}
 
-  \item Let $\NotePlaintext{} = (\Diversifier, \ValueNew{}, \NoteCommitRandNew{}, \Memo)$.
+  \item Let $\NotePlaintext{} = (\Diversifier, \ValueNew{}, \NoteCommitRandBytes, \Memo)$, where
+        $\NoteCommitRandBytes = \LEBStoOSPOf{256}{\ItoLEBSP{256}(\NoteCommitRandNew{})\kern-0.12em}$.
 
   \item Encrypt $\NotePlaintext{}$, $\cvNew{}$, and $\cmNew{}$ to the recipient
         \diversifiedTransmissionKey $\DiversifiedTransmitPublic$ with
-        \diversifiedTransmissionBase $\DiversifiedTransmitBase$, giving the \noteCiphertext
+        \diversifiedTransmissionBase $\DiversifiedTransmitBase$, and with
+        \outgoingViewingKey $\OutViewingKey$, giving the \noteCiphertext
         $(\EphemeralPublic, \TransmitCiphertext{}, \OutCiphertext)$
         as described in \crossref{saplingencrypt}.
 
@@ -4892,9 +4921,9 @@ Let $\NotePlaintext{\allNew}$ be \SproutOrNothing \notePlaintexts
 defined in \crossref{notept}.
 
 \introlist
+\vspace{1ex}
 Then to encrypt:
 
-\vspace{-1ex}
 \begin{itemize}
 \changed{
   \item Generate a new $\KASprout$ (public, private) key pair
@@ -4912,11 +4941,11 @@ $(\EphemeralPublic, \EphemeralPrivate)$.
 }
 \end{itemize}
 
-\vspace{-2.5ex}
+\vspace{-2ex}
 The resulting \notesCiphertext is $\changed{(\EphemeralPublic,
 \TransmitCiphertext{\allNew})}$.
 
-\vspace{-3ex}
+\vspace{-2ex}
 \pnote{
 It is technically possible to replace $\TransmitCiphertext{i}$ for a given \note
 with a random (and undecryptable) dummy ciphertext, relying instead on out-of-band
@@ -4935,7 +4964,7 @@ $\TransmitPrivate$ as specified in \crossref{sproutkeycomponents}.
 
 Let $\cmNew{\allNew}$ be the \noteCommitments of each output coin.
 
-\introlist
+\introsection
 \vspace{0.5ex}
 Then for each $i \in \setofNew$, the recipient will attempt to decrypt that ciphertext
 component $(\EphemeralPublic, \TransmitCiphertext{i})$ as follows:
@@ -4957,8 +4986,10 @@ is defined as follows:
   \item let $\TransmitPlaintext{i} =
 \SymDecrypt{\TransmitKey{i}}(\TransmitCiphertext{i})$
   \item if $\TransmitPlaintext{i} = \bot$, return $\bot$
-  \item extract $\NotePlaintext{i} = (\ValueNew{i},
-\NoteAddressRandNew{i}, \NoteCommitRandNew{i}, \Memo_i)$ from $\TransmitPlaintext{i}$
+  \item extract $\NotePlaintext{i} = (\ValueNew{i} \typecolon \ValueType,
+\NoteAddressRandNew{i} \typecolon \PRFOutputSprout,
+\NoteCommitRandNew{i} \typecolon \NoteCommitSproutTrapdoor,
+\Memo_i \typecolon \MemoType)$ from $\TransmitPlaintext{i}$
   \item if $\NoteCommitmentSprout((\AuthPublic, \ValueNew{i}, \NoteAddressRandNew{i},
 \NoteCommitRandNew{i})) \neq \cmNew{i}$, return $\bot$, else return $\NotePlaintext{i}$.
 \end{formulae}
@@ -5003,10 +5034,11 @@ is encrypted using a fresh ephemeral public key.
 For both encryption and decryption,
 
 \begin{itemize}
+  \item let $\OutViewingKeyLength$ be as defined in \crossref{constants};
   \item let $\Sym$ be the \encryptionScheme instantiated in \crossref{concretesym};
   \item let $\KDFSapling$ be the \keyDerivationFunction instantiated in \crossref{concretesaplingkdf};
   \item let $\KASapling$ be the \keyAgreementScheme instantiated in \crossref{concretesaplingkeyagreement};
-  \item let $\reprJ$ be as defined in \crossref{jubjub};
+  \item let $\ellJ$ and $\reprJ$ be as defined in \crossref{jubjub};
   \item let $\ExtractJ$ be as defined in \crossref{concreteextractorjubjub}.
 \end{itemize}
 } %sapling
@@ -5023,32 +5055,38 @@ and let $\DiversifiedTransmitBaseNew \typecolon \KASaplingPublicPrimeOrder$ be t
 Since \Sapling \note encryption is used only in the context of \crossref{saplingsend}, we may assume that
 $\DiversifiedTransmitBaseNew$ has already been calculated and is not $\bot$.
 
-Let $\OutViewingKey \typecolon \OutViewingKeyType$ be the \outgoingViewingKey of the
-\paymentAddress from which the \note is being spent.
+Let $\OutViewingKey \typecolon \maybe{\OutViewingKeyType}$ be as described in \crossref{saplingsend},
+i.e.\ the \outgoingViewingKey of the \paymentAddress from which the \note is being spent, or an
+\outgoingViewingKey associated with a \cite{ZIP-32} account, or $\bot$.
 
 \introsection
-Let $\NotePlaintext{} = (\Diversifier, \Value, \NoteCommitRand, \Memo)$ be the \Sapling{} \notePlaintext.
+Let $\NotePlaintext{} = (\Diversifier, \Value, \NoteCommitRandBytes, \Memo)$ be the \Sapling{} \notePlaintext.
 
 $\NotePlaintext{}$ is encoded as defined in \crossref{notept}.
 
 Let $\cvNew{}$ be the \valueCommitment for the new \note, and let $\cmNew{}$ be the \noteCommitment.
 
+\introlist
 Then to encrypt:
 
-\begin{itemize}
+\begin{algorithm}
   \item choose a uniformly random ephemeral private key $\EphemeralPrivate \leftarrowR \KASaplingPrivate$
   \item let $\EphemeralPublic = \KASaplingDerivePublic(\EphemeralPrivate, \DiversifiedTransmitBaseNew)$
   \item let $\TransmitPlaintext{}$ be the raw encoding of $\NotePlaintext{}$
   \item let $\DHSecret{} = \KASaplingAgree(\EphemeralPrivate, \DiversifiedTransmitPublicNew)$
   \item let $\TransmitKey{} = \KDFSapling(\DHSecret{}, \EphemeralPublic)$
   \item let $\TransmitCiphertext{} = \SymEncrypt{\TransmitKey{}}(\TransmitPlaintext{})$
-  \item let $\cvField = \LEBStoOSP{\ellJ}\big(\reprJ(\cvNew{})\kern-0.12em\big)$
-  \item let $\cmField = \LEBStoOSP{256}\big(\ExtractJ(\cmNew{})\kern-0.15em\big)$
-  \item let $\ephemeralKey = \LEBStoOSPOf{\ellJ}{\reprJOf{\EphemeralPublic}}$
-  \item let $\OutCipherKey = \PRFock{\OutViewingKey}(\cvField, \cmField, \ephemeralKey)$
-  \item let $\OutPlaintext = \LEBStoOSPOf{512}{\reprJ(\DiversifiedTransmitPublicNew) \,\bconcat\, \ItoLEBSPOf{256}{\EphemeralPrivate}\kern-0.12em}$
+  \item if $\OutViewingKey = \bot$:
+  \item \tab choose random $\OutCipherKey \leftarrowR \Keyspace$ and $\OutPlaintext \leftarrowR \byteseq{(\ellJ + 256)/8}$
+  \item else:
+  \item \tab let $\cvField = \LEBStoOSP{\ellJ}\big(\reprJ(\cvNew{})\kern-0.12em\big)$
+  \item \tab let $\cmField = \LEBStoOSP{256}\big(\ExtractJ(\cmNew{})\kern-0.15em\big)$
+  \item \tab let $\ephemeralKey = \LEBStoOSPOf{\ellJ}{\reprJOf{\EphemeralPublic}}$
+  \item \tab let $\OutCipherKey = \PRFock{\OutViewingKey}(\cvField, \cmField, \ephemeralKey)$
+  \item \tab let $\OutPlaintext = \LEBStoOSPOf{\ellJ + 256}{\reprJ(\DiversifiedTransmitPublicNew) \,\bconcat\, \ItoLEBSPOf{256}{\EphemeralPrivate}\kern-0.12em}$
+  \item \vspace{-2ex}
   \item let $\OutCiphertext = \SymEncrypt{\OutCipherKey}(\OutPlaintext)$
-\end{itemize}
+\end{algorithm}
 
 The resulting \noteCiphertext is $(\EphemeralPublic, \TransmitCiphertext{}, \OutCiphertext)$.
 
@@ -5068,8 +5106,8 @@ received out-of-band, which are not addressed in this document.
 \sapling{
 \subsubsection{Decryption using an Incoming Viewing Key (\Sapling)} \label{saplingdecryptivk}
 
-Let $\InViewingKey$ be the recipient's \incomingViewingKey, as specified in
-\crossref{saplingkeycomponents}.
+Let $\InViewingKey \typecolon \InViewingKeyTypeSapling$ be the recipient's \incomingViewingKey,
+as specified in \crossref{saplingkeycomponents}.
 
 Let $(\EphemeralPublic, \TransmitCiphertext{}, \OutCiphertext)$ be the \noteCiphertext from the
 \outputDescription{}. Let $\cmField$ be that field of the \outputDescription (encoding the
@@ -5079,20 +5117,22 @@ $u$-coordinate of the \noteCommitment).
 The recipient will attempt to decrypt the $\EphemeralPublic$ and $\TransmitCiphertext{}$
 components of the \noteCiphertext as follows:
 
-\begin{formulae}
+\begin{algorithm}
   \item let $\DHSecret{} = \KASaplingAgree(\InViewingKey, \EphemeralPublic)$
   \item let $\TransmitKey{} = \KDFSapling(\DHSecret{}, \EphemeralPublic)$
   \item let $\TransmitPlaintext{} = \SymDecrypt{\TransmitKey{}}(\TransmitCiphertext{})$
   \item if $\TransmitPlaintext{} = \bot$, return $\bot$
-  \item extract $\NotePlaintext{} = (\Diversifier, \Value, \NoteCommitRand, \Memo)$ from $\TransmitPlaintext{}$
+  \item extract $\NotePlaintext{} = (\Diversifier \typecolon \DiversifierType, \Value \typecolon \ValueType,
+\NoteCommitRandBytes \typecolon \NoteCommitSaplingTrapdoorBytes, \Memo \typecolon \MemoType)$ from $\TransmitPlaintext{}$
+  \item let $\NoteCommitRand = \LEOStoIPOf{256}{\NoteCommitRandBytes}$
   \item let $\DiversifiedTransmitBase = \DiversifyHash(\Diversifier)$
-  \item if $\DiversifiedTransmitBase = \bot$, return $\bot$
+  \item if $\NoteCommitRand \geq \ParamJ{r}$ or $\DiversifiedTransmitBase = \bot$, return $\bot$
   \item let $\DiversifiedTransmitPublic = \KASaplingDerivePublic(\InViewingKey, \DiversifiedTransmitBase)$
   \item let $\cmU' = \ExtractJ\big(\NoteCommitSapling{\NoteCommitRandNew{}}(\reprJOf{\DiversifiedTransmitBase},
                                                                             \reprJOf{\DiversifiedTransmitPublic},
                                                                             \Value)\kern-0.12em\big)$.
   \item if $\LEBStoOSPOf{256}{\cmU'} \neq \cmField$, return $\bot$, else return $\NotePlaintext{}$.
-\end{formulae}
+\end{algorithm}
 
 A received \Sapling{} \note is necessarily a \positionedNote, and so its
 $\NoteAddressRand$ value can immediately be calculated as described in
@@ -5103,6 +5143,7 @@ the \nullifierKey $\AuthProvePublicRepr$; the coin is unspent if and only if
 $\nf = \PRFnfSapling{\AuthProvePublicRepr}\big(\reprJ(\NoteAddressRand)\kern-0.15em\big)$ is not in the
 \nullifierSet for that \blockchain.
 
+\vspace{-3ex}
 \pnote{
 A \note can change from being unspent to spent as a node's view of the best
 \blockchain is extended by new \transactions. Also, \blockchain reorganizations
@@ -5115,25 +5156,22 @@ contain the \transaction in which a \note was output.
 \sapling{
 \subsubsection{Decryption using a Full Viewing Key (\Sapling)} \label{saplingdecryptovk}
 
-Let $\OutViewingKey$ be the recipient's \outgoingViewingKey, as specified in
-\crossref{saplingkeycomponents}.
+Let $\OutViewingKey \typecolon \OutViewingKeyType$ be the \outgoingViewingKey, as specified
+in \crossref{saplingkeycomponents}, that is to be used for decryption.
+(If $\OutViewingKey = \bot$ was used for encryption, the payment is not decryptable by
+this method.)
 
-Let $(\EphemeralPublic, \TransmitCiphertext{}, \OutCiphertext)$ be the \noteCiphertext
-from the \outputDescription{}.
-
-Let $\cvField$, $\cmField$, and $\ephemeralKey$ be those
+Let $(\EphemeralPublic, \TransmitCiphertext{}, \OutCiphertext)$ be the \noteCiphertext,
+and let $\cvField$, $\cmField$, and $\ephemeralKey$ be those
 fields of the \outputDescription (encoding the \valueCommitment, the $u$-coordinate
-of the \noteCommitment, and $\EphemeralPublic$ respectively).
+of the \noteCommitment, and $\EphemeralPublic$).
 
-\vspace{-2ex}
-\pnote{For a valid \transaction it must be the case that
-$\ephemeralKey = \LEBStoOSP{\ellJ}\big(\reprJOf{\EphemeralPublic}\kern-0.15em\big)$.}
-
-\vspace{2ex}
+\introlist
+\vspace{1ex}
 The \outgoingViewingKey holder will attempt to decrypt the \noteCiphertext as follows:
 
 \introlist
-\begin{formulae}
+\begin{algorithm}
   \item let $\OutCipherKey = \PRFock{\OutViewingKey}(\cvField, \cmField, \ephemeralKey)$
   \item let $\OutPlaintext = \SymDecrypt{\OutCipherKey}(\OutCiphertext)$
   \item if $\OutPlaintext = \bot$, return $\bot$
@@ -5144,20 +5182,25 @@ The \outgoingViewingKey holder will attempt to decrypt the \noteCiphertext as fo
   \item let $\TransmitKey{} = \KDFSapling(\DHSecret{}, \EphemeralPublic)$
   \item let $\TransmitPlaintext{} = \SymDecrypt{\TransmitKey{}}(\TransmitCiphertext{})$
   \item if $\TransmitPlaintext{} = \bot$, return $\bot$
-  \item extract $\NotePlaintext{} = (\Diversifier, \Value, \NoteCommitRand, \Memo)$ from $\TransmitPlaintext{}$
+  \item extract $\NotePlaintext{} = (\Diversifier \typecolon \DiversifierType, \Value \typecolon \ValueType,
+\NoteCommitRandBytes \typecolon \NoteCommitSaplingTrapdoorBytes, \Memo \typecolon \MemoType)$ from $\TransmitPlaintext{}$
+  \item let $\NoteCommitRand = \LEOStoIPOf{256}{\NoteCommitRandBytes}$
   \item let $\DiversifiedTransmitBase = \DiversifyHash(\Diversifier)$
-  \item if $\DiversifiedTransmitBase = \bot$, return $\bot$
+  \item if $\NoteCommitRand \geq \ParamJ{r}$ or $\DiversifiedTransmitBase = \bot$, return $\bot$
   \item if $\KASaplingDerivePublic(\EphemeralPrivate, \DiversifiedTransmitBase) \neq \EphemeralPublic$,
         return $\bot$
   \item let $\cmU' = \ExtractJ\big(\NoteCommitSapling{\NoteCommitRandNew{}}(\reprJOf{\DiversifiedTransmitBase},
                                                                             \reprJOf{\DiversifiedTransmitPublic},
                                                                             \Value)\kern-0.12em\big)$.
   \item if $\LEBStoOSPOf{256}{\cmU'} \neq \cmField$, return $\bot$, else return $\NotePlaintext{}$.
-\end{formulae}
+\end{algorithm}
 } %sapling
 
+\vspace{-2ex}
+\pnote{For a valid \transaction it must be the case that
+$\ephemeralKey = \LEBStoOSP{\ellJ}\big(\reprJOf{\EphemeralPublic}\kern-0.15em\big)$.}
 
-\intropart
+
 \subsection{\Blockchain{} Scanning\pSproutOrNothing} \label{sproutscan}
 
 The following algorithm can be used, given the \blockchain and a
@@ -5171,14 +5214,14 @@ Let $\PRFOutputLengthSprout$ be as defined in \crossref{constants}.
 Let $\NoteTypeSprout$ be as defined in \crossref{notes}.
 
 \vspace{1ex}
-Let $\InViewingKey = (\AuthPublic, \TransmitPrivate)$ be the \incomingViewingKey
-corresponding to $\AuthPrivate$, and let $\TransmitPublic$ be the associated
+Let $\InViewingKey = (\AuthPublic \typecolon \PRFOutputSprout, \TransmitPrivate \typecolon \KASproutPrivate)$
+be the \incomingViewingKey corresponding to $\AuthPrivate$, and let $\TransmitPublic$ be the associated
 \transmissionKey, as specified in \crossref{sproutkeycomponents}.
 
 \introsection
 \vspace{2ex}
-\begin{formulae}
-  \item Initialize $\ReceivedSet \typecolon \powerset{\NoteTypeSprout \times \Memo} = \setof{}$.
+\begin{algorithm}
+  \item Initialize $\ReceivedSet \typecolon \powerset{\NoteTypeSprout \times \MemoType} = \setof{}$.
   \item Initialize $\SpentSet \typecolon \powerset{\NoteTypeSprout} = \setof{}$.
   \item Initialize $\NullifierMap \typecolon \PRFOutputSprout \rightarrow \NoteTypeSprout$ to the empty mapping.
         \vspace{1ex}
@@ -5191,8 +5234,8 @@ corresponding to $\AuthPrivate$, and let $\TransmitPublic$ be the associated
                        $(\EphemeralPublic, \TransmitCiphertext{i})$ using $\InViewingKey$ with the
                        \vspace{-1.2ex}
   \item \tab \tab \tab algorithm in \crossref{sproutdecrypt}. If this succeeds giving $\NotePlaintext{}$:
-  \item \tab \tab \tab \tab Extract $\NoteTuple{}$ and $\Memo$ from $\NotePlaintext{}$ (taking the
-                            $\AuthPublic$ field of the \note to be $\AuthPublic$ from
+  \item \tab \tab \tab \tab Extract $\NoteTuple{}$ and $\Memo \typecolon \MemoType$ from $\NotePlaintext{}$
+                            (taking the $\AuthPublic$ field of the \note to be $\AuthPublic$ from
                             $\InViewingKey$).
   \item \tab \tab \tab \tab Add $(\NoteTuple{}, \Memo)$ to $\ReceivedSet$.
   \item \tab \tab \tab \tab Calculate the nullifier $\nf$ of $\NoteTuple{}$ using $\AuthPrivate$
@@ -5205,7 +5248,7 @@ corresponding to $\AuthPrivate$, and let $\TransmitPublic$ be the associated
                        to $\SpentSet$.
   \item \vspace{-2ex}
   \item Return $(\ReceivedSet, \SpentSet)$.
-\end{formulae}
+\end{algorithm}
 
 
 \sapling{
@@ -5218,8 +5261,9 @@ Typically, these components are derived from a \fullViewingKey as described in
 \crossref{saplingkeycomponents}.
 
 The following algorithm can be used, given the \blockchain and
-$(\AuthProvePublic, \InViewingKey)$, to obtain each \note sent to the corresponding
-\paymentAddress, its \memo field, and its final status (spent or unspent).
+$(\AuthProvePublic \typecolon \SubgroupJ, \InViewingKey \typecolon \InViewingKeyTypeSapling)$,
+to obtain each \note sent to the corresponding \paymentAddress, its \memo field,
+and its final status (spent or unspent).
 
 \vspace{1ex}
 Let $\PRFOutputLengthNfSapling$ be as defined in \crossref{constants}.
@@ -5227,8 +5271,8 @@ Let $\PRFOutputLengthNfSapling$ be as defined in \crossref{constants}.
 Let $\NoteTypeSapling$ be as defined in \crossref{notes}.
 
 \introsection
-\begin{formulae}
-  \item Initialize $\ReceivedSet \typecolon \powerset{\NoteTypeSapling \times \Memo} = \setof{}$.
+\begin{algorithm}
+  \item Initialize $\ReceivedSet \typecolon \powerset{\NoteTypeSapling \times \MemoType} = \setof{}$.
   \item Initialize $\SpentSet \typecolon \powerset{\NoteTypeSapling} = \setof{}$.
   \item Initialize $\NullifierMap \typecolon \PRFOutputNfSapling \rightarrow \NoteTypeSapling$ to the empty mapping.
         \vspace{1ex}
@@ -5237,7 +5281,7 @@ Let $\NoteTypeSapling$ be as defined in \crossref{notes}.
   \item \tab \tab Attempt to decrypt the \noteCiphertext components
                   $\EphemeralPublic$ and $\TransmitCiphertext{}$ using $\InViewingKey$ with the algorithm\vspace{-1.2ex}%
   \item \tab \tab in \crossref{saplingdecryptivk}. If this succeeds giving $\NotePlaintext{}$:
-  \item \tab \tab \tab Extract $\NoteTuple{}$ and $\Memo$ from $\NotePlaintext{}$.
+  \item \tab \tab \tab Extract $\NoteTuple{}$ and $\Memo \typecolon \MemoType$ from $\NotePlaintext{}$.
   \item \tab \tab \tab Add $(\NoteTuple{}, \Memo)$ to $\ReceivedSet$.
   \item \tab \tab \tab Calculate the nullifier $\nf$ of $\NoteTuple{}$ using $\AuthProvePublic$
                        and $\NotePosition$ as described in \crossref{notes}.
@@ -5248,7 +5292,7 @@ Let $\NoteTypeSapling$ be as defined in \crossref{notes}.
   \item \tab \tab If $\nf$ is present in $\NullifierMap$, add $\NullifierMap(\nf)$ to $\SpentSet$.
   \item \vspace{-2ex}
   \item Return $(\ReceivedSet, \SpentSet)$.
-\end{formulae}
+\end{algorithm}
 
 \vspace{-2ex}
 \begin{nnotes}
@@ -5749,7 +5793,7 @@ Define $\PedersenGenAlg \typecolon \byteseq{8} \times \Nat \rightarrow \PrimeOrd
 \introsection
 Define $\PedersenHashToPoint(D \typecolon \byteseq{8}, M \typecolon \bitseq{\PosInt}) \rightarrow \SubgroupJ$ as follows:
 
-\begin{formulae}
+\begin{algorithm}
   \item Pad $M$ to a multiple of $3$ bits by appending zero bits, giving $M'$.
   \item Let $n = \ceiling{\hfrac{\length(M')}{3 \mult c}}$.
   \item Split $M'$ into $n$ \quotedterm{segments} $M_\barerange{1}{n}$
@@ -5757,20 +5801,20 @@ Define $\PedersenHashToPoint(D \typecolon \byteseq{8}, M \typecolon \bitseq{\Pos
         each of $M_\barerange{1}{n-1}$ is of length $3 \smult c$ bits.
         ($M_n$ may be shorter.)
   \item Return $\vsum{i=1}{n} \scalarmult{\PedersenEncode{M_i}}{\PedersenGen{D}{i}} \typecolon \SubgroupJ$.
-\end{formulae}
+\end{algorithm}
 
 where
 $\PedersenEncode{\paramdot} \typecolon \bitseq{3 \mult \range{1}{c}} \rightarrow
    \rangenozero{-\hfrac{\ParamJ{r}-1}{2}}{\hfrac{\ParamJ{r}-1}{2}}$ is defined as:
 
-\begin{formulae}
+\begin{algorithm}
   \item Let $k_i = \length(M_i)/3$.
   \item Split $M_i$ into $3$-bit \quotedterm{chunks} $m_\barerange{1}{k_i}$
         so that $M_i = \concatbits(m_\barerange{1}{k_i})$.
   \item Write each $m_j$ as $[\sj{0}, \sj{1}, \sj{2}]$, and let
         $\enc(m_j) = (1 - 2 \smult \sj{2}) \mult (1 + \sj{0} + 2 \smult \sj{1}) \typecolon \Int$.
   \item Let $\PedersenEncode{M_i} = \vsum{j=1}{k_i} \enc(m_j) \mult 2^{4 \mult (j-1)}$.
-\end{formulae}
+\end{algorithm}
 
 Finally, define $\PedersenHash \typecolon \byteseq{8} \times \bitseq{\PosInt} \rightarrow \MerkleHashSapling$ by:
 
@@ -6425,7 +6469,7 @@ Define $\RedDSARandomizePublic \typecolon \RedDSARandom \times \RedDSAPublic \ri
 
 \introlist
 Define $\RedDSASign{} \typecolon (\sk \typecolon \RedDSAPrivate) \times (M \typecolon \RedDSAMessage) \rightarrowR \RedDSASignature$ as:
-\begin{formulae}
+\begin{algorithm}
   \item Choose a byte sequence $T$ uniformly at random on $\byteseq{(\RedDSAHashLength+128)/8}$.
   \item Let $r = \RedDSAHashToScalar(T \bconcat M)$.
   \item Let $\RedDSASigR = \scalarmult{r}{\GenG{}}$.
@@ -6434,12 +6478,12 @@ Define $\RedDSASign{} \typecolon (\sk \typecolon \RedDSAPrivate) \times (M \type
   \item Let $\RedDSASigS = (r + \RedDSAHashToScalar(\RedDSAReprR \bconcat \vkBytes \bconcat M) \mult \sk) \bmod \ParamG{r}$.
   \item Let $\RedDSAReprS = \LEBStoOSPOf{\bitlength(\ParamG{r})}{\ItoLEBSPOf{\bitlength(\ParamG{r})}{\RedDSASigS}\kern-0.16em}$.
   \item Return $\RedDSAReprR \bconcat \RedDSAReprS$.
-\end{formulae}
+\end{algorithm}
 
 \introlist
 Define $\RedDSAVerify{} \typecolon (\vk \typecolon \RedDSAPublic) \times (M \typecolon \RedDSAMessage) \times
         (\sigma \typecolon \RedDSASignature) \rightarrow \bit$ as:
-\begin{formulae}
+\begin{algorithm}
   \item Let $\RedDSAReprR$ be the first $\ceiling{\ellG{}/8}$ bytes of $\sigma$, and
         let $\RedDSAReprS$ be the remaining $\ceiling{\bitlength(\ParamG{r})/8}$ bytes.
   \item Let $\RedDSASigR = \abstG{}\big(\LEOStoBSP{\ellG{}}(\RedDSAReprR)\kern-0.1em\big)$, and
@@ -6448,7 +6492,7 @@ Define $\RedDSAVerify{} \typecolon (\vk \typecolon \RedDSAPublic) \times (M \typ
   \item Let $\RedDSASigc = \RedDSAHashToScalar(\RedDSAReprR \bconcat \vkBytes \bconcat M)$.
   \item Return $1$ if $\RedDSASigR \neq \bot$ and $\RedDSASigS < \ParamG{r}$ and
         $\scalarmult{\RedDSASigS}{\GenG{}} = \RedDSASigR + \scalarmult{\RedDSASigc}{\vk}$, otherwise $0$.
-\end{formulae}
+\end{algorithm}
 
 \vspace{-4ex}
 \pnote{The verification algorithm \emph{does not} check that $\RedDSASigR$ is a point of order
@@ -7088,12 +7132,12 @@ let $M \typecolon \byteseqs$ be the hash input.
 \introlist
 The hash $\GroupJHash{\URS}(D, M) \typecolon \PrimeOrderJ$ is calculated as follows:
 
-\begin{formulae}
+\begin{algorithm}
   \item $P := \abstJOf{\LEOStoBSPOf{256}{\BlakeTwosOf{256}{D,\, \URS \bconcat\, M}}}$
   \item If $P = \bot$ then return $\bot$.
   \item $Q := \scalarmult{\ParamJ{h}}{P}$
   \item If $Q = \ZeroJ$ then return $\bot$, else return $Q$.
-\end{formulae}
+\end{algorithm}
 
 Define $\first \typecolon (\byte \rightarrow \maybe{T}) \rightarrow \maybe{T}$
 so that $\first(f) = f(i)$ where $i$ is the least integer in $\byte$
@@ -7262,16 +7306,18 @@ the \blockchain in encrypted form.
 The \notePlaintexts in a \joinSplitDescription are encrypted to the
 respective \transmissionKeys $\TransmitPublicNew{\allNew}$.
 Each \notsprout{\Sprout} \notePlaintext (denoted $\NotePlaintext{}$) consists of
-$(\Value, \NoteAddressRand, \NoteCommitRand\changed{, \Memo})$.
+$(\Value \typecolon \ValueType, \NoteAddressRand \typecolon ,
+\NoteCommitRand \typecolon \NoteCommitSproutOutput\changed{, \Memo \typecolon \MemoType})$.
 
 \saplingonward{
 The \notePlaintext in each \outputDescription is encrypted to the
 \diversifiedTransmissionKey $\DiversifiedTransmitPublic$.
 Each \Sapling \notePlaintext (denoted $\NotePlaintext{}$) consists of
-$(\Diversifier, \Value, \NoteCommitRand, \Memo)$.
+$(\Diversifier \typecolon \DiversifierType, \Value \typecolon \ValueType,
+\NoteCommitRand \typecolon \NoteCommitSaplingOutput, \Memo \typecolon \MemoType)$.
 }
 
-\changed{$\Memo$ is a 512-byte \memo associated with this \note.
+\changed{$\Memo$ is a $\MemoByteLength$-byte \memo associated with this \note.
 
 \introlist
 The usage of the \memo is by agreement between the sender and recipient of the
@@ -7279,7 +7325,7 @@ The usage of the \memo is by agreement between the sender and recipient of the
 
 \begin{itemize}
   \item a UTF-8 human-readable string \cite{Unicode}, padded by appending zero bytes; or
-  \item an arbitrary sequence of 512 bytes starting with a byte value of $\hexint{F5}$
+  \item an arbitrary sequence of $\MemoByteLength$ bytes starting with a byte value of $\hexint{F5}$
         or greater, which is therefore not a valid UTF-8 string.
 \end{itemize}
 
@@ -7308,7 +7354,7 @@ The encoding of a \SproutOrNothing \notePlaintext consists of:
   &}\sbitbox{180}{$64$-bit $\Value$} &
     \sbitbox{256}{$256$-bit $\NoteAddressRand$} &
     \sbitbox{256}{\changed{$256$}-bit $\NoteCommitRand$} &
-    \changed{\sbitbox{800}{$\Memo$ ($512$ bytes)}}
+    \changed{\sbitbox{800}{$\Memo$ ($\MemoByteLength$ bytes)}}
 \end{bytefield}
 \end{equation*}
 
@@ -7321,7 +7367,7 @@ The encoding of a \SproutOrNothing \notePlaintext consists of:
     \item $32$ bytes specifying $\NoteAddressRand$.
     \item \changed{32} bytes specifying $\NoteCommitRand$.
 \changed{
-    \item $512$ bytes specifying $\Memo$.
+    \item $\MemoByteLength$ bytes specifying $\Memo$.
 }
 \end{itemize}
 
@@ -7336,7 +7382,7 @@ The encoding of a \Sapling \notePlaintext consists of:
     \sbitbox{240}{$88$-bit $\Diversifier$}
     \sbitbox{180}{$64$-bit $\Value$}
     \sbitbox{256}{$256$-bit $\NoteCommitRand$}
-    \sbitbox{800}{$\Memo$ ($512$ bytes)}
+    \sbitbox{800}{$\Memo$ ($\MemoByteLength$ bytes)}
 \end{bytefield}
 \end{equation*}
 
@@ -7346,7 +7392,7 @@ The encoding of a \Sapling \notePlaintext consists of:
     \item $11$ bytes specifying $\Diversifier$.
     \item $8$ bytes specifying $\Value$.
     \item $32$ bytes specifying $\NoteCommitRand$.
-    \item $512$ bytes specifying $\Memo$.
+    \item $\MemoByteLength$ bytes specifying $\Memo$.
 \end{itemize}
 } %sapling
 
@@ -7419,7 +7465,7 @@ The raw encoding of a P2PKH address consists of:
         instead.)
   \item $20$ bytes specifying a public key hash, which is a RIPEMD-160
         hash \cite{RIPEMD160} of a SHA-256 hash \cite{NIST2015}
-        of an uncompressed ECDSA key encoding.
+        of a compressed ECDSA key encoding.
 \end{itemize}
 
 \begin{pnotes}
@@ -9380,6 +9426,8 @@ of their ``Auditable, Anonymous Electronic Cash'' proposal in \cite{ST1999}.
     \item Add section on signature hashing.
     \item Correct the definition of set difference ($S \setminus T$).
     \item Clarify that interstitial \treestates form a tree for each \transaction containing \joinSplitDescriptions.
+    \item Correct the description of P2PKH addresses in \crossref{transparentaddrencoding} --- they
+          use a hash of a compressed, not an uncompressed ECDSA key representation.
     \item Clarify attribution of the \Zcash protocol design.
     \item Acknowledge Alex Biryukov and Dmitry Khovratovich as the designers of Equihash.
     \item Acknowledge Shafi Goldwasser, Silvio Micali, Oded Goldreich, Rosario Gennaro, Bryan Parno, Jon Howell,
@@ -10394,7 +10442,7 @@ To check that $(u, \varv)$ is a point on the Edwards curve, use:
 Define $\DecompressValidate \typecolon \CompressedEdwardsJubjub \rightarrow \AffineEdwardsJubjub$
 as follows:
 
-\begin{formulae}
+\begin{algorithm}
   \item $\DecompressValidate(\tilde{u}, \varv):$
   \item \tab // Prover supplies the $u$-coordinate.
   \item \tab Let $u \typecolon \GF{\ParamS{r}}$.
@@ -10409,7 +10457,7 @@ as follows:
   \item \tab Check that $\vsum{i=0}{254} u_i \mult 2^i \leq \ParamS{r}-1$.
              \vspace{1ex}
   \item \tab Return $(u, \varv)$.
-\end{formulae}
+\end{algorithm}
 
 This costs $3$ constraints for the curve equation check, $1$ constraint for the
 unpacking, and $255 + 133 - 1$ constraints for the range check (which includes
@@ -10734,7 +10782,7 @@ cannot be used. Instead we use a naïve double-and-add method.
 \introlist
 Given $k = \vsum{i=0}{250} k_i \smult 2^i$, we calculate $R = \scalarmult{k}{B}$ using:
 
-\begin{formulae}
+\begin{algorithm}
   \item // $\Base_i = \scalarmult{2^i}{B}$
   \item let $\Base^u_0 = \SelectuOf{B}$
   \item let $\Base^{\vv}_0\hairspace = B_{\vv}$
@@ -10749,7 +10797,7 @@ Given $k = \vsum{i=0}{250} k_i \smult 2^i$, we calculate $R = \scalarmult{k}{B}$
   \item \tab let $\Addend^{\vv}_i\hairspace = k_i \bchoose \Base^{\vv}_i : 1$
   \item \tab let $\Acc_i = \Acc_{i-1} + \Addend^i$
   \item let $R = \Acc_{250}$.
-\end{formulae}
+\end{algorithm}
 
 This costs $5$ constraints for each of $250$ Edwards doublings, $6$ constraints for each
 of $250$ Edwards additions, and $2$ constraints for each of $251$ point selections,

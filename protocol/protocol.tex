@@ -653,6 +653,8 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\IncomingViewingKeys}{\titleterm{Incoming Viewing Keys}}
 \newcommand{\outgoingViewingKey}{\term{outgoing viewing key}}
 \newcommand{\outgoingViewingKeys}{\term{outgoing viewing keys}}
+\newcommand{\outgoingCipherKey}{\term{outgoing cipher key}}
+\newcommand{\outgoingCipherKeys}{\term{outgoing cipher keys}}
 \newcommand{\fullViewingKey}{\term{full viewing key}}
 \newcommand{\fullViewingKeys}{\term{full viewing keys}}
 \newcommand{\FullViewingKeys}{\titleterm{Full Viewing Keys}}
@@ -960,6 +962,8 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\Repr}{\kern-0.03em\ReprNoKern}
 \newcommand{\EphemeralPublicRepr}{\EphemeralPublic^{\Repr}}
 \newcommand{\EphemeralPrivate}{\mathsf{esk}}
+\newcommand{\EphemeralPrivateBytes}{\bytes{\EphemeralPrivate}}
+\newcommand{\EphemeralPrivateBytesType}{\byteseq{32}}
 \newcommand{\TransmitPublic}{\mathsf{pk_{enc}}}
 \newcommand{\TransmitPublicSup}[1]{\mathsf{pk}^{#1}_\mathsf{enc}}
 \newcommand{\TransmitPublicNew}[1]{\mathsf{pk^{new}_{\enc,\mathnormal{#1}}}}
@@ -5125,7 +5129,7 @@ components of the \noteCiphertext as follows:
   \item extract $\NotePlaintext{} = (\Diversifier \typecolon \DiversifierType, \Value \typecolon \ValueType,
 \NoteCommitRandBytes \typecolon \NoteCommitSaplingTrapdoorBytes, \Memo \typecolon \MemoType)$ from $\TransmitPlaintext{}$
   \item let $\NoteCommitRand = \LEOStoIPOf{256}{\NoteCommitRandBytes}$
-  \item let $\DiversifiedTransmitBase = \DiversifyHash(\Diversifier)$
+        and $\DiversifiedTransmitBase = \DiversifyHash(\Diversifier)$
   \item if $\NoteCommitRand \geq \ParamJ{r}$ or $\DiversifiedTransmitBase = \bot$, return $\bot$
   \item let $\DiversifiedTransmitPublic = \KASaplingDerivePublic(\InViewingKey, \DiversifiedTransmitBase)$
   \item let $\cmU' = \ExtractJ\big(\NoteCommitSapling{\NoteCommitRandNew{}}(\reprJOf{\DiversifiedTransmitBase},
@@ -5175,9 +5179,11 @@ The \outgoingViewingKey holder will attempt to decrypt the \noteCiphertext as fo
   \item let $\OutCipherKey = \PRFock{\OutViewingKey}(\cvField, \cmField, \ephemeralKey)$
   \item let $\OutPlaintext = \SymDecrypt{\OutCipherKey}(\OutCiphertext)$
   \item if $\OutPlaintext = \bot$, return $\bot$
-  \item extract $(\DiversifiedTransmitPublicRepr, \EphemeralPrivate)$ from $\OutPlaintext$
-  \item let $\DiversifiedTransmitPublic = \abstJOf{\DiversifiedTransmitPublicRepr}$
-  \item if $\DiversifiedTransmitPublic \notin \KASaplingPublicPrimeOrder$, return $\bot$
+  \item extract $(\DiversifiedTransmitPublicRepr \typecolon \ReprJ,
+        \EphemeralPrivateBytes \typecolon \EphemeralPrivateBytesType)$ from $\OutPlaintext$
+  \item let $\EphemeralPrivate = \LEOStoIPOf{256}{\EphemeralPrivateBytes}$
+        and $\DiversifiedTransmitPublic = \abstJOf{\DiversifiedTransmitPublicRepr}$
+  \item if $\EphemeralPrivate \geq \ParamJ{r}$ or $\DiversifiedTransmitPublic \notin \KASaplingPublicPrimeOrder$, return $\bot$
   \item let $\DHSecret{} = \KASaplingAgree(\EphemeralPrivate, \DiversifiedTransmitPublic)$
   \item let $\TransmitKey{} = \KDFSapling(\DHSecret{}, \EphemeralPublic)$
   \item let $\TransmitPlaintext{} = \SymDecrypt{\TransmitKey{}}(\TransmitCiphertext{})$
@@ -5185,7 +5191,7 @@ The \outgoingViewingKey holder will attempt to decrypt the \noteCiphertext as fo
   \item extract $\NotePlaintext{} = (\Diversifier \typecolon \DiversifierType, \Value \typecolon \ValueType,
 \NoteCommitRandBytes \typecolon \NoteCommitSaplingTrapdoorBytes, \Memo \typecolon \MemoType)$ from $\TransmitPlaintext{}$
   \item let $\NoteCommitRand = \LEOStoIPOf{256}{\NoteCommitRandBytes}$
-  \item let $\DiversifiedTransmitBase = \DiversifyHash(\Diversifier)$
+        and $\DiversifiedTransmitBase = \DiversifyHash(\Diversifier)$
   \item if $\NoteCommitRand \geq \ParamJ{r}$ or $\DiversifiedTransmitBase = \bot$, return $\bot$
   \item if $\KASaplingDerivePublic(\EphemeralPrivate, \DiversifiedTransmitBase) \neq \EphemeralPublic$,
         return $\bot$
@@ -5789,7 +5795,6 @@ Define $\PedersenGenAlg \typecolon \byteseq{8} \times \Nat \rightarrow \PrimeOrd
 
 \newcommand{\sj}[1]{s^{\kern 0.02em j}_{#1}}
 
-\vspace{2ex}
 \introsection
 Define $\PedersenHashToPoint(D \typecolon \byteseq{8}, M \typecolon \bitseq{\PosInt}) \rightarrow \SubgroupJ$ as follows:
 
@@ -5800,9 +5805,10 @@ Define $\PedersenHashToPoint(D \typecolon \byteseq{8}, M \typecolon \bitseq{\Pos
         so that $M' = \concatbits(M_\barerange{1}{n})$, and
         each of $M_\barerange{1}{n-1}$ is of length $3 \smult c$ bits.
         ($M_n$ may be shorter.)
-  \item Return $\vsum{i=1}{n} \scalarmult{\PedersenEncode{M_i}}{\PedersenGen{D}{i}} \typecolon \SubgroupJ$.
+  \item Return $\ssum{i=1}{n} \scalarmult{\PedersenEncode{M_i}}{\PedersenGen{D}{i}} \typecolon \SubgroupJ$.
 \end{algorithm}
 
+\vspace{-2ex}
 where
 $\PedersenEncode{\paramdot} \typecolon \bitseq{3 \mult \range{1}{c}} \rightarrow
    \rangenozero{-\hfrac{\ParamJ{r}-1}{2}}{\hfrac{\ParamJ{r}-1}{2}}$ is defined as:
@@ -5813,9 +5819,10 @@ $\PedersenEncode{\paramdot} \typecolon \bitseq{3 \mult \range{1}{c}} \rightarrow
         so that $M_i = \concatbits(m_\barerange{1}{k_i})$.
   \item Write each $m_j$ as $[\sj{0}, \sj{1}, \sj{2}]$, and let
         $\enc(m_j) = (1 - 2 \smult \sj{2}) \mult (1 + \sj{0} + 2 \smult \sj{1}) \typecolon \Int$.
-  \item Let $\PedersenEncode{M_i} = \vsum{j=1}{k_i} \enc(m_j) \mult 2^{4 \mult (j-1)}$.
+  \item Let $\PedersenEncode{M_i} = \ssum{j=1}{k_i} \enc(m_j) \mult 2^{4 \mult (j-1)}$.
 \end{algorithm}
 
+\introlist
 Finally, define $\PedersenHash \typecolon \byteseq{8} \times \bitseq{\PosInt} \rightarrow \MerkleHashSapling$ by:
 
 \begin{formulae}
@@ -6092,18 +6099,18 @@ be necessary.})
 \newsavebox{\ockbox}
 \begin{lrbox}{\ockbox}
 \setsapling
-\begin{bytefield}[bitwidth=0.039em]{512}
+\begin{bytefield}[bitwidth=0.038em]{512}
     \sbitbox{256}{$\LEBStoOSPOf{256}{\OutViewingKey}$} &
     \sbitbox{256}{$32$-byte $\cvField$}
     \sbitbox{256}{$32$-byte $\cmField$} &
-    \sbitbox{256}{$32$-byte $\ephemeralKey$}
+    \sbitbox{264}{$32$-byte $\ephemeralKey$}
 \end{bytefield}
 \end{lrbox}
 
 \newsavebox{\nfsaplingbox}
 \begin{lrbox}{\nfsaplingbox}
 \setsapling
-\begin{bytefield}[bitwidth=0.039em]{512}
+\begin{bytefield}[bitwidth=0.038em]{512}
     \sbitbox{256}{$\LEBStoOSPOf{256}{\AuthProvePublicRepr}$} &
     \sbitbox{256}{$\LEBStoOSPOf{256}{\NoteAddressRandRepr}$}
 \end{bytefield}
@@ -6132,8 +6139,8 @@ corresponding to $t$.
 
 \introlist
 \vspace{2ex}
-$\PRFock{}$ is used in \crossref{} to derive the
-\authSigningKey $\OutCipherKey$ used to encrypt an \outputCiphertext.
+$\PRFock{}$ is used in \crossref{saplingencrypt} to derive the
+\outgoingCipherKey $\OutCipherKey$ used to encrypt an \outputCiphertext.
 
 It is instantiated using the $\BlakeTwobGeneric$ \hashFunction defined in
 \crossref{concreteblake2}:
@@ -6164,7 +6171,7 @@ It is instantiated using the $\BlakeTwosGeneric$ \hashFunction defined in \cross
 $\BlakeTwosOf{256}{\ascii{Zcash\_nf}, \Justthebox{\nfsaplingbox}}$ must be a
 \collisionResistant PRF for output range $\byteseq{32}$ when keyed by the bits
 corresponding to $\AuthProvePublicRepr$, with input in the bits corresponding to
-$\NoteAddressRand$. Note that $\AuthProvePublicRepr \typecolon \SubgroupReprJ$
+$\NoteAddressRandRepr$. Note that $\AuthProvePublicRepr \typecolon \SubgroupReprJ$
 is a representation of a point in the $\ParamJ{r}$-order subgroup of the \jubjubCurve,
 and therefore is not uniformly distributed on $\ReprJ$.
 $\SubgroupReprJ$ is defined in \crossref{jubjub}.

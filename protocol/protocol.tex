@@ -87,7 +87,7 @@
 \renewcommand{\@pnumwidth}{2em}
 \makeatother
 
-\newcommand{\pagenumfont}{\fontfamily{pnc}\selectfont\rule[-.2\baselineskip]{0pt}{1.34\baselineskip}}
+\newcommand{\pagenumfont}{\fontfamily{pnc}\selectfont\rule[-.2\baselineskip]{0pt}{1.32\baselineskip}}
 \renewcommand{\cftsecpagefont}{\pagenumfont}
 \renewcommand{\cftsubsecpagefont}{\pagenumfont}
 \renewcommand{\cftsubsubsecpagefont}{\pagenumfont}
@@ -96,7 +96,8 @@
 \hfuzz=1pt
 \overfullrule=2cm
 
-\setlength{\footnotemargin}{0.6em}
+\renewcommand{\footnotelayout}{\leftskip=1.4em}
+\setlength{\footnotemargin}{0.55em}
 \setlength{\footnotesep}{2ex}
 \addtolength{\skip\footins}{3ex}
 
@@ -1023,7 +1024,7 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\PRFOutputNfSapling}{\bitseq{\PRFOutputLengthNfSapling}}
 \newcommand{\PRFOutputLengthExpand}{\mathsf{\ell_{PRFexpand}}}
 \newcommand{\PRFOutputExpand}{\byteseq{\PRFOutputLengthExpand/8}}
-\newcommand{\PRFInputExpand}{\byteseq{\barerange{1}{2}}}
+\newcommand{\PRFInputExpand}{\byteseqs}
 
 % Commitments
 
@@ -1035,22 +1036,26 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\CommitAlg}{\mathsf{COMM}}
 \newcommand{\Commit}[1]{\CommitAlg_{#1}}
 \newcommand{\CommitTrapdoor}{\CommitAlg\mathsf{.Trapdoor}}
+\newcommand{\CommitGenTrapdoor}{\CommitAlg\mathsf{.GenTrapdoor}}
 \newcommand{\CommitInput}{\CommitAlg\mathsf{.Input}}
 \newcommand{\CommitOutput}{\CommitAlg\mathsf{.Output}}
 \newcommand{\NoteCommitSproutAlg}{\mathsf{\sprout{COMM}\notsprout{NoteCommit}}^{\mathsf{Sprout}}}
 \newcommand{\NoteCommitSprout}[1]{\NoteCommitSproutAlg_{#1}}
 \newcommand{\NoteCommitSproutTrapdoor}{\NoteCommitSproutAlg\mathsf{.Trapdoor}}
+\newcommand{\NoteCommitSproutGenTrapdoor}{\NoteCommitSproutAlg\mathsf{.GenTrapdoor}}
 \newcommand{\NoteCommitSproutInput}{\NoteCommitSproutAlg\mathsf{.Input}}
 \newcommand{\NoteCommitSproutOutput}{\NoteCommitSproutAlg\mathsf{.Output}}
 \newcommand{\NoteCommitSaplingAlg}{\mathsf{NoteCommit}^{\mathsf{Sapling}}}
 \newcommand{\NoteCommitSapling}[1]{\NoteCommitSaplingAlg_{#1}}
 \newcommand{\NoteCommitSaplingTrapdoor}{\NoteCommitSaplingAlg\mathsf{.Trapdoor}}
 \newcommand{\NoteCommitSaplingTrapdoorBytes}{\byteseq{32}}
+\newcommand{\NoteCommitSaplingGenTrapdoor}{\NoteCommitSaplingAlg\mathsf{.GenTrapdoor}}
 \newcommand{\NoteCommitSaplingInput}{\NoteCommitSaplingAlg\mathsf{.Input}}
 \newcommand{\NoteCommitSaplingOutput}{\NoteCommitSaplingAlg\mathsf{.Output}}
 \newcommand{\ValueCommitAlg}{\mathsf{ValueCommit}}
 \newcommand{\ValueCommit}[1]{\ValueCommitAlg_{#1}}
 \newcommand{\ValueCommitTrapdoor}{\ValueCommitAlg\mathsf{.Trapdoor}}
+\newcommand{\ValueCommitGenTrapdoor}{\ValueCommitAlg\mathsf{.GenTrapdoor}}
 \newcommand{\ValueCommitInput}{\ValueCommitAlg\mathsf{.Input}}
 \newcommand{\ValueCommitOutput}{\ValueCommitAlg\mathsf{.Output}}
 \newcommand{\ValueCommitValueBase}{\mathcal{V}}
@@ -1676,27 +1681,34 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \Large \coauthora\affiliation — \coauthorb\affiliation — \coauthorc\affiliation}
 \date{\today}
 \maketitle
+\vspace{-6ex}
+
+\notsprout{
+\begin{center}
+\hspace{0.6em}\includegraphics[scale=.1,interpolate]{jubjub}
+\footnote{Jubjub bird image credit: Peter Newell 1902; Daira Hopwood 2018.}
+\end{center}
+\vspace{-6ex}
+} %notsprout
 
 \renewcommand{\abstractname}{}
-\vspace{-8ex}
 \begin{abstract}
 \normalsize \noindent \textbf{Abstract.}
 \Zcash is an implementation of the \term{Decentralized Anonymous Payment}
-scheme \Zerocash, with security fixes and adjustments
-to terminology, functionality and performance. It bridges the existing
-transparent payment scheme used by \Bitcoin with a
-\emph{shielded} payment scheme secured by zero-knowledge succinct
-non-interactive arguments of knowledge (\zkSNARKs). It attempts to
-address the problem of mining centralization by use of the Equihash
+scheme \Zerocash, with security fixes and improvements to performance and
+functionality. It bridges the existing transparent payment scheme used by
+\Bitcoin with a \emph{shielded} payment scheme secured by zero-knowledge
+succinct non-interactive arguments of knowledge (\zkSNARKs). It attempted
+to address the problem of mining centralization by use of the Equihash
 memory-hard proof-of-work algorithm.
 
 \vspace{1.5ex}
 \sprout{\noindent This specification defines the \Zcash consensus protocol and explains
 its differences from \Zerocash and \Bitcoin.}
-\sapling{\noindent This \em{draft} specification defines the next
-upgrade of the \Zcash consensus protocol, codenamed \NUZero, and the
-subsequent upgrade, codenamed \Sapling. It is a work in progress
-and should not be used as a reference for the current protocol.}
+\sapling{\noindent This specification defines the \Zcash consensus protocol
+at launch; after the upgrade codenamed \NUZero; and after the
+subsequent upgrade codenamed \Sapling. It is a work in progress.
+Protocol differences from \Zerocash and \Bitcoin are also explained.}
 
 \vspace{2.5ex}
 \noindent \textbf{Keywords:}~ \StrSubstitute[0]{\keywords}{,}{, }.
@@ -1716,8 +1728,8 @@ and should not be used as a reference for the current protocol.}
 \section{Introduction}
 
 \Zcash is an implementation of the \term{Decentralized Anonymous Payment}
-scheme \Zerocash \cite{BCGGMTV2014}, with some security fixes and adjustments
-to terminology, functionality and performance. It bridges the existing
+scheme \Zerocash \cite{BCGGMTV2014}, with security fixes and improvements
+to performance and functionality. It bridges the existing
 transparent payment scheme used by \Bitcoin \cite{Nakamoto2008} with a
 \emph{shielded} payment scheme secured by zero-knowledge succinct
 non-interactive arguments of knowledge (\zkSNARKs).
@@ -1915,10 +1927,11 @@ revealing which one. This implies that a spent \note cannot be linked to the
 \transaction in which it was created. That is, from an adversary's point of
 view the set of possibilities for a given \note input to a \transaction
 ---its \noteTraceabilitySet--- includes \emph{all} previous notes that the
-adversary does not control or know to have been spent.\footnote{We make this claim
-only for \emph{fully shielded} \transactions. It does not exclude the possibility
-that an adversary may use metadata-based heuristics such as timing or the number of
-inputs and outputs to make probabilistic inferences about \transaction linkage.
+adversary does not control or know to have been spent.\footnotewithlabel{securitycaveat}{We
+make this claim only for \emph{fully shielded} \transactions. It does not exclude the
+possibility that an adversary may use data present in the cleartext of a \transaction
+such as the number of inputs and outputs, or metadata-based heuristics such as timing,
+to make probabilistic inferences about \transaction linkage.
 For consequences of this in the case of partially shielded \transactions,
 see \cite{Peterson2017}, \cite{Quesnelle2017}, and \cite{KYMM2018}.} This contrasts with
 other proposals for private payment systems, such as CoinJoin \cite{Bitcoin-CoinJoin}
@@ -2753,7 +2766,7 @@ Let $\Sym$ be as defined in \crossref{concretesym}.
 
 \notsprout{For \Sprout, \changed{four} \emph{independent} $\PRF{x}{}$ are needed:}
 
-\begin{tabular}{@{\hskip 2em}l@{\notsprout{\hskip 1.88em}}l@{\;}l@{\;}l@{\,\notsprout{\hskip 3.78em}}l}
+\begin{tabular}{@{\hskip 2em}l@{\notsprout{\hskip 1.88em}}l@{\;}l@{\;}l@{\,\notsprout{\hskip 5em}}l}
 $\PRFaddr{}      $&$\typecolon\; \bitseq{\AuthPrivateLength} $&$\times\; \byte $& &$\rightarrow \PRFOutputSprout $\\
 $\PRFnf{}        $&$\typecolon\; \bitseq{\AuthPrivateLength} $&$\times\; \PRFOutputSprout $& &$\rightarrow \PRFOutputSprout $\\
 $\PRFpk{}        $&$\typecolon\; \bitseq{\AuthPrivateLength} $&$\times\; \setofOld $&$\times\; \hSigType $&$\rightarrow \PRFOutputSprout $\\
@@ -3185,8 +3198,8 @@ when at least one of $\sk_{\alln}$ is unknown.)
 \introlist
 \subsubsection{Commitment} \label{abstractcommit}
 
-A \commitmentScheme is a function that, given a random \commitmentTrapdoor
-and an input, can be used to commit to the input in such a way that:
+A \commitmentScheme is a function that, given a \commitmentTrapdoor generated at
+random and an input, can be used to commit to the input in such a way that:
 
 \begin{itemize}
   \item no information is revealed about it without the \trapdoor (\quotedterm{hiding}),
@@ -3196,18 +3209,18 @@ and an input, can be used to commit to the input in such a way that:
 
 \vspace{-3ex}
 A \commitmentScheme $\CommitAlg$ defines a type of inputs $\CommitInput$,
-a type of commitments $\CommitOutput$, and a type of \commitmentTrapdoors
-$\CommitTrapdoor$.
+a type of commitments $\CommitOutput$, a type of \commitmentTrapdoors
+$\CommitTrapdoor$, and a generator of random trapdoors, $\CommitGenTrapdoor$.
 
 \vspace{2ex}
 Let $\CommitAlg \typecolon \CommitTrapdoor \times \CommitInput \rightarrow \CommitOutput$
 be a function satisfying the following security requirements.
 
 \vspace{-2ex}
-\begin{securityrequirements}
+\begin{securityrequirements}[leftmargin=2em]
   \item \textbf{Computational hiding:} For all $x, x' \typecolon \CommitInput$,
-        the distributions $\{\; \Commit{r}(x) \;|\; r \leftarrowR \CommitTrapdoor \;\}$
-        and $\{\; \Commit{r}(x') \;|\; r \leftarrowR \CommitTrapdoor \;\}$ are
+        the distributions $\{\, \Commit{r}(x) \;|\; r \leftarrowR \CommitGenTrapdoor() \,\}$
+        and $\{\, \Commit{r}(x') \;|\; r \leftarrowR \CommitGenTrapdoor() \,\}$ are
         computationally indistinguishable.
   \item \textbf{Computational binding:} It is infeasible to find
         $x, x' \typecolon \CommitInput$ and
@@ -3216,16 +3229,29 @@ be a function satisfying the following security requirements.
 \end{securityrequirements}
 
 \vspace{-2ex}
-\pnote{
-If it were only feasible to find $x \typecolon \CommitInput$ and
+\sprout{
+\pnote{If it were only feasible to find $x \typecolon \CommitInput$ and
 $r, r' \typecolon \CommitTrapdoor$ such that $r \neq r'$ and
-$\Commit{r}(x) = \Commit{r'}(x)$, this would not by itself contradict
-the computational binding security requirement.
-}
+$\Commit{r}(x) = \Commit{r'}(x)$, this would not contradict
+the computational binding security requirement.}
+} %sprout
+\notsprout{
+\begin{pnotes}[leftmargin=2em]
+  \item $\CommitGenTrapdoor$ need not produce the uniform distribution on $\CommitTrapdoor$.
+        In that case, it is incorrect to choose a trapdoor from the latter distribution. 
+  \item If it were only feasible to find $x \typecolon \CommitInput$ and
+        $r, r' \typecolon \CommitTrapdoor$ such that $r \neq r'$ and
+        $\Commit{r}(x) = \Commit{r'}(x)$, this would not contradict
+        the computational binding security requirement.
+        \sapling{(In fact, this is feasible for $\NoteCommitSaplingAlg$ and $\ValueCommitAlg$
+        because trapdoors are equivalent modulo $\ParamJ{r}$, and the range of a trapdoor
+        for those algorithms is $\binaryrange{\ScalarLength}$ where $2^{\ScalarLength} > \ParamJ{r}$.)}
+\end{pnotes}
+} %notsprout
 
 \vspace{3ex}
-Let $\NoteCommitRandLength$, $\MerkleHashLengthSprout$, $\PRFOutputLengthSprout$, and
-$\ValueLength$ be as defined in \crossref{constants}.
+Let $\NoteCommitRandLength$, $\MerkleHashLengthSprout$, $\PRFOutputLengthSprout$,
+$\ValueLength$, and $\ScalarLength$ be as defined in \crossref{constants}.
 
 \sapling{
 Let $\SubgroupJ$ and $\ParamJ{r}$ be as defined in \crossref{jubjub}.
@@ -3241,9 +3267,9 @@ Define:
   \item $\NoteCommitSproutTrapdoor := \bitseq{\NoteCommitRandLength}$ and
         $\NoteCommitSproutOutput := \bitseq{\MerkleHashLengthSprout}$;
 \sapling{
-  \item $\NoteCommitSaplingTrapdoor := \GF{\ParamJ{r}}$ and
+  \item $\NoteCommitSaplingTrapdoor := \binaryrange{\ScalarLength}$ and
         $\NoteCommitSaplingOutput := \SubgroupJ$;
-  \item $\ValueCommitTrapdoor := \GF{\ParamJ{r}}$ and
+  \item $\ValueCommitTrapdoor := \binaryrange{\ScalarLength}$ and
         $\ValueCommitOutput := \SubgroupJ$.
 } %sapling
 \end{formulae}
@@ -3261,6 +3287,7 @@ Define:
 instantiated in \crossref{concretesproutnotecommit}.
 
 \sapling{
+\introlist
 \vspace{3ex}
 \Sapling uses two additional commitment schemes:
 
@@ -3605,8 +3632,9 @@ Define $\ToScalar(x \typecolon \PRFOutputExpand) := \LEOStoIPOf{\PRFOutputLength
 A new \Sapling \spendingKey $\SpendingKey$ is generated by choosing a bit sequence
 uniformly at random from $\SpendingKeyType$.
 
-From this \spendingKey, the \authSigningKey $\AuthSignPrivate \typecolon \GFstar{\ParamJ{r}}$ and
-\authProvingKey $\AuthProvePrivate \typecolon \GF{\ParamJ{r}}$ are derived as follows:
+From this \spendingKey, the \authSigningKey $\AuthSignPrivate \typecolon \GFstar{\ParamJ{r}}$,
+the \authProvingKey $\AuthProvePrivate \typecolon \GF{\ParamJ{r}}$, and the
+\outgoingViewingKey $\OutViewingKey \typecolon \OutViewingKeyType$ are derived as follows:
 
 \vspace{-0.5ex}
 \begin{tabular}{@{\hskip 1.7em}r@{\;}l}
@@ -3619,7 +3647,7 @@ If $\AuthSignPrivate = 0$, discard this key and repeat with a new $\SpendingKey$
 
 \vspace{1ex}
 $\AuthSignPublic \typecolon \PrimeOrderJ$, $\AuthProvePublic \typecolon \SubgroupJ$, and
-$\InViewingKey \typecolon \InViewingKeyTypeSapling$ are then derived as:
+the \incomingViewingKey $\InViewingKey \typecolon \InViewingKeyTypeSapling$ are then derived as:
 
 \vspace{-0.5ex}
 \begin{tabular}{@{\hskip 1.7em}r@{\;}l}
@@ -3841,7 +3869,7 @@ where
 
 \vspace{2ex}
 \begin{consensusrules}
-  \item Elements of a \spendDescription{} \MUST have the types given above.
+  \item Elements of a \spendDescription{} \MUST be canonical encodings of the types given above.
   \item $\AuthSignRandomizedPublic$ \MUSTNOT be of small order, i.e.\ $\scalarmult{\ParamJ{h}}{\AuthSignRandomizedPublic}$
         \MUSTNOT be $\ZeroJ$.
   \item The proof $\Proof{\Spend}$ \MUST be valid given a \primaryInput formed
@@ -3892,7 +3920,7 @@ where
 \end{itemize}
 
 \begin{consensusrules}
-  \item Elements of an \outputDescription{} \MUST have the types given above.
+  \item Elements of an \outputDescription{} \MUST be canonical encodings of the types given above.
   \item The proof $\Proof{\Output}$ \MUST be valid given a \primaryInput formed
         from the other fields except $\TransmitCiphertext{}$ and $\OutCiphertext{}$ ---
         i.e.\ $\SpendVerify{}((\cv, \cm, \EphemeralPublic), \Proof{\Output}) = 1$.
@@ -3923,7 +3951,7 @@ uniformly at random on $\bitseq{\NoteAddressPreRandLength}$.}
 Then it creates each output \note with index $i \typecolon \setofNew$ as follows:
 
 \begin{itemize}
-  \item Choose uniformly random $\NoteCommitRandNew{i} \leftarrowR \NoteCommitSproutTrapdoor$.
+  \item Choose uniformly random $\NoteCommitRandNew{i} \leftarrowR \NoteCommitSproutGenTrapdoor()$.
 \changed{
   \item Compute $\NoteAddressRandNew{i} = \PRFrho{\NoteAddressPreRand}(i, \hSig)$.
 }
@@ -3996,8 +4024,8 @@ the following steps:
         \vspace{-0.5ex}
 
         \begin{tabular}{@{\hskip 2em}r@{\;}l}
-          $\ValueCommitRandNew{}$ &$\leftarrowR \ValueCommitTrapdoor$ \\
-          $\NoteCommitRandNew{}$ &$\leftarrowR \NoteCommitSaplingTrapdoor$
+          $\ValueCommitRandNew{}$ &$\leftarrowR \ValueCommitGenTrapdoor()$ \\
+          $\NoteCommitRandNew{}$ &$\leftarrowR \NoteCommitSaplingGenTrapdoor()$
         \end{tabular}
 
   \item Calculate
@@ -4058,7 +4086,7 @@ is constructed as follows:
         and derive its \payingKey $\AuthPublicOld{i}$.
   \item \vspace{-0.5ex} Set $\vOld{i} = 0$.
   \item Choose uniformly random $\NoteAddressRandOld{i} \leftarrowR \PRFOutputSprout$
-        and $\NoteCommitRandOld{i} \leftarrowR \NoteCommitSproutTrapdoor$.
+        and $\NoteCommitRandOld{i} \leftarrowR \NoteCommitSproutGenTrapdoor()$.
   \item Compute $\nfOld{i} = \PRFnf{\AuthPrivateOld{i}}(\NoteAddressRandOld{i})$.
   \item Let $\TreePath{i}$ be a \dummy \merklePath for the
         \auxiliaryInput to the \joinSplitStatement (this will not be checked).
@@ -4099,7 +4127,7 @@ A \dummy{} \Sapling input \note is constructed as follows:
   \item Generate a new \diversifiedPaymentAddress $(\Diversifier, \DiversifiedTransmitPublic)$
         for $\SpendingKey$ as described in \crossref{saplingkeycomponents}.
   \item Set $\vOld{} = 0$, and set $\NotePosition = 0$.
-  \item Choose uniformly random $\NoteCommitRand \leftarrowR \NoteCommitSaplingTrapdoor$.
+  \item Choose uniformly random $\NoteCommitRand \leftarrowR \NoteCommitSaplingGenTrapdoor()$.
         and $\AuthProvePrivate \leftarrowR \GF{\ParamJ{r}}$.
   \item Compute $\AuthProvePublic = \scalarmult{\AuthProvePrivate}{\AuthProveBase}$ and
         $\AuthProvePublicRepr = \reprJOf{\AuthProvePublic}$\,.
@@ -4735,7 +4763,7 @@ the prover knows an \auxiliaryInput:
          \hparen\DiversifiedTransmitPublic \typecolon \GroupJ,\vspace{0.6ex}\\
          \hparen\vOld{} \typecolon \ValueType,\\
          \hparen\ValueCommitRandOld{} \typecolon \binaryrange{\ScalarLength},\\
-         \hparen\cmOld{} \typecolon \NoteCommitSaplingOutput,\\
+         \hparen\cmOld{} \typecolon \GroupJ,\\
          \hparen\NoteCommitRandOld{} \typecolon \binaryrange{\ScalarLength},\\
          \hparen\AuthSignRandomizer \typecolon \binaryrange{\ScalarLength},\\
          \hparen\AuthSignPublic \typecolon \SpendAuthSigPublic,\\
@@ -4808,6 +4836,7 @@ For details of the form and encoding of \spendStatement proofs, see \crossref{gr
   \item It is \emph{not} checked in the \spendStatement that $\AuthSignRandomizedPublic$ is not of
         small order. However, this \emph{is} checked outside the \spendStatement, as specified in
         \crossref{spenddesc}.
+  \item It is \emph{not} checked that $\ValueCommitRandOld{} < \ParamJ{r}$ or that $\NoteCommitRandOld{} < \ParamJ{r}$.
   \item $\SpendAuthSigRandomizePublic(\AuthSignRandomizer, \AuthSignPublic) = \AuthSignPublic + \scalarmult{\AuthSignRandomizer}{\AuthSignBase}$.
         ($\AuthSignBase$ is as defined in \crossref{concretespendauthsig}.)
 \end{pnotes}
@@ -4841,8 +4870,8 @@ the prover knows an \auxiliaryInput:
   \item $(\DiversifiedTransmitBase \typecolon \GroupJ,\\[0.5ex]
    \hparen\DiversifiedTransmitPublicRepr \typecolon \ReprJ,\\
    \hparen\vNew{} \typecolon \ValueType,\\
-   \hparen\ValueCommitRandNew{} \typecolon \ValueCommitTrapdoor,\\
-   \hparen\NoteCommitRandNew{} \typecolon \NoteCommitSaplingTrapdoor,\\
+   \hparen\ValueCommitRandNew{} \typecolon \binaryrange{\ScalarLength},\\
+   \hparen\NoteCommitRandNew{} \typecolon \binaryrange{\ScalarLength},\\
    \hparen\EphemeralPrivate \typecolon \binaryrange{\ScalarLength})$
 \end{formulae}
 \vspace{-1ex}
@@ -4881,6 +4910,7 @@ For details of the form and encoding of \outputStatement proofs, see \crossref{g
 
         The $\ValueCommitOutput$ and $\NoteCommitSaplingOutput$ types also represent points.
   \item The validity of $\DiversifiedTransmitPublicRepr$ is \emph{not} checked in this circuit.
+  \item It is \emph{not} checked that $\ValueCommitRandOld{} < \ParamJ{r}$ or that $\NoteCommitRandOld{} < \ParamJ{r}$.
 \end{pnotes}
 } %sapling
 
@@ -5494,9 +5524,9 @@ $\BlakeTwobGeneric$ is used to instantiate $\hSigCRH$, $\EquihashGen{}$,
 and $\KDFSprout$.
 \nuzero{From \NUZero onward, it is used to compute \sighashTxHashes
 as specified in \cite{ZIP-143}.}
-\sapling{For \Sapling, it is also used to instantiate $\KDFSapling$,
-and in the $\RedJubjub$ \signatureScheme which instantiates $\SpendAuthSig$
-and $\BindingSig$.}
+\sapling{For \Sapling, it is also used to instantiate $\PRFexpand{}$,
+$\PRFock{}$, $\KDFSapling$, and in the $\RedJubjub$ \signatureScheme
+which instantiates $\SpendAuthSig$ and $\BindingSig$.}
 
 \vspace{-1ex}
 \begin{formulae}
@@ -5516,8 +5546,8 @@ $\BlakeTwosOf{\ell}{p, x}$ refers to unkeyed $\BlakeTwos{\ell}$
 in sequential mode, with an output digest length of $\ell/8$ bytes,
 $8$-byte personalization string $p$, and input $x$.
 
-$\BlakeTwosGeneric$ is used to instantiate $\PRFexpand{}$, $\PRFnfSapling{}$,
-$\CRHivk$, and $\GroupJHash{}$.
+$\BlakeTwosGeneric$ is used to instantiate $\PRFnfSapling{}$, $\CRHivk$,
+and $\GroupJHash{}$.
 
 \vspace{-1ex}
 \begin{formulae}
@@ -5808,7 +5838,7 @@ Define $\PedersenHashToPoint(D \typecolon \byteseq{8}, M \typecolon \bitseq{\Pos
   \item Return $\ssum{i=1}{n} \scalarmult{\PedersenEncode{M_i}}{\PedersenGen{D}{i}} \typecolon \SubgroupJ$.
 \end{algorithm}
 
-\vspace{-2ex}
+\vspace{-1ex}
 where
 $\PedersenEncode{\paramdot} \typecolon \bitseq{3 \mult \range{1}{c}} \rightarrow
    \rangenozero{-\hfrac{\ParamJ{r}-1}{2}}{\hfrac{\ParamJ{r}-1}{2}}$ is defined as:
@@ -5823,6 +5853,7 @@ $\PedersenEncode{\paramdot} \typecolon \bitseq{3 \mult \range{1}{c}} \rightarrow
 \end{algorithm}
 
 \introlist
+\vspace{-1ex}
 Finally, define $\PedersenHash \typecolon \byteseq{8} \times \bitseq{\PosInt} \rightarrow \MerkleHashSapling$ by:
 
 \begin{formulae}
@@ -6617,6 +6648,7 @@ instantiated using $\SHAFull$ as follows:
 
 \begin{formulae}[leftmargin=1em]
   \item $\NoteCommitSprout{\NoteCommitRand}(\AuthPublic, \Value, \NoteAddressRand) := \SHAFullBox{\cmbox}$
+  \item $\NoteCommitSproutGenTrapdoor()$ generates the uniform distribution on $\NoteCommitSproutTrapdoor$.
 \end{formulae}
 
 \pnote{
@@ -6654,7 +6686,8 @@ instantiated as follows using $\WindowedPedersenCommitAlg$:
 \begin{formulae}
   \item $\NoteCommitSapling{\NoteCommitRand}(\DiversifiedTransmitBaseRepr, \DiversifiedTransmitPublicRepr, \Value) :=
            \WindowedPedersenCommit{\NoteCommitRand}\left(\ones{6} \bconcat \ItoLEBSPOf{64}{\Value} \bconcat
-             \DiversifiedTransmitBaseRepr \bconcat \DiversifiedTransmitPublicRepr\right)$.
+             \DiversifiedTransmitBaseRepr \bconcat \DiversifiedTransmitPublicRepr\right)$
+  \item $\NoteCommitSaplingGenTrapdoor()$ generates the uniform distribution on $\GF{\ParamJ{r}}$.
 \end{formulae}
 
 \vspace{-2ex}
@@ -6692,6 +6725,7 @@ In order to support this property, we also define \quotedterm{homomorphic}
 \begin{formulae}
   \item $\HomomorphicPedersenCommit{\ValueCommitRand}(D, \Value) :=
            \scalarmult{\Value}{\FindGroupJHashOf{D, \ascii{v}}} + \scalarmult{\ValueCommitRand}{\FindGroupJHashOf{D, \ascii{r}}}$
+  \item $\ValueCommitGenTrapdoor()$ generates the uniform distribution on $\GF{\ParamJ{r}}$.
 \end{formulae}
 
 See \crossref{ccthomomorphiccommit} for rationale and efficient circuit implementation
@@ -8160,11 +8194,14 @@ Consensus rules applying to a \joinSplitDescription are given in \crossref{joins
 
 Let $\LEBStoOSP{}{}$ be as defined in \crossref{endian}.
 
+\vspace{-0.5ex}
 Let $\reprJ$ be as defined in \crossref{jubjub}.
 
+\vspace{-0.5ex}
 An abstract \spendDescription, as described in \crossref{spendsandoutputs}, is encoded in
 a \transaction as an instance of a \type{SpendDescription} type as follows:
 
+\vspace{-2.5ex}
 \begin{center}
 \hbadness=2000
 \begin{tabularx}{0.92\textwidth}{|c|l|l|L|}
@@ -8173,7 +8210,7 @@ Bytes & \heading{Name} & \heading{Data Type} & \heading{Description} \\
 \hhline{|=|=|=|=|}
 
 $32$ & $\cvField$ & \type{char[32]} & A \valueCommitment to the value of the input \note,
-$\LEBStoOSPOf{256}{\reprJOf{\cv}\hairspace}$. \\ \hline
+$\LEBStoOSPOf{256}{\reprJOf{\cv}}$. \\ \hline
 
 $32$ & $\anchorField$ & \type{char[32]} & A \merkleRoot of the \Sapling \noteCommitmentTree
 at some \blockHeight in the past, $\LEBStoOSPOf{256}{\rt}$. \\ \hline
@@ -8182,7 +8219,7 @@ $32$ & $\nullifierField$ & \type{char[32]} & The \nullifier of the input \note,
 $\LEBStoOSPOf{256}{\nf}$. \\ \hline
 
 $32$ & $\rkField$ & \type{char[32]} & The randomized public key for $\spendAuthSig$,
-$\LEBStoOSPOf{256}{\reprJOf{\AuthSignRandomizedPublic}\hairspace}$. \\ \hline
+$\LEBStoOSPOf{256}{\reprJOf{\AuthSignRandomizedPublic}\kern 0.05em}$. \\ \hline
 
 $192$ & $\zkproof$ & \type{char[192]} & An encoding of the \zeroKnowledgeProof
 $\ProofSpend$ (see \crossref{groth}). \\ \hline
@@ -8192,7 +8229,11 @@ $64$ & $\spendAuthSig$ & \type{char[64]} & A signature authorizing this spend. \
 \end{tabularx}
 \end{center}
 
-Consensus rules applying to a \spendDescription are given in \crossref{spenddesc}.
+\vspace{-5.5ex}
+\consensusrule{$\LEOStoIPOf{256}{\anchorField}$ \MUST be less than $\ParamJ{q}$.}
+
+\vspace{-0.5ex}
+Other consensus rules applying to a \spendDescription are given in \crossref{spenddesc}.
 
 
 \introsection
@@ -8200,13 +8241,14 @@ Consensus rules applying to a \spendDescription are given in \crossref{spenddesc
 
 Let $\LEBStoOSP{}{}$ be as defined in \crossref{endian}.
 
-Let $\reprJ$ be as defined in \crossref{jubjub}.
+\vspace{-0.5ex}
+Let $\reprJ$ be as defined in \crossref{jubjub}, and $\ExtractJ$ as in \crossref{concretegrouphashjubjub}.
 
-Let $\ExtractJ$ be as defined in \crossref{concretegrouphashjubjub}.
-
+\vspace{-0.5ex}
 An abstract \outputDescription, described in \crossref{spendsandoutputs}, is encoded in
 a \transaction as an instance of an \type{OutputDescription} type as follows:
 
+\vspace{-2.5ex}
 \begin{center}
 \hbadness=2000
 \begin{tabularx}{0.92\textwidth}{|c|l|l|L|}
@@ -8235,10 +8277,15 @@ $\ProofOutput$ (see \crossref{groth}). \\ \hline
 \end{tabularx}
 \end{center}
 
+\vspace{-2ex}
 The $\ephemeralKey$, $\encCiphertext$, and $\outCiphertext$ fields together form the
 \noteCiphertext, which is computed as described in \crossref{saplinginband}.
 
-Consensus rules applying to an \outputDescription are given in \crossref{outputdesc}.
+\vspace{-4ex}
+\consensusrule{$\LEOStoIPOf{256}{\cmField}$ \MUST be less than $\ParamJ{q}$.}
+
+\vspace{-0.5ex}
+Other consensus rules applying to an \outputDescription are given in \crossref{outputdesc}.
 }
 
 
@@ -9435,6 +9482,8 @@ of their ``Auditable, Anonymous Electronic Cash'' proposal in \cite{ST1999}.
     \item Clarify that interstitial \treestates form a tree for each \transaction containing \joinSplitDescriptions.
     \item Correct the description of P2PKH addresses in \crossref{transparentaddrencoding} --- they
           use a hash of a compressed, not an uncompressed ECDSA key representation.
+    \item Clarify the wording of the caveat\footnoteref{securitycaveat} about the claimed security
+          of shielded \transactions.
     \item Clarify attribution of the \Zcash protocol design.
     \item Acknowledge Alex Biryukov and Dmitry Khovratovich as the designers of Equihash.
     \item Acknowledge Shafi Goldwasser, Silvio Micali, Oded Goldreich, Rosario Gennaro, Bryan Parno, Jon Howell,
@@ -9443,6 +9492,11 @@ of their ``Auditable, Anonymous Electronic Cash'' proposal in \cite{ST1999}.
 \sapling{
     \item Use the more precise subgroup types $\SubgroupG$ and $\SubgroupJ$ in preference to
           $\GroupG{}$ and $\GroupJ$ where applicable.
+    \item Change the types of \auxiliaryInputs to the \spendStatement and \outputStatement, to be more
+          faithful to the implementation.
+    \item Change the syntax of a \commitmentScheme to add $\CommitGenTrapdoor$. This is necessary
+          because the intended distribution of \commitmentTrapdoors may not be uniform on all values
+          that are acceptable trapdoor inputs.
     \item Correct the argument that $\vSum$ is in range in \crossref{saplingbalance}.
     \item Correct or improve the types of $\GroupJHash{}$, $\FindGroupJHash$, $\ExtractJ$, $\PRFexpand{}$,
           $\PRFock{}$, and $\CRHivk$.
@@ -9455,7 +9509,14 @@ of their ``Auditable, Anonymous Electronic Cash'' proposal in \cite{ST1999}.
     \item Rename $\mathsf{CRS}$ (Common Random String) to $\URS$ (\uniformRandomString), to
           match the terminology adopted at the first zkproof workshop held in Boston, Massachusetts
           on May~10--11, 2018.
-    \item Add reference to \cite{Carroll1876}.
+    \item Generalize $\PRFexpand{}$ to accept an arbitrary-length input. (This specification does not
+          use that generalization, but \cite{ZIP-32} does.)
+    \item Clarify the wording of the abstract.
+    \item Add the Jubjub bird image to the title page. This image has been edited from a scan of
+          Peter Newell's original illustration (as it appeared in \cite{Carroll1902}) to remove the
+          background and Bandersnatch, and to restore the bird's clipped right wing.
+    \item Change the light yellow background to white (indicating that this \NUZero and \Sapling
+          specification is no longer a draft).
 } %sapling
 \end{itemize}
 

@@ -315,8 +315,8 @@
 \newcommand{\varvv}{\varv\kern 0.02em\varv}
 
 \newcommand{\hfrac}[2]{\scalebox{0.8}{$\genfrac{}{}{0.5pt}{0}{#1}{#2}$}}
-\newcommand{\ssqrt}[1]{\rlap{\scalebox{0.64}[1]{$\sqrt{\scalebox{1.5625}[1]{${#1}\strut$}}$}} %
-             \hspace{0.005em}\scalebox{0.64}[1]{$\sqrt{\scalebox{1.5625}[1]{$\phantom{#1}\strut$}}$}}
+\newcommand{\ssqrt}[1]{\rlap{\scalebox{0.64}[1]{$\sqrt{\scalebox{1.5625}[1]{${#1}\vphantom{b}$}}$}} %
+             \hspace{0.005em}\scalebox{0.64}[1]{$\sqrt{\scalebox{1.5625}[1]{$\phantom{#1}\vphantom{b}$}}$}}
 
 \newcommand{\sbitbox}[2]{\bitbox{#1}{\strut #2}}
 
@@ -1947,8 +1947,8 @@ to be rejected.
 \introsection
 \section{Notation} \label{notation}
 
+\vspace{-2ex}
 $\bit$ means the type of bit values, i.e.\ $\setof{0, 1}$.
-
 $\byte$ means the type of byte values, i.e.\ $\range{0}{255}$.
 
 $\Nat$ means the type of nonnegative integers. $\PosInt$~means
@@ -2093,6 +2093,7 @@ $a \xor b$ means the bitwise-exclusive-or of $a$ and $b$,
 and $a \band b$ means the bitwise-and of $a$ and $b$. These are
 defined on integers or (equal-length) bit sequences according to context.
 
+\vspace{-0.5ex}
 $\!\vsum{i=1}{\rmN} a_i$ means the sum of $a_{\allN{}}$.\;
 $\vproduct{i=1}{\rmN} a_i$ means the product of $a_{\allN{}}$.\;
 $\vxor{i=1}{\rmN} a_i$ means the bitwise exclusive-or of $a_{\allN{}}$.
@@ -2103,6 +2104,10 @@ $\vxor{i=1}{0} a_i = 0$} or the all-zero bit sequence of the
 appropriate length given by the type of $a$.
 
 \notsprout{
+$\ssqrt{a}$, where $a \typecolon \GF{q}$, means the positive
+(i.e.\ in the range $\range{0}{\hfrac{\ParamJ{r}-1}{2}}$
+square root of $a$ in $\GF{q}$, if it exists.
+
 $b \bchoose x : y$ means $x$ when $b = 1$, or $y$ when $b = 0$.
 }
 
@@ -3210,7 +3215,7 @@ random and an input, can be used to commit to the input in such a way that:
 \vspace{-3ex}
 A \commitmentScheme $\CommitAlg$ defines a type of inputs $\CommitInput$,
 a type of commitments $\CommitOutput$, a type of \commitmentTrapdoors
-$\CommitTrapdoor$, and a generator of random trapdoors, $\CommitGenTrapdoor$.
+$\CommitTrapdoor$, and a trapdoor generator $\CommitGenTrapdoor \typecolon () \rightarrowR \CommitTrapdoor$.
 
 \vspace{2ex}
 Let $\CommitAlg \typecolon \CommitTrapdoor \times \CommitInput \rightarrow \CommitOutput$
@@ -3228,7 +3233,7 @@ be a function satisfying the following security requirements.
         such that $x \neq x'$ and $\Commit{r}(x) = \Commit{r'}(x')$.
 \end{securityrequirements}
 
-\vspace{-2ex}
+\vspace{-3ex}
 \sprout{
 \pnote{If it were only feasible to find $x \typecolon \CommitInput$ and
 $r, r' \typecolon \CommitTrapdoor$ such that $r \neq r'$ and
@@ -3249,33 +3254,13 @@ the computational binding security requirement.}
 \end{pnotes}
 } %notsprout
 
-\vspace{3ex}
+\vspace{1ex}
 Let $\NoteCommitRandLength$, $\MerkleHashLengthSprout$, $\PRFOutputLengthSprout$,
-$\ValueLength$, and $\ScalarLength$ be as defined in \crossref{constants}.
+and $\ValueLength$ be as defined in \crossref{constants}.
 
-\sapling{
-Let $\SubgroupJ$ and $\ParamJ{r}$ be as defined in \crossref{jubjub}.
-} %sapling
-
-\sprout{
 Define $\NoteCommitSproutTrapdoor := \bitseq{\NoteCommitRandLength}$ and
 $\NoteCommitSproutOutput := \bitseq{\MerkleHashLengthSprout}$.
-} %sprout
-\notsprout{
-Define:
-\begin{formulae}
-  \item $\NoteCommitSproutTrapdoor := \bitseq{\NoteCommitRandLength}$ and
-        $\NoteCommitSproutOutput := \bitseq{\MerkleHashLengthSprout}$;
-\sapling{
-  \item $\NoteCommitSaplingTrapdoor := \binaryrange{\ScalarLength}$ and
-        $\NoteCommitSaplingOutput := \SubgroupJ$;
-  \item $\ValueCommitTrapdoor := \binaryrange{\ScalarLength}$ and
-        $\ValueCommitOutput := \SubgroupJ$.
-} %sapling
-\end{formulae}
-} %notsprout
 
-\vspace{1ex}
 \SproutOrZcash uses a \note{} \commitmentScheme
 
 \begin{tabular}{@{\hskip 1.5em}r@{\;}l}
@@ -3287,8 +3272,21 @@ Define:
 instantiated in \crossref{concretesproutnotecommit}.
 
 \sapling{
+\vspace{2ex}
+Let $\ScalarLength$ be as defined in \crossref{constants}.
+
+Let $\SubgroupJ$ and $\ParamJ{r}$ be as defined in \crossref{jubjub}.
+
 \introlist
-\vspace{3ex}
+Define:
+\begin{formulae}
+  \item $\NoteCommitSaplingTrapdoor := \binaryrange{\ScalarLength}$ and
+        $\NoteCommitSaplingOutput := \GroupJ$;
+  \item $\ValueCommitTrapdoor := \binaryrange{\ScalarLength}$ and
+        $\ValueCommitOutput := \GroupJ$.
+\end{formulae}
+
+\introlist
 \Sapling uses two additional commitment schemes:
 
 \begin{tabular}{@{\hskip 1.5em}r@{\;}l@{\;}l}
@@ -3299,6 +3297,11 @@ instantiated in \crossref{concretesproutnotecommit}.
 
 $\NoteCommitSapling{}$ is instantiated in \crossref{concretesaplingnotecommit}, and
 $\ValueCommit{}$ is instantiated in \crossref{concretevaluecommit}.
+
+\vspace{-2ex}
+\nnote{$\NoteCommitSapling{}$ and $\ValueCommit{}$ always return points in the subgroup $\SubgroupJ$.
+However, we declare the type of these commitment outputs to be $\GroupJ$ because they are not
+checked to be in the subgroup when used in \spendDescriptions and \outputDescriptions.}
 } %sapling
 
 
@@ -3389,7 +3392,9 @@ For a randomly selected $\URS \typecolon \GroupGHashURSType$,
 it must be reasonble to model $\GroupGHash{\URS}$ as a random oracle.
 } %securityrequirement
 
+\vspace{-1ex}
 \begin{nnotes}
+\vspace{-0.5ex}
   \item $\GroupJHash{}$ is used to obtain generators of the \jubjubCurve for various purposes:
         the bases $\AuthSignBase$ and $\AuthProveBase$ used in \Sapling key generation,
         the \xPedersenHash defined in \crossref{concretepedersenhash}, and
@@ -3545,6 +3550,7 @@ taking them to be the particular \provingKey and \verifyingKey defined by the
         $\BNCurve$ pairing (\crossref{bnpairing}),
         to prove and verify the \Sprout \joinSplitStatement
         (\crossref{joinsplitstatement}) before \Sapling activation.
+        \vspace{-0.5ex}
   \item $\Groth$ (\crossref{groth}) is used with the
         $\BLSCurve$ pairing (\crossref{blspairing}),
         to prove and verify the \Sapling \spendStatement
@@ -3553,8 +3559,8 @@ taking them to be the particular \provingKey and \verifyingKey defined by the
         and verify the \joinSplitStatement after \Sapling activation.
 \end{itemize}
 
-These specializations are referred to as $\JoinSplit$ for the \Sprout
-\joinSplitStatement (with either $\PHGR$ and $\BNCurve$, or $\Groth$ and
+These specializations are: $\JoinSplit$ for the \Sprout
+\joinSplitStatement (with $\PHGR$ and $\BNCurve$, or $\Groth$ and
 $\BLSCurve$); $\Spend$ for the \Sapling \spendStatement; and $\Output$
 for the \Sapling \outputStatement.
 
@@ -3565,7 +3571,7 @@ and \verifyingKey defined in \crossref{sproutparameters}, or the
 defined in \crossref{saplingparameters}, according to whether the proof
 appears in a \block before or after \Sapling activation.
 
-Similarly, we omit key subscripts on $\SpendProve$,
+We also omit subscripts on $\SpendProve$,
 $\SpendVerify$, $\OutputProve$, and $\OutputVerify$, taking
 them to be the relevant $\Groth$ \provingKeys and
 \verifyingKeys defined in \crossref{saplingparameters}.
@@ -3616,9 +3622,8 @@ Let $\DiversifyHash$ be a \hashFunction, instantiated in \crossref{concretediver
 Let $\SpendAuthSig$, instantiated in \crossref{concretespendauthsig},
 be a \rerandomizableSignatureScheme.
 
-Let $\reprJ$, $\SubgroupJ$, and $\SubgroupReprJ$ be as defined in \crossref{jubjub}.
-
-Let $\FindGroupJHash$ be as defined in \crossref{concretegrouphashjubjub}.
+Let $\reprJ$, $\SubgroupJ$, and $\SubgroupReprJ$ be as defined in \crossref{jubjub}, and
+let $\FindGroupJHash$ be as defined in \crossref{concretegrouphashjubjub}.
 
 Let $\LEBStoOSP{} \typecolon (\ell \typecolon \Nat) \times \bitseq{\ell} \rightarrow \byteseq{\sceiling{\ell/8}}$
 and $\LEOStoIP{} \typecolon (\ell \typecolon \Nat \suchthat \ell \bmod 8 = 0) \times \byteseq{\ell/8} \rightarrow \binaryrange{\ell}$
@@ -3658,7 +3663,7 @@ the \incomingViewingKey $\InViewingKey \typecolon \InViewingKeyTypeSapling$ are 
 
 If $\InViewingKey = 0$, discard this key and repeat with a new $\SpendingKey$.
 
-\vspace{2ex}
+\vspace{1ex}
 As explained in \crossref{addressesandkeys}, \Sapling allows the efficient
 creation of multiple \diversifiedPaymentAddresses with the same spending
 authority. A group of such addresses shares the same \fullViewingKey and
@@ -3688,10 +3693,8 @@ cannot be distinguished (without knowledge of the \spendingKey) from one with a 
 
 \introlist
 Let $\first \typecolon (\byte \rightarrow \maybe{T}) \rightarrow \maybe{T}$
-be as defined in \crossref{concretegrouphashjubjub}.
-
-Define:
-\vspace{-1ex}
+be as defined in \crossref{concretegrouphashjubjub}. Define:
+\vspace{-0.5ex}
 \begin{formulae}
   \item $\CheckDiversifier(\Diversifier \typecolon \DiversifierType) := \begin{cases}
           \bot,         &\caseif \DiversifyHash(\Diversifier) = \bot \\
@@ -3707,6 +3710,7 @@ if this happens, discard the key and repeat with a different $\SpendingKey$.
 
 \vspace{-2ex}
 \begin{pnotes}
+\vspace{-1ex}
   \item The protocol does not prevent using the \diversifier $\Diversifier$ to produce
         \quotedterm{vanity} addresses that start with a meaningful string when
         encoded in Bech32 (see \crossref{saplingpaymentaddrencoding}).
@@ -3870,14 +3874,16 @@ where
 \vspace{2ex}
 \begin{consensusrules}
   \item Elements of a \spendDescription{} \MUST be canonical encodings of the types given above.
-  \item $\AuthSignRandomizedPublic$ \MUSTNOT be of small order, i.e.\ $\scalarmult{\ParamJ{h}}{\AuthSignRandomizedPublic}$
-        \MUSTNOT be $\ZeroJ$.
+  \item $\cv$ and $\AuthSignRandomizedPublic$ \MUSTNOT be of small order, i.e.\ $\scalarmult{\ParamJ{h}}{\cv}$
+        \MUSTNOT be $\ZeroJ$ and $\scalarmult{\ParamJ{h}}{\AuthSignRandomizedPublic}$ \MUSTNOT be $\ZeroJ$.
   \item The proof $\Proof{\Spend}$ \MUST be valid given a \primaryInput formed
         from the other fields except $\spendAuthSig$ ---
         i.e.\ $\SpendVerify{}((\cv, \rt, \nf, \AuthSignRandomizedPublic), \Proof{\Spend}) = 1$.
-  \item The \spendAuthSignature{} \MUST be a valid $\SpendAuthSig$ signature over $\SigHash$
-        using $\AuthSignRandomizedPublic$ as the public key, where $\SigHash$ is the \sighashTxHash
-        of this \transaction using $\SIGHASHALL$ as defined in \crossref{sighash} ---
+  \item Let $\SigHash$ be the \sighashTxHash of this \transaction, not associated with an input,
+        as defined in \crossref{sighash} using $\SIGHASHALL$.
+
+        The \spendAuthSignature{} \MUST be a valid $\SpendAuthSig$ signature over $\SigHash$
+        using $\AuthSignRandomizedPublic$ as the public key ---
         i.e.\ $\SpendAuthSigVerify{\AuthSignRandomizedPublic}(\SigHash, \spendAuthSig) = 1$.
 \end{consensusrules}
 } %sapling
@@ -3892,6 +3898,8 @@ An \outputTransfer, as specified in \crossref{spendsandoutputs}, is encoded in
 Each \transaction includes a sequence of zero or more \outputDescriptions.
 There are no signatures associated with \outputDescriptions.
 
+Let $\ValueCommitOutput$ be as defined in \crossref{abstractcommit}.
+
 Let $\KASapling$ be as defined in \crossref{abstractkeyagreement}.
 
 Let $\Sym$ be as defined in \crossref{abstractsym}.
@@ -3902,7 +3910,6 @@ Let $\Spend$ be as defined in \crossref{abstractzk}.
 \introlist
 An \outputDescription consists of $(\cv, \cmU, \EphemeralPublic, \TransmitCiphertext{}, \OutCiphertext, \ProofOutput)$
 where
-\vspace{1ex}
 \begin{itemize}
   \item $\cv \typecolon \ValueCommitOutput$ is the \valueCommitment to the value of the output \note;
   \item $\cmU \typecolon \MerkleHashSapling$ is the result of applying $\ExtractJ$ (defined
@@ -3916,19 +3923,23 @@ where
         a \fullViewingKey to recover the recipient \diversifiedTransmissionKey $\DiversifiedTransmitPublic$
         and the ephemeral private key $\EphemeralPrivate$ (and therefore the entire \notePlaintext);
   \item $\ProofOutput \typecolon \OutputProof$ is a \zeroKnowledgeProof with \primaryInput
-        $(\cv, \cm, \EphemeralPublic)$ for the \outputStatement defined in \crossref{outputstatement}.
+        $(\cv, \cmU, \EphemeralPublic)$ for the \outputStatement defined in \crossref{outputstatement}.
 \end{itemize}
 
 \begin{consensusrules}
   \item Elements of an \outputDescription{} \MUST be canonical encodings of the types given above.
+        \vspace{-0.5ex}
+  \item $\cv$ and $\EphemeralPublic$ \MUSTNOT be of small order, i.e.\ $\scalarmult{\ParamJ{h}}{\cv}$
+        \MUSTNOT be $\ZeroJ$ and $\scalarmult{\ParamJ{h}}{\EphemeralPublic}$ \MUSTNOT be $\ZeroJ$.
   \item The proof $\Proof{\Output}$ \MUST be valid given a \primaryInput formed
         from the other fields except $\TransmitCiphertext{}$ and $\OutCiphertext{}$ ---
-        i.e.\ $\SpendVerify{}((\cv, \cm, \EphemeralPublic), \Proof{\Output}) = 1$.
+        i.e.\ $\SpendVerify{}((\cv, \cmU, \EphemeralPublic), \Proof{\Output}) = 1$.
 \end{consensusrules}
 } %sapling
 
 
 \introlist
+\vspace{-2ex}
 \subsection{Sending \Notes} \label{send}
 
 \notsprout{\subsubsection{Sending \Notes{} (\Sprout)}} \label{sproutsend}
@@ -3943,17 +3954,19 @@ generating a new $\JoinSplitSig$ key pair:
 \end{formulae}
 
 \introlist
+\vspace{-1ex}
 For each \joinSplitDescription, the sender chooses $\RandomSeed$ uniformly at
 random on $\bitseq{\RandomSeedLength}$, and selects
 the input \notes. At this point there is sufficient information to compute $\hSig$,
 as described in the previous section. \changed{The sender also chooses $\NoteAddressPreRand$
 uniformly at random on $\bitseq{\NoteAddressPreRandLength}$.}
-Then it creates each output \note with index $i \typecolon \setofNew$ as follows:
+Then it creates each output \note with index $i \typecolon \setofNew$:
 
 \begin{itemize}
   \item Choose uniformly random $\NoteCommitRandNew{i} \leftarrowR \NoteCommitSproutGenTrapdoor()$.
 \changed{
   \item Compute $\NoteAddressRandNew{i} = \PRFrho{\NoteAddressPreRand}(i, \hSig)$.
+        \vspace{-0.5ex}
 }
   \item Compute $\cmNew{i} =
         \NoteCommitSprout{\NoteCommitRandNew{i}}(\AuthPublicNew{i}, \ValueNew{i}, \NoteAddressRandNew{i})$.
@@ -4802,7 +4815,7 @@ $\nfOld{} = \PRFnfSapling{\AuthProvePublicRepr}(\NoteAddressRandRepr)$ where
 \begin{formulae}
   \item $\AuthProvePublicRepr = \reprJOf{\scalarmult{\AuthProvePrivate}{\AuthProveBase}}$
         \vspace{-1ex}
-  \item $\NoteAddressRandRepr = \reprJ\big(\MixingPedersenHash(\cmOld{}, \NotePosition)\big)$.
+  \item $\NoteAddressRandRepr = \reprJ\big(\MixingPedersenHash(\cmOld{}, \NotePosition)\kern-0.12em\big)$.
 \end{formulae}
 
 \vspace{-1ex}
@@ -4828,8 +4841,7 @@ For details of the form and encoding of \spendStatement proofs, see \crossref{gr
         see \crossref{ccteddecompressvalidate} for implementation of validity checks on compressed
         representations of \jubjubCurve points.
 
-        The $\ValueCommitOutput$, $\NoteCommitSaplingOutput$, and $\SpendAuthSigPublic$ types also
-        represent points.
+        The $\ValueCommitOutput$ and $\SpendAuthSigPublic$ types also represent points, i.e. $\GroupJ$.
   \item In the Merkle path validity check, each \merkleLayer does \emph{not} check that its
         input bit sequence is a canonical encoding (in $\range{0}{\ParamJ{r}-1}$) of the integer
         from the previous \merkleLayer.
@@ -4858,7 +4870,7 @@ A valid instance of $\ProofOutput$ assures that given a \primaryInput:
 
 \begin{formulae}
   \item $\oparen\cvNew{} \typecolon \ValueCommitOutput,\\
-         \hparen\cmNew{} \typecolon \NoteCommitSaplingOutput,\\
+         \hparen\cmU \typecolon \MerkleHashSapling,\\
          \hparen\EphemeralPublic \typecolon \GroupJ\cparen$,
 \end{formulae}
 
@@ -4880,9 +4892,9 @@ such that the following conditions hold:
 \vspace{1ex}
 \snarkcondition{Note commitment integrity} \label{outputnotecommitmentintegrity}
 
-$\cmNew{} = \NoteCommitSapling{\NoteCommitRandNew{}}(\DiversifiedTransmitBaseRepr,
-                                                     \DiversifiedTransmitPublicRepr,
-                                                     \vNew{})$,
+$\cmU = \ExtractJ\big(\NoteCommitSapling{\NoteCommitRandNew{}}(\DiversifiedTransmitBaseRepr,
+                                                               \DiversifiedTransmitPublicRepr,
+                                                               \vNew{})\kern-0.12em\big)$,
 where $\DiversifiedTransmitBaseRepr = \reprJOf{\DiversifiedTransmitBase}$\,.
 
 \snarkcondition{Value commitment integrity} \label{outputvaluecommitmentintegrity}
@@ -4908,7 +4920,7 @@ For details of the form and encoding of \outputStatement proofs, see \crossref{g
         see \crossref{ccteddecompressvalidate} for implementation of validity checks on compressed
         representations of \jubjubCurve points.
 
-        The $\ValueCommitOutput$ and $\NoteCommitSaplingOutput$ types also represent points.
+        The $\ValueCommitOutput$ type also represents points, i.e. $\GroupJ$.
   \item The validity of $\DiversifiedTransmitPublicRepr$ is \emph{not} checked in this circuit.
   \item It is \emph{not} checked that $\ValueCommitRandOld{} < \ParamJ{r}$ or that $\NoteCommitRandOld{} < \ParamJ{r}$.
 \end{pnotes}
@@ -8042,9 +8054,13 @@ $\versionField \geq 4$ and $\nShieldedSpend + \nShieldedOutput > 0$.
                 $\dataToBeSigned$, as defined in \crossref{sproutnonmalleability}.
         \end{itemize}
   \saplingonwarditem{If $\versionField \geq 4$ and $\nShieldedSpend + \nShieldedOutput > 0$,
-        then \bindingSig{} \MUST represent a valid signature under the \txBindingVerificationKey,
-        calculated as specified in \crossref{bindingsig}, of $\dataToBeSigned$ as defined
-        in that section.}
+        then:
+        \begin{itemize}
+          \item let $\BindingPublic$ and $\SigHash$ be as defined in \crossref{bindingsig};
+          \item \bindingSig{} \MUST represent a valid signature under the \txBindingVerificationKey
+                $\BindingPublic$ of $\SigHash$ ---
+                i.e.\ $\BindingSigVerify{\BindingPublic}(\SigHash, \bindingSig) = 1$.
+        \end{itemize}}
   \item A \coinbaseTransaction{} \MUSTNOT have any
         \joinSplitDescriptions\sapling{, \spendDescriptions, or \outputDescriptions}.
   \item A \transaction{} \MUSTNOT spend an output of a \coinbaseTransaction
@@ -8054,6 +8070,7 @@ $\versionField \geq 4$ and $\nShieldedSpend + \nShieldedOutput > 0$.
   \nuzeroonwarditem{\nExpiryHeight{} \MUST be less than or equal to 499999999.}
   \nuzeroonwarditem{If a \transaction is not a \coinbaseTransaction and its \nExpiryHeight{} field
         is nonzero, then it \MUSTNOT be mined at a \blockHeight greater than its \nExpiryHeight.}
+  \saplingonwarditem{\valueBalance{} \MUST be in the range $\range{-\MAXMONEY}{\MAXMONEY}$.}
   \item \todo{Other rules inherited from \Bitcoin.}
 \end{consensusrules}
 
@@ -9494,6 +9511,8 @@ of their ``Auditable, Anonymous Electronic Cash'' proposal in \cite{ST1999}.
           $\GroupG{}$ and $\GroupJ$ where applicable.
     \item Change the types of \auxiliaryInputs to the \spendStatement and \outputStatement, to be more
           faithful to the implementation.
+    \item Add explicit consensus rules that the $\anchorField$ field of a \spendDescription and the $\cmField$
+          field of an \outputDescription{} \MUST be canonical encodings.
     \item Change the syntax of a \commitmentScheme to add $\CommitGenTrapdoor$. This is necessary
           because the intended distribution of \commitmentTrapdoors may not be uniform on all values
           that are acceptable trapdoor inputs.

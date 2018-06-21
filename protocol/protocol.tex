@@ -2105,8 +2105,9 @@ appropriate length given by the type of $a$.
 
 \notsprout{
 $\ssqrt{a}$, where $a \typecolon \GF{q}$, means the positive
-(i.e.\ in the range $\range{0}{\hfrac{\ParamJ{r}-1}{2}}$
-square root of $a$ in $\GF{q}$, if it exists.
+(i.e.\ in the range $\range{0}{\hfrac{\ParamJ{r}-1}{2}}$)
+square root of $a$ in $\GF{q}$. It is only used in cases where the
+square root must exist.
 
 $b \bchoose x : y$ means $x$ when $b = 1$, or $y$ when $b = 0$.
 }
@@ -3727,6 +3728,7 @@ if this happens, discard the key and repeat with a different $\SpendingKey$.
 
 \vspace{-3ex}
 \begin{nnotes}
+\vspace{-0.5ex}
   \item Assume that $\PRFexpand{}$ is a PRF with output range $\PRFOutputExpand$, where
         $2^{\PRFOutputLengthExpand}$ is large compared to $\ParamJ{r}$.
 
@@ -3736,7 +3738,8 @@ if this happens, discard the key and repeat with a different $\SpendingKey$.
         Then $f$ is also a PRF, since
         $\LEOStoIP{\PRFOutputLengthExpand} \typecolon \PRFOutputExpand \rightarrow \binaryrange{\PRFOutputLengthExpand}$
         is injective, and the bias introduced by the reduction modulo $\ParamJ{r}$ is small
-        because \crossref{constants} defines $\PRFOutputLengthExpand$ as $512$.
+        because \crossref{constants} defines $\PRFOutputLengthExpand$ as $512$, while $\ParamJ{r}$
+        has length $252$ bits.
 
         It follows that the distribution of $\AuthSignPrivate$,
         i.e.\ $\PRFexpand{\SpendingKey}([0]) : \SpendingKey \leftarrowR \SpendingKeyType$,
@@ -3751,6 +3754,7 @@ if this happens, discard the key and repeat with a different $\SpendingKey$.
         indistinguishable from the uniform distribution on $\SubgroupReprJ$
         which is the keyspace of $\PRFnfSapling{}$.
 \end{nnotes}
+\vspace{-2ex}
 } %sapling
 
 
@@ -3814,6 +3818,7 @@ where
         a sequence of ciphertext components for the encrypted output \notes.
 \end{itemize}
 
+\vspace{-1ex}
 The $\ephemeralKey$ and $\encCiphertexts$ fields together form the \notesCiphertext.
 
 \introlist
@@ -4134,7 +4139,7 @@ Let $\NoteCommitSaplingTrapdoor$ be as defined in \crossref{abstractcommit}.
 \introlist
 A \dummy{} \Sapling input \note is constructed as follows:
 
-\vspace{-1ex}
+\vspace{-0.5ex}
 \begin{itemize}
   \item Choose uniformly random $\SpendingKey \leftarrowR \SpendingKeyType$.
   \item Generate a new \diversifiedPaymentAddress $(\Diversifier, \DiversifiedTransmitPublic)$
@@ -5116,7 +5121,7 @@ Let $\cvNew{}$ be the \valueCommitment for the new \note, and let $\cmNew{}$ be 
 Then to encrypt:
 
 \begin{algorithm}
-  \item choose a uniformly random ephemeral private key $\EphemeralPrivate \leftarrowR \KASaplingPrivate$
+  \item choose a uniformly random ephemeral private key $\EphemeralPrivate \leftarrowR \KASaplingPrivate \setminus \setof{0}$
   \item let $\EphemeralPublic = \KASaplingDerivePublic(\EphemeralPrivate, \DiversifiedTransmitBaseNew)$
   \item let $\TransmitPlaintext{}$ be the raw encoding of $\NotePlaintext{}$
   \item let $\DHSecret{} = \KASaplingAgree(\EphemeralPrivate, \DiversifiedTransmitPublicNew)$
@@ -9484,6 +9489,8 @@ double-spends--- were first applied to privacy-preserving digital currencies
 by Tomas Sander and Amnon Ta–Shma. To a large extent \Zcash is a refinement
 of their ``Auditable, Anonymous Electronic Cash'' proposal in \cite{ST1999}.
 
+Finally, we would like to thank the Internet Archive for their scan of
+Peter Newell's illustration of the Jubjub bird, from \cite{Carroll1902}.
 
 \intropart
 \section{Change History}
@@ -9512,7 +9519,11 @@ of their ``Auditable, Anonymous Electronic Cash'' proposal in \cite{ST1999}.
     \item Change the types of \auxiliaryInputs to the \spendStatement and \outputStatement, to be more
           faithful to the implementation.
     \item Add explicit consensus rules that the $\anchorField$ field of a \spendDescription and the $\cmField$
-          field of an \outputDescription{} \MUST be canonical encodings.
+          field of an \outputDescription{} must be canonical encodings.
+    \item Add consensus rules that $\cv$ in a \spendDescription, and $\cv$ and $\EphemeralPublic$ in an
+          \outputDescription, are not of small order. Exclude $0$ from the range of $\EphemeralPrivate$
+          when encrypting \Sapling notes.
+    \item Add a consensus rule that $\valueBalance$ is in the range $\range{-\MAXMONEY}{\MAXMONEY}$.
     \item Change the syntax of a \commitmentScheme to add $\CommitGenTrapdoor$. This is necessary
           because the intended distribution of \commitmentTrapdoors may not be uniform on all values
           that are acceptable trapdoor inputs.
@@ -9523,6 +9534,8 @@ of their ``Auditable, Anonymous Electronic Cash'' proposal in \cite{ST1999}.
     \item Ensure that \Sprout functions and values are given \Sprout-specific types where appropriate.
     \item Improve cross-referencing.
     \item Clarify the use of $\PHGR$ vs $\Groth$ proofs in \joinSplitStatements.
+    \item Clarify that the $\ssqrt{a}$ notation refers to the positive square root. (This matters for
+          the conversion in \crossref{cctconversion}.)
     \item Model the group hash, and the use of $\BlakeTwosGeneric$ to construct the group hash, as random oracles.
           This appears to be unavoidable in order to allow proving unlinkability of $\DiversifyHash$.
     \item Rename $\mathsf{CRS}$ (Common Random String) to $\URS$ (\uniformRandomString), to

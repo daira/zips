@@ -787,6 +787,7 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\bconcat}{\mathop{\kern 0.05em||}}
 \newcommand{\listcomp}[1]{\overlap{0.06em}{\ensuremath{[}}~{#1}~\overlap{0.06em}{\ensuremath{]}}}
 \newcommand{\fun}[2]{{#1} \mapsto {#2}}
+\newcommand{\exclusivefun}[3]{{#1} \mapsto_{\neq\kern 0.05em{#3}\!} {#2}}
 \newcommand{\first}{\mathsf{first}}
 \newcommand{\for}{\text{ for }}
 \newcommand{\from}{\text{ from }}
@@ -1398,6 +1399,7 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\sighashType}{\term{SIGHASH type}}
 \newcommand{\sighashTypes}{\term{SIGHASH types}}
 \newcommand{\SIGHASHALL}{\mathsf{SIGHASH\_ALL}}
+\newcommand{\SIGHASHSINGLE}{\mathsf{SIGHASH\_SINGLE}}
 \newcommand{\SigHash}{\mathsf{SigHash}}
 \newcommand{\scriptSig}{\mathtt{scriptSig}}
 \newcommand{\scriptPubKey}{\mathtt{scriptPubKey}}
@@ -1574,6 +1576,7 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\GroupJHash}[1]{\GroupHash^{\SubgroupJ}_{#1}}
 \newcommand{\GroupJHashURSType}{\GroupJHash{}\mathsf{.URSType}}
 \newcommand{\GroupJHashInput}{\GroupJHash{}\mathsf{.Input}}
+\newcommand{\HashOutput}{\bytes{H}}
 \newcommand{\FindGroupJHash}{\FindGroupHash^{\SubgroupJ}}
 \newcommand{\FindGroupJHashOf}[1]{\FindGroupJHash\!\left({#1}\right)\!}
 
@@ -1971,10 +1974,26 @@ written as subscripts, e.g.\ if $x \typecolon X$, $y \typecolon Y$, and
 $f \typecolon X \times Y \rightarrow Z$, then an invocation of
 $f(x, y)$ can also be written $f_x(y)$.
 
+$\setof{x \typecolon T \suchthat p_x}$ means the subset of $x$ from $T$
+for which $p_x$ (a boolean expression depending on $x$) holds.
+
+$T \subseteq U$ indicates that $T$ is an inclusive subset or subtype of $U$.
+$S \union T$ means the set union of $S$ and $T$.
+
+$S \intersection T$ means the set intersection of $S$ and $T$,
+i.e.\ $\setof{x \typecolon S \suchthat x \in T}$.
+
 \notsprout{
+$S \difference T$ means the set difference obtained by removing elements
+in $T$ from $S$, i.e. $\setof{x \typecolon S \suchthat x \notin T}$.
+
 $\fun{x \typecolon T}{e_x \typecolon U}$ means the function of type $T \rightarrow U$
 mapping formal parameter $x$ to $e_x$ (an expression depending on~$x$).
 The types $T$ and $U$ are always explicit.
+
+$\exclusivefun{x \typecolon T}{e_x \typecolon U}{y}$ means
+$\fun{x \typecolon T}{e_x \typecolon U \union \setof{y}}$ restricted to the domain
+$\setof{x \typecolon T \suchthat e_x \neq y}$ and range $U$.
 
 $\powerset{T}$ means the powerset of $T$.
 }
@@ -1990,24 +2009,6 @@ $\length(S)$ means the length of (number of elements in) $S$.
 
 \notsprout{
 $\truncate{k}(S)$ means the sequence formed from the first $k$ elements of $S$.
-}
-
-$T \subseteq U$ indicates that $T$ is an inclusive subset or subtype of $U$.
-
-\notsprout{
-$\setof{x \typecolon T \suchthat p_x}$ means the subset of $x$ from $T$
-for which $p_x$ (a boolean expression depending on $x$) holds.
-}
-
-$S \union T$ means the set union of $S$ and $T$, or the type corresponding
-to it.
-
-$S \intersection T$ means the set intersection of $S$ and $T$,
-i.e.\ $\setof{x \typecolon S \suchthat x \in T}$.
-
-\notsprout{
-$S \difference T$ means the set difference obtained by removing elements
-in $T$ from $S$, i.e. $\setof{x \typecolon S \suchthat x \notin T}$.
 }
 
 $\hexint{}$ followed by a string of $\mathtt{monospace}$ hexadecimal
@@ -3390,7 +3391,8 @@ the \jubjubCurve defined by \crossref{jubjub}.
 \vspace{-2ex}
 \securityrequirement{
 For a randomly selected $\URS \typecolon \GroupGHashURSType$,
-it must be reasonble to model $\GroupGHash{\URS}$ as a random oracle.
+it must be reasonble to model $\GroupGHash{\URS}$ (restricted to inputs for which it does
+not return $\bot$) as a random oracle.
 } %securityrequirement
 
 \vspace{-1ex}
@@ -3418,7 +3420,8 @@ it must be reasonble to model $\GroupGHash{\URS}$ as a random oracle.
         stronger than \collisionResistance\!.
   \item $\GroupJHash{}$ is also used to instantiate $\DiversifyHash$ in \crossref{concretediversifyhash}.
         We do not know how to prove the Unlinkability property defined in that section
-        in the standard model, but in a model where $\GroupJHash{}$ is taken as a random oracle,
+        in the standard model, but in a model where $\GroupJHash{}$ (restricted to
+        inputs for which it does not return $\bot$) is taken as a random oracle,
         it is implied by the Decisional Diffie-Hellman assumption on $\SubgroupJ$.
   \item $\URS$ is a \uniformRandomString; we choose it verifiably at random
         (see \crossref{beacon}), \emph{after} fixing the concrete
@@ -5540,7 +5543,8 @@ $16$-byte personalization string $p$, and input $x$.
 $\BlakeTwobGeneric$ is used to instantiate $\hSigCRH$, $\EquihashGen{}$,
 and $\KDFSprout$.
 \nuzero{From \NUZero onward, it is used to compute \sighashTxHashes
-as specified in \cite{ZIP-143}.}
+as specified in \cite{ZIP-143}\sapling{, or as in \cite{ZIP-243} after
+\Sapling activation}.}
 \sapling{For \Sapling, it is also used to instantiate $\PRFexpand{}$,
 $\PRFock{}$, $\KDFSapling$, and in the $\RedJubjub$ \signatureScheme
 which instantiates $\SpendAuthSig$ and $\BindingSig$.}
@@ -5558,7 +5562,7 @@ block.
 }
 
 \sapling{
-\vspace{1ex}
+\vspace{0.5ex}
 $\BlakeTwosOf{\ell}{p, x}$ refers to unkeyed $\BlakeTwos{\ell}$
 in sequential mode, with an output digest length of $\ell/8$ bytes,
 $8$-byte personalization string $p$, and input $x$.
@@ -5566,7 +5570,7 @@ $8$-byte personalization string $p$, and input $x$.
 $\BlakeTwosGeneric$ is used to instantiate $\PRFnfSapling{}$, $\CRHivk$,
 and $\GroupJHash{}$.
 
-\vspace{-1ex}
+\vspace{-1.5ex}
 \begin{formulae}
   \item $\BlakeTwos{\ell} \typecolon \byteseq{8} \times \byteseqs \rightarrow \byteseq{\ell/8}$
 \end{formulae}
@@ -5574,7 +5578,7 @@ and $\GroupJHash{}$.
 
 
 \introsection
-\vspace{-1ex}
+\vspace{-1.5ex}
 \subsubsubsection{\MerkleTree{} \HashFunction} \label{merklecrh}
 
 \newsavebox{\merklebox}
@@ -5593,7 +5597,7 @@ Let $\SHACompress$ be as specified in \crossref{concretesha256}.
 $\MerkleCRHSprout \typecolon \MerkleHashSprout \times \MerkleHashSprout \rightarrow \MerkleHashSprout$
 is defined as follows:
 
-\vspace{-1ex}
+\vspace{-1.5ex}
 \begin{formulae}
   \item $\MerkleCRHSprout(\mathsf{left}, \mathsf{right}) := \SHACompressBox{\merklebox}$.
 \end{formulae}
@@ -5618,7 +5622,7 @@ Let $\SHACompress$ be as specified in \crossref{concretesha256}.
 $\MerkleCRHSprout \typecolon \MerkleLayerSprout \times \MerkleHashSprout \times \MerkleHashSprout
 \rightarrow \MerkleHashSprout$ is defined as follows:
 
-\vspace{-1ex}
+\vspace{-1.5ex}
 \begin{formulae}
   \item $\MerkleCRHSprout(\mathsf{layer}, \mathsf{left}, \mathsf{right}) := \SHACompressBox{\merklebox}$.
 \end{formulae}
@@ -5631,7 +5635,7 @@ such that $\SHACompress(x) = \zeros{256}$.
 
 \vspace{-3ex}
 \begin{pnotes}
-\vspace{-2ex}
+\vspace{-1.5ex}
   \item The $\mathsf{layer}$ argument does not affect the output.
         \vspace{-1ex}
   \item $\SHACompress$ is not the same as the $\SHAFull$ function, which hashes arbitrary-length
@@ -5657,15 +5661,12 @@ $\MerkleCRHSapling \typecolon \MerkleLayerSapling \times \MerkleHashSapling \tim
 \end{formulae}
 
 \vspace{-5ex}
-\securityrequirement{
-$\PedersenHash$ must be \collisionResistant\!.
-}
+\securityrequirement{$\PedersenHash$ must be \collisionResistant\!.}
 
-\vspace{-3ex}
+\vspace{-4ex}
 \pnote{The prefix $l$ provides domain separation between inputs at different layers of the
 \noteCommitmentTree. It is distinct from the $\NoteCommitSaplingAlg$ prefix
-as noted in \crossref{concretewindowedcommit}.}
-} %sapling
+as noted in \crossref{concretewindowedcommit}.}} %sapling
 
 
 \subsubsubsection{\hSigText{} \HashFunction} \label{hsigcrh}
@@ -5785,8 +5786,9 @@ which could be derived from either of those authorities, it is not possible to
 tell which authority the third address was derived from.}
 
 \begin{nnotes}
-  \item Suppose that $\GroupJHash{}$ is modelled as a random oracle from \diversifiers
-        to points of order $\ParamJ{r}$ on the \jubjubCurve. In this model, Unlinkability
+  \item Suppose that $\GroupJHash{}$ (restricted to inputs for which it does not
+        return $\bot$) is modelled as a random oracle from \diversifiers to points
+        of order $\ParamJ{r}$ on the \jubjubCurve. In this model, Unlinkability
         of $\DiversifyHash$ holds under the Decisional Diffie-Hellman assumption on the
         \jubjubCurve.
   \item Informally, the random self-reducibility property of DDH implies that an
@@ -6543,7 +6545,7 @@ Define $\RedDSAVerify{} \typecolon (\vk \typecolon \RedDSAPublic) \times (M \typ
         let $\RedDSAReprS$ be the remaining $\ceiling{\bitlength(\ParamG{r})/8}$ bytes.
   \item Let $\RedDSASigR = \abstG{}\big(\LEOStoBSP{\ellG{}}(\RedDSAReprR)\kern-0.1em\big)$, and
         let $\RedDSASigS = \LEOStoIP{\bitlength(\ParamG{r})}(\RedDSAReprS)$.
-  \item Let $\vkBytes = \LEBStoOSPOf{\ellG{}}{\reprGOf{}{\RedDSADerivePublic(\sk)}\kern 0.05em}$.
+  \item Let $\vkBytes = \LEBStoOSPOf{\ellG{}}{\reprGOf{}{\vk}}$.
   \item Let $\RedDSASigc = \RedDSAHashToScalar(\RedDSAReprR \bconcat \vkBytes \bconcat M)$.
   \item Return $1$ if $\RedDSASigR \neq \bot$ and $\RedDSASigS < \ParamG{r}$ and
         $\scalarmult{\RedDSASigS}{\GenG{}} = \RedDSASigR + \scalarmult{\RedDSASigc}{\vk}$, otherwise $0$.
@@ -6707,7 +6709,7 @@ instantiated as follows using $\WindowedPedersenCommitAlg$:
   \item $\NoteCommitSaplingGenTrapdoor()$ generates the uniform distribution on $\GF{\ParamJ{r}}$.
 \end{formulae}
 
-\vspace{-2ex}
+\vspace{-3ex}
 \begin{securityrequirements}
   \item $\WindowedPedersenCommitAlg$, and hence $\NoteCommitSaplingAlg$, must be
         computationally binding and at least computationally hiding \commitmentSchemes.
@@ -6716,7 +6718,7 @@ instantiated as follows using $\WindowedPedersenCommitAlg$:
 \vspace{-1ex}
 (They are in fact unconditionally hiding \commitmentSchemes.)
 
-\vspace{-1ex}
+\vspace{-2ex}
 \pnote{
 The prefix $\ones{6}$ distinguishes the use of $\WindowedPedersenCommitAlg$ in
 $\NoteCommitSaplingAlg$ from the layer prefix used in $\MerkleCRHSapling$ (see
@@ -6748,20 +6750,23 @@ In order to support this property, we also define \quotedterm{homomorphic}
 See \crossref{ccthomomorphiccommit} for rationale and efficient circuit implementation
 of this function.
 
-\vspace{2ex}
+\vspace{1ex}
 Define:
 \begin{formulae}
+\vspace{-0.5ex}
   \item $\ValueCommitValueBase := \FindGroupJHashOf{\ascii{Zcash\_cv}, \ascii{v}}$
+\vspace{-0.5ex}
   \item $\ValueCommitRandBase  := \FindGroupJHashOf{\ascii{Zcash\_cv}, \ascii{r}}$.
 \end{formulae}
 
+\introlist
 The commitment scheme $\ValueCommit{}$ specified in \crossref{abstractcommit} is
 instantiated as follows using $\HomomorphicPedersenCommit{}$:
 \begin{formulae}
   \item $\ValueCommit{\ValueCommitRand}(\Value) :=
            \HomomorphicPedersenCommit{\ValueCommitRand}(\ascii{Zcash\_cv}, \Value)$.
 \end{formulae}
-
+\vspace{-1ex}
 which is equivalent to:
 \begin{formulae}
   \item $\ValueCommit{\ValueCommitRand}(\Value) := \scalarmult{\Value}{\ValueCommitValueBase}
@@ -7148,6 +7153,7 @@ since $\SubgroupJ$ is of odd order \cite{KvE2013}).
 $\Selectu$ is injective on $\SubgroupJ$.
 \end{theorem}
 
+\vspace{-3.5ex}
 \begin{proof}
 By writing the curve equation as
 $\varv^2 = (1 - a \smult u^2) / (1 - d \smult u^2)$, and noting that the
@@ -7159,7 +7165,9 @@ most one of $(u, \varv)$ and $(u, -\varv)$ is in $\SubgroupJ$. Therefore,
 $\Selectu$ is injective on points in $\SubgroupJ$.
 \end{proof}
 
-It follows that $\ExtractJ$ is injective on $\SubgroupJ$.
+\vspace{-1ex}
+Since $\ItoLEBSP{\MerkleHashLengthSapling}$ is injective, it follows that
+$\ExtractJ$ is injective on $\SubgroupJ$.
 }
 
 
@@ -7167,13 +7175,13 @@ It follows that $\ExtractJ$ is injective on $\SubgroupJ$.
 \introsection
 \subsubsubsection{Group Hash into \Jubjub} \label{concretegrouphashjubjub}
 
-Let $\GroupGHashInput := \byteseq{8} \times \byteseqs$.
+\vspace{-2ex}
+Let $\GroupGHashInput := \byteseq{8} \times \byteseqs$, and
+let $\GroupGHashURSType := \byteseq{64}$.
 
 (The input element with type $\byteseq{8}$ is intended to act as a
 ``personalization'' parameter to distinguish uses of the \groupHash for
 different purposes.)
-
-Let $\GroupGHashURSType := \byteseq{64}$.
 
 Let $\URS$ be the MPC randomness beacon defined in \crossref{beacon}.
 
@@ -7183,7 +7191,7 @@ Let $\LEOStoIP{}$ be as defined in \crossref{endian}.
 
 Let $\abstJ$ be as defined in \crossref{jubjub}.
 
-\vspace{2ex}
+\vspace{1ex}
 Let $D \typecolon \byteseq{8}$ be an $8$-byte domain separator, and
 let $M \typecolon \byteseqs$ be the hash input.
 
@@ -7191,12 +7199,37 @@ let $M \typecolon \byteseqs$ be the hash input.
 The hash $\GroupJHash{\URS}(D, M) \typecolon \PrimeOrderJ$ is calculated as follows:
 
 \begin{algorithm}
-  \item $P := \abstJOf{\LEOStoBSPOf{256}{\BlakeTwosOf{256}{D,\, \URS \bconcat\, M}}}$
-  \item If $P = \bot$ then return $\bot$.
-  \item $Q := \scalarmult{\ParamJ{h}}{P}$
-  \item If $Q = \ZeroJ$ then return $\bot$, else return $Q$.
+  \item let $\HashOutput = \BlakeTwos{256}(D,\, \URS \bconcat\, M)$
+  \item let $P = \abstJOf{\LEOStoBSP{256}(\HashOutput)\kern-0.12em}$
+  \item if $P = \bot$ then return $\bot$
+  \item let $Q = \scalarmult{\ParamJ{h}}{P}$
+  \item if $Q = \ZeroJ$ then return $\bot$, else return $Q$.
 \end{algorithm}
 
+\vspace{-3ex}
+\begin{pnotes}
+\vspace{-1ex}
+  \item The $\BlakeTwos{256}$ chaining variable after processing $\URS$ may be precomputed.
+  \item The use of $\GroupJHash{\URS}$ for $\DiversifyHash$ and to generate independent bases
+        needs a random oracle (for inputs on which $\GroupJHash{\URS}$ does not return $\bot$);
+        here we show that it is sufficient to employ a simpler random oracle instantiated by
+        $\vphantom{a^b}\BlakeTwos{256}$ in the security analysis.
+
+        $\exclusivefun{\HashOutput \typecolon \byteseq{32}}
+          {\abstJOf{\LEOStoBSP{256}(\HashOutput)\kern-0.12em} \typecolon \GroupJ}{\bot}$
+        is injective, and both it and its inverse are efficiently computable.
+
+        $\exclusivefun{P \typecolon \GroupJ}
+          {\scalarmult{\ParamJ{h}}{P} \typecolon \PrimeOrderJ}{\ZeroJ}$
+        is exactly $\ParamJ{h}$-to-$1$, and both it and its inverse relation are efficiently computable.
+
+        It follows that when $\fun{(D \typecolon \byteseq{8}, M \typecolon \byteseqs)}
+          {\BlakeTwosOf{256}{D,\, \URS \bconcat\, M} \typecolon \byteseq{32}}$
+        is modelled as a random oracle, $\exclusivefun{(D \typecolon \byteseq{8}, M \typecolon \byteseqs)}
+          {\GroupJHash{\URS}(D, M) \typecolon \PrimeOrderJ}{\bot}$ also acts as a random oracle.
+\end{pnotes}
+
+\vspace{0.5ex}
 Define $\first \typecolon (\byte \rightarrow \maybe{T}) \rightarrow \maybe{T}$
 so that $\first(f) = f(i)$ where $i$ is the least integer in $\byte$
 such that $f(i) \neq \bot$, or $\bot$ if no such $i$ exists.
@@ -7204,14 +7237,13 @@ such that $f(i) \neq \bot$, or $\bot$ if no such $i$ exists.
 Define $\FindGroupJHashOf{D, M} :=
 \first(\fun{i \typecolon \byte}{\GroupJHash{\URS}(D, M \bconcat\, [i]) \typecolon \maybe{(\PrimeOrderJ)}})$.
 
-\begin{pnotes}
-  \item The $\BlakeTwos{256}$ chaining variable after processing $\URS$ may be precomputed.
-  \item For random input, $\FindGroupJHash$ returns $\bot$ with probability approximately $2^{-256}$.
-        In the \Zcash protocol, most uses of $\FindGroupJHash$ are for constants and do not
-        return $\bot$; the only use that could potentially return $\bot$ is in the
-        computation of a \defaultDiversifiedPaymentAddress in \crossref{saplingkeycomponents}.
-\end{pnotes}
-}
+\vspace{-3ex}
+\pnote{For random input, $\FindGroupJHash$ returns $\bot$ with probability approximately $2^{-256}$.
+In the \Zcash protocol, most uses of $\FindGroupJHash$ are for constants and do not
+return $\bot$; the only use that could potentially return $\bot$ is in the
+computation of a \defaultDiversifiedPaymentAddress in \crossref{saplingkeycomponents}.
+} %pnote
+} %sapling
 
 
 \subsubsection{\ZeroKnowledgeProvingSystems}
@@ -7361,18 +7393,23 @@ the \blockchain in encrypted form.
 
 % FIXME duplication with {noteptconcept}.
 
+\introlist
 The \notePlaintexts in a \joinSplitDescription are encrypted to the
 respective \transmissionKeys $\TransmitPublicNew{\allNew}$.
-Each \notsprout{\Sprout} \notePlaintext (denoted $\NotePlaintext{}$) consists of
-$(\Value \typecolon \ValueType, \NoteAddressRand \typecolon ,
-\NoteCommitRand \typecolon \NoteCommitSproutOutput\changed{, \Memo \typecolon \MemoType})$.
+Each \notsprout{\Sprout} \notePlaintext (denoted $\NotePlaintext{}$) consists of:
+\begin{formulae}
+  \item $(\Value \typecolon \ValueType, \NoteAddressRand \typecolon \PRFOutputSprout,
+\NoteCommitRand \typecolon \NoteCommitSproutOutput\changed{, \Memo \typecolon \MemoType})$
+\end{formulae}
 
 \saplingonward{
 The \notePlaintext in each \outputDescription is encrypted to the
 \diversifiedTransmissionKey $\DiversifiedTransmitPublic$.
-Each \Sapling \notePlaintext (denoted $\NotePlaintext{}$) consists of
-$(\Diversifier \typecolon \DiversifierType, \Value \typecolon \ValueType,
-\NoteCommitRand \typecolon \NoteCommitSaplingOutput, \Memo \typecolon \MemoType)$.
+Each \Sapling \notePlaintext (denoted $\NotePlaintext{}$) consists of:
+\begin{formulae}
+  \item $(\Diversifier \typecolon \DiversifierType, \Value \typecolon \ValueType,
+\NoteCommitRand \typecolon \NoteCommitSaplingOutput, \Memo \typecolon \MemoType)$
+\end{formulae}
 }
 
 \changed{$\Memo$ is a $\MemoByteLength$-byte \memo associated with this \note.
@@ -7526,6 +7563,7 @@ The raw encoding of a P2PKH address consists of:
         of a compressed ECDSA key encoding.
 \end{itemize}
 
+\vspace{-2ex}
 \begin{pnotes}
   \item In \Bitcoin a single byte is used for the version field identifying
         the address type. In \Zcash two bytes are used. For addresses on
@@ -8217,7 +8255,7 @@ Consensus rules applying to a \joinSplitDescription are given in \crossref{joins
 Let $\LEBStoOSP{}{}$ be as defined in \crossref{endian}.
 
 \vspace{-0.5ex}
-Let $\reprJ$ be as defined in \crossref{jubjub}.
+Let $\reprJ$ and $\ParamJ{q}$ be as defined in \crossref{jubjub}.
 
 \vspace{-0.5ex}
 An abstract \spendDescription, as described in \crossref{spendsandoutputs}, is encoded in
@@ -8257,14 +8295,13 @@ $64$ & $\spendAuthSig$ & \type{char[64]} & A signature authorizing this spend. \
 \vspace{-0.5ex}
 Other consensus rules applying to a \spendDescription are given in \crossref{spenddesc}.
 
-
 \introsection
 \subsection{Encoding of \OutputDescriptions} \label{outputencoding}
 
 Let $\LEBStoOSP{}{}$ be as defined in \crossref{endian}.
 
 \vspace{-0.5ex}
-Let $\reprJ$ be as defined in \crossref{jubjub}, and $\ExtractJ$ as in \crossref{concretegrouphashjubjub}.
+Let $\reprJ$ and $\ParamJ{q}$ be as in \crossref{jubjub}, and $\ExtractJ$ as in \crossref{concretegrouphashjubjub}.
 
 \vspace{-0.5ex}
 An abstract \outputDescription, described in \crossref{spendsandoutputs}, is encoded in
@@ -8928,7 +8965,10 @@ transactions. It also allows \transparent and \shielded transfers to
 happen atomically --- possibly under the control of nontrivial script
 conditions, at some cost in distinguishability.
 
-\todo{Describe changes to signing.}
+Computation of \sighashTxHashes, as described in \crossref{sighash},
+was changed to clean up handling of an error case for $\SIGHASHSINGLE$,
+to remove the special treatment of \ScriptOP{CODESEPARATOR}, and to
+include \Zcash-specific fields in the hash \cite{ZIP-76}.
 
 
 \subsection{\Memos}
@@ -9460,7 +9500,7 @@ Michael Dixon, Andrew Poelstra, and no doubt others. We would also like to
 thank the designers and developers of \Bitcoin.
 
 \Zcash has benefited from security audits performed by NCC Group, Coinspect,
-Least Authority, and Mary Maller.
+Least Authority, Mary Maller, and Kudelski Security.
 
 The Faerie Gold attack was found by Zooko Wilcox; subsequent analysis
 of variations on the attack was performed by Daira Hopwood and Sean Bowe.
@@ -9489,8 +9529,10 @@ double-spends--- were first applied to privacy-preserving digital currencies
 by Tomas Sander and Amnon Ta–Shma. To a large extent \Zcash is a refinement
 of their ``Auditable, Anonymous Electronic Cash'' proposal in \cite{ST1999}.
 
+\notsprout{
 Finally, we would like to thank the Internet Archive for their scan of
 Peter Newell's illustration of the Jubjub bird, from \cite{Carroll1902}.
+}
 
 \intropart
 \section{Change History}
@@ -9502,6 +9544,7 @@ Peter Newell's illustration of the Jubjub bird, from \cite{Carroll1902}.
           ``If $\nJoinSplit > 0$, the \transaction{} \MUSTNOT use \sighashTypes other than $\SIGHASHALL$.'',
           which was never implemented.
     \item Add section on signature hashing.
+    \item Briefly describe the changes to computation of \sighashTxHashes\notsprout{ in \Sprout}.
     \item Correct the definition of set difference ($S \setminus T$).
     \item Clarify that interstitial \treestates form a tree for each \transaction containing \joinSplitDescriptions.
     \item Correct the description of P2PKH addresses in \crossref{transparentaddrencoding} --- they
@@ -9513,6 +9556,7 @@ Peter Newell's illustration of the Jubjub bird, from \cite{Carroll1902}.
     \item Acknowledge Shafi Goldwasser, Silvio Micali, Oded Goldreich, Rosario Gennaro, Bryan Parno, Jon Howell,
           Craig Gentry, Mariana Raykova, and Jens Groth for their work on zero-knowledge proving systems.
     \item Acknowledge Tomas Sander and Amnon Ta–Shma for \cite{ST1999}.
+    \item Acknowledge Kudelski Security's audit.
 \sapling{
     \item Use the more precise subgroup types $\SubgroupG$ and $\SubgroupJ$ in preference to
           $\GroupG{}$ and $\GroupJ$ where applicable.
@@ -9528,6 +9572,8 @@ Peter Newell's illustration of the Jubjub bird, from \cite{Carroll1902}.
           because the intended distribution of \commitmentTrapdoors may not be uniform on all values
           that are acceptable trapdoor inputs.
     \item Correct the argument that $\vSum$ is in range in \crossref{saplingbalance}.
+    \item Correct an error in the algorithm for $\RedDSAVerify{}$: the public key $\vk$ is given directly
+          to this algorithm and should not be computed from the unknown private key $\sk$.
     \item Correct or improve the types of $\GroupJHash{}$, $\FindGroupJHash$, $\ExtractJ$, $\PRFexpand{}$,
           $\PRFock{}$, and $\CRHivk$.
     \item Instantiate $\PRFock{}$ using $\BlakeTwob{256}$.
@@ -9536,13 +9582,18 @@ Peter Newell's illustration of the Jubjub bird, from \cite{Carroll1902}.
     \item Clarify the use of $\PHGR$ vs $\Groth$ proofs in \joinSplitStatements.
     \item Clarify that the $\ssqrt{a}$ notation refers to the positive square root. (This matters for
           the conversion in \crossref{cctconversion}.)
-    \item Model the group hash, and the use of $\BlakeTwosGeneric$ to construct the group hash, as random oracles.
-          This appears to be unavoidable in order to allow proving unlinkability of $\DiversifyHash$.
+    \item Model the group hash as a random oracle. This appears to be unavoidable in order to allow
+          proving unlinkability of $\DiversifyHash$. Explain how this relates to the Discrete Logarithm
+          Independence assumption used previously, and justify this modelling by showing that it
+          follows from treating $\BlakeTwos{256}$ as a random oracle in the instantiation of
+          $\GroupJHash{}$. 
     \item Rename $\mathsf{CRS}$ (Common Random String) to $\URS$ (\uniformRandomString), to
           match the terminology adopted at the first zkproof workshop held in Boston, Massachusetts
           on May~10--11, 2018.
     \item Generalize $\PRFexpand{}$ to accept an arbitrary-length input. (This specification does not
           use that generalization, but \cite{ZIP-32} does.)
+    \item Change the notation for a multiplication constraint in \crossref{circuitdesign} to avoid
+          potential confusion with cartesian product.
     \item Clarify the wording of the abstract.
     \item Add the Jubjub bird image to the title page. This image has been edited from a scan of
           Peter Newell's original illustration (as it appeared in \cite{Carroll1902}) to remove the

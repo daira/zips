@@ -1086,8 +1086,8 @@ electronic commerce and payment, financial privacy, proof of work, zero knowledg
 \newcommand{\noteCiphertextOrchard}{\termandindex{transmitted note ciphertext}{transmitted note ciphertext (Orchard)}}
 \newcommand{\noteCiphertextsOrchard}{\termandindex{transmitted note ciphertexts}{transmitted note ciphertext (Orchard)}}
 \newcommand{\noteOrNotesCiphertext}{\termnoindex{transmitted note(s) ciphertext}}
-\newcommand{\outputCiphertext}{\term{Output ciphertext}}
-\newcommand{\outputCiphertexts}{\terms{Output ciphertext}}
+\newcommand{\outgoingCiphertext}{\term{outgoing ciphertext}}
+\newcommand{\outgoingCiphertexts}{\terms{outgoing ciphertext}}
 \newcommand{\incrementalMerkleTree}{\term{incremental Merkle tree}}
 \newcommand{\merkleRoot}{\termandindex{root}{root (of a Merkle tree)}}
 \newcommand{\merkleNode}{\termandindex{node}{node (of a Merkle tree)}}
@@ -3159,6 +3159,9 @@ $\NoteTuple{} = (\Diversifier, \DiversifiedTransmitPublic, \Value, \NoteUniqueRa
 \vspace{-2.5ex}
 where $\NoteCommitAlg{Orchard}$ is instantiated in \crossref{concretesinsemillacommit}.
 
+If $\NoteCommitAlg{Orchard}$ returns $\bot$ (which happens with negligible probability),
+the \note is invalid and should be recreated with a different $\NoteSeedBytes$.
+
 Unlike in \Sapling, the definition of an \Orchard \note includes the
 $\NoteUniqueRand$ field; the \note's position in the \noteCommitmentTree does
 not need to be known in order to compute this value.
@@ -4268,12 +4271,14 @@ Let $\GroupP$, $\GroupPx$, $\ellP$, $\ParamP{q}$, and $\ParamP{r}$ be as defined
 Define:
 \begin{formulae}
   \item $\NoteCommitTrapdoor{Orchard} := \binaryrange{\ScalarLength{Orchard}}$ and
-        $\NoteCommitOutput{Orchard} := \GroupP$;
+        $\NoteCommitOutput{Orchard} := \maybe{\GroupP}$;
   \item $\ValueCommitTrapdoor{Orchard} := \binaryrange{\ScalarLength{Orchard}}$ and
         $\ValueCommitOutput{Orchard} := \GroupP$.
   \item $\CommitIvkTrapdoor := \binaryrange{\ScalarLength{Orchard}}$ and
-        $\CommitIvkOutput := \InViewingKeyTypeOrchard$.
+        $\CommitIvkOutput := \maybe{\InViewingKeyTypeOrchard}$.
 \end{formulae}
+
+\nnote{$\NoteCommitAlg{Orchard}$ and $\CommitIvkAlg$ can return $\bot$ with negligible probability.}
 
 \introlist
 \Orchard uses three additional commitment schemes:
@@ -4381,7 +4386,7 @@ the \jubjubCurve defined by \crossref{jubjub}.
 \vspace{-2ex}
 \securityrequirement{
 For a randomly selected $\URS \typecolon \SubgroupGHashURSType$,
-it must be reasonble to model $\SubgroupGHash{\URS}$ (restricted to inputs for which it does
+it must be reasonable to model $\SubgroupGHash{\URS}$ (restricted to inputs for which it does
 not return $\bot$) as a \randomOracle.
 } %securityrequirement
 
@@ -4825,6 +4830,7 @@ as follows:
   \item \blank
   \item let $\AuthSignPublic = \ExtractP(\AuthSignPublicPoint)$
   \item let $\InViewingKey = \CommitIvk{\CommitIvkRand}\big(\AuthSignPublic, \NullifierKey\big)$
+  \item if $\InViewingKey = \bot$, discard this key and repeat with a new $\SpendingKey$.
   \item let $K = \ItoLEBSPOf{\SpendingKeyLength}{\CommitIvkRand}$
   \item let $R = \PRFexpand{K}\big([\hexint{82}] \bconcat \ItoLEOSPOf{256}{\AuthSignPublic} \bconcat \ItoLEOSPOf{256}{\NullifierKey}\kern-0.25em\big)$
   \item let $\DiversifierKey$ be the first $\DiversifierKeyLength/8$ bytes of $R$ and
@@ -5400,6 +5406,7 @@ and then performs the following steps:
                                                          \reprP\Of{\DiversifiedTransmitPublic},
                                                          \Value, \NoteUniqueRand, \NoteNullifierRand)$.
         \vspace{0.5ex}
+  \item If $\cm = \bot$, return $\bot$.
   \item Let $\NotePlaintext{} = (\NotePlaintextLeadByte, \Diversifier, \Value, \NoteSeedBytes, \Memo)$.
         \vspace{0.5ex}
   \item Encrypt $\NotePlaintext{}$ to the recipient
@@ -5566,6 +5573,7 @@ constructed as follows:
   \item Let $\cm = \NoteCommit{Orchard}{\NoteCommitRand}\big(\reprP\Of{\DiversifiedTransmitBase},
                                                              \reprP\Of{\DiversifiedTransmitPublic},
                                                              \Value, \NoteUniqueRand, \NoteNullifierRand\big)$.
+  \item If $\cm = \bot$, return $\bot$.
   \item Let $\nf = \DeriveNullifier{\NullifierKey}(\NoteUniqueRand, \NoteNullifierRand, \cm)$.
   \item Construct a \dummy \merklePath $\TreePath{}$ for use in the
         \auxiliaryInput to the \spendStatement (this will not be checked, because $\Value = 0$).
@@ -6714,7 +6722,7 @@ $\nfOld{} = \DeriveNullifier{\NullifierKey}(\NoteUniqueRandOld{}, \NoteNullifier
 $\AuthSignRandomizedPublic = \SpendAuthSigRandomizePublic{Orchard}(\AuthSignRandomizer, \AuthSignPublicPoint)$.
 
 \snarkcondition{Diversified address integrity}{actionaddressintegrity}
-$\DiversifiedTransmitPublicOld = \scalarmult{\InViewingKey}{\DiversifiedTransmitBaseOld}$ where
+$\InViewingKey = \bot$ or $\DiversifiedTransmitPublicOld = \scalarmult{\InViewingKey}{\DiversifiedTransmitBaseOld}$ where
 $\InViewingKey = \CommitIvk{\CommitIvkRandom}\big(\ExtractP(\AuthSignPublicPoint), \NullifierKey\big)$.
 
 \snarkcondition{New note commitment integrity}{actionnewnotecommitmentintegrity}
@@ -7002,7 +7010,7 @@ $\NotePlaintext{}$ is encoded as defined in \crossref{notept}.
 
 Let $\cv$ be the \valueCommitment for the new \note, and let $\cm$ be the \noteCommitment.
 (These are needed to derive the \defining{\outgoingCipherKey} $\OutCipherKey$ in order to produce the
-\defining{\outputCiphertext} $\OutCiphertext$.)
+\defining{\outgoingCiphertext} $\OutCiphertext$.)
 
 \introlist
 \vspace{1ex}
@@ -8161,7 +8169,7 @@ See \crossref{cctmixinghash} for efficient circuit implementation of this functi
 } %sapling
 
 
-%\nufive{
+\nufive{
 \introlist
 \lsubsubsubsection{Sinsemilla Hash Function}{concretesinsemillahash}
 
@@ -8179,7 +8187,7 @@ $\SinsemillaHash$ is used in the definition of $\SinsemillaCommitAlg$
 Let $\GroupP$, $\ZeroP$, $\ParamP{q}$, $\ParamP{r}$, and $\ParamP{b}$ be as defined in
 \crossref{pallasandvesta}.
 
-Let $\ExtractP \typecolon \GroupP \rightarrow \MerkleHash{Orchard}$ be as
+Let $\ExtractPbot \typecolon \GroupP \rightarrow \MerkleHash{Orchard}$ be as
 defined in \crossref{concreteextractorpallas}.
 
 Let $\GroupPHash$ be as defined in \crossref{concretegrouphashpallasandvesta}.
@@ -8193,7 +8201,7 @@ be as defined in \crossref{endian}.
 \vspace{1ex}
 Let $k := 10$.
 
-Let $c$ be the largest integer such that $2^n \leq \hfrac{\ParamP{r}-1}{2}$,
+Let $c$ be the largest integer such that $2^c \leq \hfrac{\ParamP{r}-1}{2}$,
 i.e.\ $c := 253$.
 
 \introlist
@@ -8207,12 +8215,16 @@ $\SinsemillaGenBase \typecolon \binaryrange{k} \rightarrow \GroupPstar$ by:
 
 \vspace{1ex}
 \introlist
-Define $\incompleteadd \typecolon \GroupP \times \GroupP \rightarrow \maybe{\GroupP}$ as incomplete addition on the \Pallas curve:
+Define $\incompleteadd \typecolon \maybe{\GroupP} \times \maybe{\GroupP} \rightarrow \maybe{\GroupP}$ as incomplete addition on the \Pallas curve:
 
+\vspace{-1ex}
 \begin{tabular}{@{\hskip 1.5em}r@{\;}l@{\;}l@{\;}l}
-  $\ZeroP$ &$\incompleteadd$ &$\ZeroP$   &$= \bot$ \\
-  $\ZeroP$ &$\incompleteadd$ &$(x', y')$ &$= \bot$ \\
-  $(x, y)$ &$\incompleteadd$ &$\ZeroP$   &$= \bot$ \\
+  $\bot$   &$\incompleteadd$ &$\bot$     &$= \bot$ \\[-0.5ex]
+  $\bot$   &$\incompleteadd$ &$P$        &$= \bot$ \\[-0.5ex]
+  $P$      &$\incompleteadd$ &$\bot$     &$= \bot$ \\[-0.5ex]
+  $\ZeroP$ &$\incompleteadd$ &$\ZeroP$   &$= \bot$ \\[-0.25ex]
+  $\ZeroP$ &$\incompleteadd$ &$(x', y')$ &$= \bot$ \\[-0.5ex]
+  $(x, y)$ &$\incompleteadd$ &$\ZeroP$   &$= \bot$ \\[-0.25ex]
   $(x, y)$ &$\incompleteadd$ &$(x', y')$ &$= \begin{cases}
                                                \bot,              &\caseif x = x' \\
                                                (x, y) + (x', y'), &\caseotherwise\text{.}
@@ -8220,7 +8232,8 @@ Define $\incompleteadd \typecolon \GroupP \times \GroupP \rightarrow \maybe{\Gro
 \end{tabular}
 
 \introlist
-Define $\SinsemillaHashToPoint(D \typecolon \byteseqs, M \typecolon \bitseq{\range{0}{k \mult c}}) \rightarrow \GroupP$ as follows:
+\vspace{1ex}
+Define $\SinsemillaHashToPoint(D \typecolon \byteseqs, M \typecolon \bitseq{\range{0}{k \mult c}}) \rightarrow \maybe{\GroupP}$ as follows:
 
 \begin{algorithm}
   \item pad $M$ to a multiple of $k$ bits by appending zero bits, giving $M'$.
@@ -8240,14 +8253,15 @@ Define $\SinsemillaHashToPoint(D \typecolon \byteseqs, M \typecolon \bitseq{\ran
 Finally, define $\SinsemillaHash \typecolon \byteseqs \times \bitseq{\range{0}{k \mult c}} \rightarrow \maybe{\MerkleHash{Orchard}}$ by:
 
 \begin{formulae}
-  \item $\SinsemillaHash(D, M) := \ExtractP\big(\SinsemillaHashToPoint\Of{D, M}\kern-0.1em\big)$.
+  \item $\SinsemillaHash(D, M) := \ExtractPbot\big(\SinsemillaHashToPoint\Of{D, M}\kern-0.1em\big)$.
 \end{formulae}
 
 See \cite[section TODO ``Sinsemilla'']{Zcash-Orchard} for rationale and efficient circuit implementation of these functions.
 
 \securityrequirement{
 $\SinsemillaHash$ and $\SinsemillaHashToPoint$ are required to be \collisionResistant
-between inputs of fixed length, for a given personalization input $D$.
+between inputs of fixed length, for a given personalization input $D$. It must also be
+infeasible to find inputs $(D, M)$ such that $\SinsemillaHashToPoint(D, M) = \bot$.
 No other security properties commonly associated with \hashFunctions are needed.
 } %securityrequirement
 
@@ -8260,19 +8274,25 @@ No other security properties commonly associated with \hashFunctions are needed.
 
 \introlist
 \theoremlabel{thmshortsinsemillacr}
-\begin{theorem}[Collision resistance of generalized $\SinsemillaHash$]
+\begin{theorem}[Collision resistance of $\SinsemillaHash$ and $\SinsemillaHashToPoint$]
 
-Consider ... We show that ...
+Let $D \typecolon \byteseqs$ be a personalization input, and let $\ell \typecolon \range{0}{k \mult c}$.
+Show that finding a collision $M, M' \typecolon \bitseq{\ell}$ with $M \neq M'$ such that
+$\SinsemillaHashToPoint(D, M) = \SinsemillaHashToPoint(D, M')$ or $\SinsemillaHash(D, M) = \SinsemillaHash(D, M')$
+efficiently yields a non-trivial discrete logarithm relation.
 \end{theorem}
 
 \begin{proof}
+Without loss of generality we can restrict to the case where $\ell$ is a multiple of $k$,
+since the zero padding is injective, and only has the effect of restricting the adversary's
+choice of $M$ when $\ell$ is not a multiple of $k$.
 
-We show a correspondence between Sinsemilla and a vector Pedersen hash, which allows using the security argument
-from \cite{BGG1995} to show that collision-resistance can be tightly reduced to the discrete log problem in
-$\mathbb{P}$.
+We show a correspondence between Sinsemilla and a vector Pedersen hash, which allows using the
+security argument from \cite{BGG1995} to show that collision-resistance can be tightly reduced
+to the discrete log problem in $\mathbb{P}$.
 
-We collect the scalars by which each generator $\SinsemillaGenBase(j)$ is multiplied in the algorithm for
-$\SinsemillaHashToPoint$. For a given $M$ define $m_i$ as in that algorithm.
+We collect the scalars by which each generator $\SinsemillaGenBase(j)$ is multiplied in the
+algorithm for $\SinsemillaHashToPoint$. For a given $M$ define $m_i$ as in that algorithm.
 
 For $j \in \binaryrange{k}$ define
 \begin{formulae}
@@ -8307,8 +8327,6 @@ been motivated by wanting to support variable-length messages and incremental ha
 we do not.
 
 Now we consider $\SinsemillaHash$. We want to prove that if we can find two messages $M$ 
-\vspace{-1.5ex}
-
 and $M'$ such that $\ExtractPbot\big(\SinsemillaHash(M)\kern-0.1em\big) =
 \ExtractPbot\big(\SinsemillaHash(M')\kern-0.1em\big)$ then we can find a discrete logarithm.
 So either $\SinsemillaHash(M) = \SinsemillaHash(M')$ (in which case use the original Pedersen
@@ -8325,13 +8343,13 @@ property of $\SinsemillaCommitAlg$.
 $\SinsemillaCommitAlg$ is perfectly hiding because the output distribution is perfectly
 indistinguishable from a random $\GroupP$ element, given that $r$ is a random scalar on
 $[0, q)$. It follows that $\SinsemillaShortCommitAlg$ is also perfectly hiding, since hiding
-cannot be affected by applying any fixed function to the *output* of $Commit$.
+cannot be affected by applying any fixed function to the \emph{output} of $\SinsemillaCommitAlg$.
 
 \end{proof}
 
 \nnote{
 The above theorem covers the case where additional terms may be added to the
-$\SinsemillaHashToPoint$ output before applying $\ExtractP$. This is needed
+$\SinsemillaHashToPoint$ output before applying $\ExtractPbot$. This is needed
 to show security of the $\SinsemillaShortCommitAlg$ \commitmentScheme defined in
 \crossref{concretesinsemillacommit}. It is also needed to show security of the
 \nullifier derivation defined in \crossref{commitmentsandnullifiers} against
@@ -8345,7 +8363,8 @@ Faerie Gold attacks, as described in \crossref{faeriegold}.
 
 \begin{proof}
 
-We now aim to show that when Sinsemilla is instantiated over a short Weierstrass curve, the additions can be implemented as incomplete additions.
+We now aim to show that when Sinsemilla is instantiated over a \swCurve,
+the additions can be implemented as incomplete additions.
 
 For convenience of reference, we repeat the algorithm including the $(A + P) + A$ optimization:
 
@@ -8366,7 +8385,7 @@ Since by assumption it is hard to find a nontrivial discrete log relation, we ca
 
 \end{proof}
 
-%} %nufive
+} %nufive
 
 
 \nufive{
@@ -8635,8 +8654,8 @@ corresponding to $t$.
 
 \introlist
 \vspace{2ex}
-$\PRFock{Sapling}{}$ is used in \crossref{saplingencrypt} to derive the
-\outgoingCipherKey $\OutCipherKey$ used to encrypt an \outputCiphertext.
+$\PRFock{Sapling}{}$ is used in \crossref{saplingandorchardencrypt} to derive the
+\outgoingCipherKey $\OutCipherKey$ used to encrypt an \outgoingCiphertext.
 
 It is instantiated using the $\BlakeTwobGeneric$ \hashFunction defined in
 \crossref{concreteblake2}:
@@ -8678,7 +8697,7 @@ $\SubgroupReprJ$ is defined in \crossref{jubjub}.
 
 \newsavebox{\orchardockbox}
 \begin{lrbox}{\orchardockbox}
-\setsapling
+\setnufive
 \begin{bytefield}[bitwidth=0.038em]{512}
     \sbitbox{256}{$\LEBStoOSPOf{256}{\OutViewingKey}$} &
     \sbitbox{256}{$32$-byte $\cvField$}
@@ -8690,8 +8709,8 @@ $\SubgroupReprJ$ is defined in \crossref{jubjub}.
 \nufive{
 \introlist
 \vspace{2ex}
-$\PRFock{Orchard}{}$ is used in \crossref{orchardencrypt} to derive the
-\outgoingCipherKey $\OutCipherKey$ used to encrypt an \outputCiphertext.
+$\PRFock{Orchard}{}$ is used in \crossref{saplingandorchardencrypt} to derive the
+\outgoingCipherKey $\OutCipherKey$ used to encrypt an \outgoingCiphertext.
 
 It is instantiated using the $\BlakeTwobGeneric$ \hashFunction defined in
 \crossref{concreteblake2}:
@@ -8718,7 +8737,7 @@ part of deriving the \nullifier for an \Orchard \note.
 It is instantiated using the $\PoseidonHash$ \hashFunction \cite{GKRRS2019} defined in \crossref{poseidonhash}:
 
 \begin{formulae}
-  \item $\PRFnf{Orchard}{\NullifierKey}(\NoteUniqueRand) := \Poseidon(\NullifierKey, \NoteUniqueRand)$.
+  \item $\PRFnf{Orchard}{\NullifierKey}(\NoteUniqueRand) := \PoseidonHash(\NullifierKey, \NoteUniqueRand)$.
 \end{formulae}
 
 \vspace{-2ex}
@@ -9001,7 +9020,7 @@ Let $\EdDSABase$ be the base point given in \cite{BDLSY2012}.
 Define $\ItoLEOSP{}$, $\LEOStoBSP{}$, and $\LEBStoIP{}$ as in \crossref{endian}.
 
 Define $\reprBytesEdSpecific \typecolon \GroupEdSpecific \rightarrow \ReprEdSpecificBytes$ such
-that $\reprBytesEdSpecific\Of{x, y} = \ItoLEOSP{256}\big(y + 2^{255} \smult \tilde{x}\big)$, where
+that $\reprBytesEdSpecific\Of{(x, y)} = \ItoLEOSP{256}\big(\kern-0.1em(y \bmod p) + 2^{255} \smult \tilde{x}\big)$, where
 $\tilde{x} = x \bmod 2$.\footnotewithlabel{coordinatenames}{Here we use the $(x, y)$ naming of coordinates in
 \cite{BDLSY2012}, which is different from the $(u, \varv)$ naming used for coordinates of \ctEdwardsCurves
 in \crossref{jubjub} and in \crossref{ecbackground}.}
@@ -9572,7 +9591,7 @@ which is equivalent to:
 
 Let $\BaseLength{Orchard}$ be as defined in \crossref{constants}.
 
-Let $\ExtractP$ be as defined in \crossref{concreteextractorpallas}.
+Let $\ExtractPbot$ be as defined in \crossref{concreteextractorpallas}.
 
 \crossref{concretesinsemillahash} defines a \xSinsemillaHash construction.
 We construct \defining{\xSinsemillaCommitments} by reusing that construction,
@@ -9582,7 +9601,7 @@ and adding a randomized point on the \pallasCurve (see \crossref{pallasandvesta}
   \item $\SinsemillaCommit{r}(D, M) :=
            \SinsemillaHashToPoint(D \bconcat \ascii{-M}, M) + \scalarmult{r}{\GroupPHash\Of{D \bconcat \ascii{-r}, \ascii{}}}$
   \item $\SinsemillaShortCommit{r}(D, M) :=
-           \ExtractP\big(\SinsemillaCommit{r}(D, M)\kern-0.1em\big)$.
+           \ExtractPbot\big(\SinsemillaCommit{r}(D, M)\kern-0.1em\big)$.
 \end{formulae}
 
 See \cite[Section TODO]{Zcash-Orchard} for rationale and efficient circuit implementation of this function.
@@ -10005,7 +10024,7 @@ as in \crossref{endian}, and similarly for
 $\LEBStoIP{} \typecolon (\ell \typecolon \Nat) \times \bitseq{\ell} \rightarrow \binaryrange{\ell}$.
 
 Define $\reprJ \typecolon \GroupJ \rightarrow \ReprJ$ such
-that $\reprJ\Of{u, \varv} = \ItoLEBSP{256}\big(\varv + 2^{255} \smult \tilde{u}\big)$, where
+that $\reprJ\big((u, \varv)\big) = \ItoLEBSP{256}\big(\kern-0.1em(\varv \bmod \ParamJ{q}) + 2^{255} \smult \tilde{u}\big)$, where
 $\tilde{u} = u \bmod 2$.
 
 \vspace{-1ex}
@@ -10021,6 +10040,7 @@ $\abstJ\Of{P\Repr}$ is computed as follows:
   \item if $u \bmod 2 = \tilde{u}$ then return $(u, \varv)$ else return $(\ParamJ{q} - u, \varv)$.
 \end{formulae}
 
+\introlist
 \pnote{
 In earlier versions of this specification, $\abstJ$ was defined as the left inverse
 of $\reprJ$ such that if $S$ is not in the range of $\reprJ$, then $\abstJ\Of{S} = \bot$.
@@ -10061,11 +10081,11 @@ other conditions on points, for example that they have order at least $\ParamJ{r
 \lsubsubsubsection{Coordinate Extractor for \JubjubText}{concreteextractorjubjub}
 
 \vspace{-2ex}
-Let $\Selectu\Of{(u, \varv)} = u$ and let $\Selectv\Of{(u, \varv)} = \varv$.
+Let $\Selectu\big((u, \varv)\big) = u$ and let $\Selectv\big((u, \varv)\big) = \varv$.
 
 Define $\ExtractJ \typecolon \SubgroupJ \rightarrow \MerkleHash{Sapling}$ by
 \begin{formulae}
-  \item $\ExtractJ(P) := \ItoLEBSPOf{\MerkleHashLength{Sapling}}{\Selectu\Of{P}}$.
+  \item $\ExtractJ(P) := \ItoLEBSP{\MerkleHashLength{Sapling}}\big(\Selectu\Of{P}\kern-0.1em\big)$.
 \end{formulae}
 
 \vspace{-2ex}
@@ -10144,7 +10164,7 @@ The hash $\GroupJHash{\URS}(D, M) \typecolon \SubgroupJstar$ is calculated as fo
 
 \begin{algorithm}
   \item let $\HashOutput = \BlakeTwos{256}(D,\, \URS \bconcat\, M)$
-  \item let $P = \abstJ\Of{\LEOStoBSP{256}(\HashOutput)\kern-0.12em}$
+  \item let $P = \abstJ\big(\LEOStoBSP{256}(\HashOutput)\kern-0.12em\big)$
   \item if $P = \bot$ then return $\bot$
   \item let $Q = \scalarmult{\ParamJ{h}}{P}$
   \item if $Q = \ZeroJ$ then return $\bot$, else return $Q$.
@@ -10201,10 +10221,11 @@ system (playing a similar rôle to \BLSPairing in \Sapling), and \Pallas for the
 The \representedGroups $\GroupP$ and $\GroupV$ of points on \Pallas and \Vesta respectively
 are defined in this section.
 
-A \defining{\swEllipticCurve}, as defined for example in \cite[Definition 2.3.1]{Hisil2010}, is an
-elliptic curve $E$ over a field $\GF{q}$, parameterized by $a, b \typecolon \GF{q}$ such that
-$4 \mult a^3 + 27 \mult b^2 \neq 0$, with equation $E : y^2 = x^3 + a \mult x + b$. The curve has
-a distinguished zero point $\Zero$, also called the \definingquotedterm{point at infinity}.
+A \defining{\swEllipticCurve} over a field $\GF{q}$ for prime $q > 3$, as defined for example
+in \cite[Definition 2.3.1]{Hisil2010}, is an elliptic curve $E$ over $\GF{q}$, parameterized
+by $a, b \typecolon \GF{q}$ such that $4 \mult a^3 + 27 \mult b^2 \neq 0$, with equation
+$E : y^2 = x^3 + a \mult x + b$. The curve has a distinguished zero point $\Zero$, also
+called the \definingquotedterm{point at infinity}.
 For \Pallas and \Vesta we have $a = 0$ and so we will omit that term below.
 
 \begin{tabular}{@{}l@{\;}r@{\;}l}
@@ -10235,18 +10256,20 @@ Define $\ItoLEBSP{} \typecolon (\ell \typecolon \Nat) \times \binaryrange{\ell} 
 as in \crossref{endian}, and similarly for
 $\LEBStoIP{} \typecolon (\ell \typecolon \Nat) \times \bitseq{\ell} \rightarrow \binaryrange{\ell}$.
 
+Let $\GroupG{}$ be either $\GroupP$ or $\GroupV$.
+
 Define $\reprG{} \typecolon \GroupG{} \rightarrow \ReprG{}$ such that
 
 \vspace{-1ex}
 \begin{tabular}{@{\hskip 1.5em}r@{\;}l}
   $\reprG{}\big(\ZeroG{}\big)$ &$= \ItoLEBSP{256}(0)$ \\
-  $\reprG{}\big((x, y)\big)$ &$= \ItoLEBSP{256}\big(x + 2^{255} \smult \tilde{y}\big)$, where $\tilde{y} = y \bmod 2$.
+  $\reprG{}\big((x, y)\big)$ &$= \ItoLEBSP{256}\big(\kern-0.1em(x \bmod \ParamG{q}) + 2^{255} \smult \tilde{y}\big)$, where $\tilde{y} = y \bmod 2$.
 \end{tabular}
 
 \vspace{1ex}
 \introlist
 Define $\abstG{} \typecolon \ReprG{} \rightarrow \maybe{\GroupG{}}$ such that
-$\abstJ\Of{P\Repr}$ is computed as follows:
+$\abstG{}\Of{P\Repr}$ is computed as follows:
 \begin{formulae}
   \item let ${x\Repr} \typecolon \bitseq{255}$ be the first $255$ bits of $P\Repr$ and
         let $\tilde{y} \typecolon \bit$ be the last bit.
@@ -10408,7 +10431,7 @@ Define $\hashtofield_{\XMDBlakeTwob}^{\typeexp{\GF{\ParamG{q}}\!}{2}}(\msg \type
 
 \begin{algorithm}
   \item let $\DST' = \DST \bconcat\, [\,\length(\DST)\,]$
-  \item let $\msg' = \zerobytes{64} \bconcat \msg \bconcat\, [\,0, 128\,] \bconcat\, [\,0\,] \bconcat \DST'$
+  \item let $\msg' = \zerobytes{128} \bconcat \msg \bconcat\, [\,0, 128\,] \bconcat\, [\,0\,] \bconcat \DST'$
   \item let $b_0 = \BlakeTwob{512}\big(\zerobytes{16}, \msg'\big)$
   \item let $b_1 = \BlakeTwob{512}\big(\zerobytes{16}, b_0 \bconcat\, [\,1\,] \bconcat \DST'\big)$
   \item let $b_2 = \BlakeTwob{512}\big(\zerobytes{16}, (b_0 \xor b_1) \bconcat\, [\,2\,] \bconcat \DST'\big)$
@@ -13716,10 +13739,18 @@ Peter Newell's illustration of the Jubjub bird, from \cite{Carroll1902}.
 \lsection{Change History}{changehistory}
 
 
-\historyentry{2021.1.20}{2021-03-18}
+\historyentry{2021.1.20}{2021-03-23}
 \begin{itemize}
+\nufive{
+    \item Correct some interim findings of NCC specification audit:
+          \begin{itemize}
+            \item Propagate $\bot$ intermediate results to the output of Sinsemilla primitives.
+            \item Change the output types of $\NoteCommitAlg{Orchard}$ and $\CommitIvkAlg$ to
+                  reflect that these can return $\bot$.
+          \end{itemize}
     \item Correct the description of $\lengthField$ in \crossref{unifiedpaymentaddrencoding}.
     \item Correct the type signature of $\DiversifyHash{Orchard}$ in \crossref{abstracthashes}.
+} %nufive
     \item Remove support for building the \Sprout-only specification (\texttt{sprout.pdf}).
     \item Remove magenta highlighting of differences from \Zerocash.
 \end{itemize}
@@ -14660,7 +14691,7 @@ Peter Newell's illustration of the Jubjub bird, from \cite{Carroll1902}.
     \item Specify $\RedDSA$ and $\RedJubjub$.
     \item Specify \saplingBindingSignatures and \spendAuthSignatures.
     \item Specify the randomness beacon.
-    \item Add \outputCiphertexts and $\OutCipherKey$.
+    \item Add \outgoingCiphertexts and $\OutCipherKey$.
     \item Define $\DefaultDiversifier$.
     \item Change the \spendCircuit and \outputCircuit specifications to remove unintended differences
           from sapling-crypto.

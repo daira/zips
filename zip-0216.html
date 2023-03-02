@@ -175,7 +175,7 @@ Discussions-To: &lt;<a href="https://github.com/zcash/zips/issues/400">https://g
             .</p>
             <p>(Some versions of the Zcash protocol specification mistakenly allowed
                 <span class="math">\(\mathsf{pk_d}\)</span>
-             to be the zero point. This was corrected in version 2023.4.0 <a id="footnote-reference-16" class="footnote_reference" href="#protocol-2023-4-0">15</a> <a id="footnote-reference-17" class="footnote_reference" href="#zips-issue664">23</a> to match the implementation in librustzcash as of <a id="footnote-reference-18" class="footnote_reference" href="#librustzcash-pr109">22</a>, which has been used in <cite>zcashd</cite> since <cite>zcashd</cite> v2.1.2.)</p>
+             to be the zero point. This was corrected in version 2023.4.0 <a id="footnote-reference-16" class="footnote_reference" href="#protocol-2023-4-0">15</a> <a id="footnote-reference-17" class="footnote_reference" href="#zips-issue664">24</a> to match the implementation in librustzcash as of <a id="footnote-reference-18" class="footnote_reference" href="#librustzcash-pr109">23</a>, which has been used in <cite>zcashd</cite> since <cite>zcashd</cite> v2.1.2.)</p>
             <p>The above is intended to be a complete list of the places where compressed encodings of Jubjub points occur in the Zcash consensus protocol and in plaintext, address, or key formats.</p>
             <section id="retroactive-applicability"><h3><span class="section-heading">Retroactive applicability</span><span class="section-anchor"> <a rel="bookmark" href="#retroactive-applicability"><img width="24" height="24" class="section-anchor" src="assets/images/section-anchor.png" alt=""></a></span></h3>
                 <p>As originally specified, this ZIP required that the new validity rules be applied only after NU5 activation. This was necessary because a transaction containing a non-canonical Jubjub point encoding could have been included in any block before NU5 activation.</p>
@@ -230,11 +230,11 @@ Discussions-To: &lt;<a href="https://github.com/zcash/zips/issues/400">https://g
             <p>Encodings of elliptic curve points on the Pallas and Vesta curves in the NU5 proposal <a id="footnote-reference-26" class="footnote_reference" href="#protocol-pallasandvesta">10</a> are also not affected.</p>
         </section>
         <section id="security-and-privacy-considerations"><h2><span class="section-heading">Security and Privacy Considerations</span><span class="section-anchor"> <a rel="bookmark" href="#security-and-privacy-considerations"><img width="24" height="24" class="section-anchor" src="assets/images/section-anchor.png" alt=""></a></span></h2>
-            <p>This ZIP eliminates a potential source of consensus divergence between differing full node implementations. At the time of writing (February 2021), no such divergence exists for any production implementation of Zcash, but an early alpha version of the <cite>zebrad</cite> node implementation would have been susceptible to this issue.</p>
+            <p>This ZIP eliminates a potential source of consensus divergence between differing full node implementations. As of February 2023, no known divergence of this type exists for any production implementation of Zcash, but an early alpha version of the <cite>zebrad</cite> node implementation would have been susceptible to this issue.</p>
         </section>
         <section id="deployment"><h2><span class="section-heading">Deployment</span><span class="section-anchor"> <a rel="bookmark" href="#deployment"><img width="24" height="24" class="section-anchor" src="assets/images/section-anchor.png" alt=""></a></span></h2>
             <p>This ZIP activated with Network Upgrade 5. Requirements on points encoded in payment addresses and full viewing keys MAY be enforced in advance of NU5 activation.</p>
-            <p><cite>zcashd</cite> PR #6399 <a id="footnote-reference-27" class="footnote_reference" href="#zcashd-pr6399">21</a> retroactively enforces canonical encoding of Jubjub points for the entire chain history, as described in the <a href="#retroactive-applicability">Retroactive applicability</a> section.</p>
+            <p><cite>zcashd</cite> PRs #6000 <a id="footnote-reference-27" class="footnote_reference" href="#zcashd-pr6000">21</a> and #6399 <a id="footnote-reference-28" class="footnote_reference" href="#zcashd-pr6399">22</a> retroactively enforce canonical encoding of Jubjub points for the entire chain history, as described in the <a href="#retroactive-applicability">Retroactive applicability</a> section.</p>
         </section>
         <section id="references"><h2><span class="section-heading">References</span><span class="section-anchor"> <a rel="bookmark" href="#references"><img width="24" height="24" class="section-anchor" src="assets/images/section-anchor.png" alt=""></a></span></h2>
             <table id="rfc2119" class="footnote">
@@ -397,10 +397,18 @@ Discussions-To: &lt;<a href="https://github.com/zcash/zips/issues/400">https://g
                     </tr>
                 </tbody>
             </table>
-            <table id="zcashd-pr6399" class="footnote">
+            <table id="zcashd-pr6000" class="footnote">
                 <tbody>
                     <tr>
                         <th>21</th>
+                        <td><a href="https://github.com/zcash/zcash/pull/6000">zcash/zcash PR 6000: Enable ZIP 216 for blocks prior to NU5 activation</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table id="zcashd-pr6399" class="footnote">
+                <tbody>
+                    <tr>
+                        <th>22</th>
                         <td><a href="https://github.com/zcash/zcash/pull/6399">zcash/zcash PR 6399: Retroactively enable ZIP 216 before NU5 activation</a></td>
                     </tr>
                 </tbody>
@@ -408,7 +416,7 @@ Discussions-To: &lt;<a href="https://github.com/zcash/zips/issues/400">https://g
             <table id="librustzcash-pr109" class="footnote">
                 <tbody>
                     <tr>
-                        <th>22</th>
+                        <th>23</th>
                         <td><a href="https://github.com/zcash/librustzcash/pull/109/files#diff-92d6b429f317a74bd65b2ad87d4f841e9fa9e334edab4199cdaba91172cd2d10R147-R151">zcash/librustzcash PR 109: PaymentAddress encapsulation</a></td>
                     </tr>
                 </tbody>
@@ -416,7 +424,7 @@ Discussions-To: &lt;<a href="https://github.com/zcash/zips/issues/400">https://g
             <table id="zips-issue664" class="footnote">
                 <tbody>
                     <tr>
-                        <th>23</th>
+                        <th>24</th>
                         <td><a href="https://github.com/zcash/zips/issues/664">zcash/zips issue 664: `Sapling pk_d should not allow the zero point</a></td>
                     </tr>
                 </tbody>
